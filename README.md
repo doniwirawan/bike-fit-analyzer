@@ -1,5 +1,13 @@
 # 🚴 Bike Fit Analyzer
 
+### ▶️ Live demo (runs in your browser): **https://bikefit-analyzer.vercel.app**
+
+No install, no upload — drop a side-on pedaling clip and it grades your fit
+on-device. (The in-browser app lives in [`web/`](web/); the more accurate
+desktop pipeline is below.)
+
+---
+
 Grade your own **road bike fit** from a side-on phone video, using AI pose
 estimation. It tracks your body joints, finds the bottom of your pedal stroke,
 measures the fit angles a professional fitter looks at, grades them against
