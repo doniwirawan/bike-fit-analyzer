@@ -136,61 +136,101 @@
       <div id="example">
         <div class="badge">Example result</div>
         <!-- self-contained illustrative figure (no external assets) -->
-        <svg class="demoimg" viewBox="0 0 460 250" role="img" aria-label="Example: fit skeleton on a cyclist">
+        <svg class="demoimg" viewBox="0 0 480 278" role="img" aria-label="Example: fit skeleton and bike geometry">
           <defs>
             <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stop-color="#10151f"/><stop offset="1" stop-color="#0a0d13"/>
             </linearGradient>
+            <marker id="ah" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto-start-reverse">
+              <path d="M0 0 L8 4 L0 8 z" fill="#38bdf8"/>
+            </marker>
           </defs>
-          <rect width="460" height="250" rx="12" fill="url(#bg)"/>
-          <text x="18" y="30" fill="#9aa3b2" font-family="system-ui" font-size="13">bottom of pedal stroke</text>
+          <rect width="480" height="278" rx="12" fill="url(#bg)"/>
+          <text x="18" y="28" fill="#9aa3b2" font-family="system-ui" font-size="13">bottom of pedal stroke</text>
 
-          <!-- BIKE -->
-          <g fill="none" stroke="#39424f" stroke-width="5" stroke-linecap="round">
-            <circle cx="112" cy="194" r="47"/><circle cx="356" cy="194" r="47"/>
-            <circle cx="112" cy="194" r="47" stroke="#2c333f" stroke-width="1.5"/>
-            <circle cx="356" cy="194" r="47" stroke="#2c333f" stroke-width="1.5"/>
+          <!-- WHEELS (700c, spoked) -->
+          <g stroke-linecap="round">
+            <g stroke="#2c333f" stroke-width="1"><!-- spokes -->
+              <path d="M120 200 L165 200M120 200 L142 239M120 200 L98 239M120 200 L75 200M120 200 L98 161M120 200 L142 161" fill="none"/>
+              <path d="M306 200 L351 200M306 200 L328 239M306 200 L284 239M306 200 L261 200M306 200 L284 161M306 200 L328 161" fill="none"/>
+            </g>
+            <g fill="none">
+              <circle cx="120" cy="200" r="52" stroke="#3b4453" stroke-width="6"/>
+              <circle cx="120" cy="200" r="45" stroke="#2c333f" stroke-width="1.5"/>
+              <circle cx="306" cy="200" r="52" stroke="#3b4453" stroke-width="6"/>
+              <circle cx="306" cy="200" r="45" stroke="#2c333f" stroke-width="1.5"/>
+            </g>
+            <g fill="#4a5364"><circle cx="120" cy="200" r="4"/><circle cx="306" cy="200" r="4"/></g>
           </g>
-          <g fill="none" stroke="#525c6e" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M214 194 L112 194"/>            <!-- chainstay -->
-            <path d="M214 194 L176 108"/>            <!-- seat tube -->
-            <path d="M176 110 L112 194"/>            <!-- seatstay -->
-            <path d="M214 194 L322 150"/>            <!-- down tube -->
-            <path d="M182 112 L318 126"/>            <!-- top tube -->
-            <path d="M318 126 L332 154 L356 194"/>   <!-- head tube + fork -->
-            <path d="M214 194 L208 216"/>            <!-- crank -->
-            <path d="M312 122 q16 2 20 12 q-4 10 -14 10" stroke-width="4"/> <!-- drop bar -->
+
+          <!-- FRAME (realistic road geometry: ~73.5° seat, ~72.5° head) -->
+          <g fill="none" stroke="#5b657a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M200 208 L120 200"/>            <!-- chainstay -->
+            <path d="M200 208 L176 126"/>            <!-- seat tube -->
+            <path d="M176 126 L120 200"/>            <!-- seatstay -->
+            <path d="M200 208 L302 156"/>            <!-- down tube -->
+            <path d="M176 126 L292 124"/>            <!-- top tube -->
+            <path d="M292 124 L302 156"/>            <!-- head tube -->
+            <path d="M302 156 L306 200"/>            <!-- fork -->
+            <path d="M292 124 L312 117"/>            <!-- stem -->
+            <path d="M312 117 q17 1 19 13 q-3 11 -15 10" stroke-width="4"/> <!-- drop bar -->
           </g>
-          <rect x="168" y="102" width="26" height="7" rx="3" fill="#525c6e"/>  <!-- saddle -->
-          <rect x="201" y="213" width="16" height="6" rx="2" fill="#6b7688"/>  <!-- pedal -->
+          <path d="M150 94 Q168 88 186 93 Q170 98 150 96 Z" fill="#6b7688"/>   <!-- saddle -->
+          <circle cx="200" cy="208" r="12" fill="none" stroke="#5b657a" stroke-width="3"/> <!-- chainring -->
+          <path d="M200 208 L196 231" stroke="#8a94a8" stroke-width="4" fill="none"/> <!-- crank -->
+          <rect x="188" y="229" width="16" height="6" rx="2" fill="#8a94a8"/>  <!-- pedal -->
 
           <!-- RIDER silhouette -->
-          <g fill="none" stroke="#8792a6" stroke-opacity=".38" stroke-width="15" stroke-linecap="round">
-            <path d="M178 108 L250 86"/>            <!-- torso -->
-            <path d="M250 86 L286 110 L313 121"/>   <!-- arm -->
-            <path d="M178 108 L197 152 L210 208"/>  <!-- leg -->
+          <g fill="none" stroke="#8792a6" stroke-opacity=".34" stroke-width="16" stroke-linecap="round">
+            <path d="M174 102 L252 84"/>            <!-- torso -->
+            <path d="M252 84 L290 106 L310 116"/>   <!-- arm -->
+            <path d="M174 102 L200 152 L196 226"/>  <!-- leg -->
           </g>
-          <circle cx="272" cy="72" r="16" fill="#8792a6" fill-opacity=".38"/>  <!-- head -->
-          <path d="M258 66 a16 16 0 0 1 28 0" fill="none" stroke="#8792a6" stroke-opacity=".55" stroke-width="4"/> <!-- helmet -->
+          <circle cx="278" cy="70" r="16" fill="#8792a6" fill-opacity=".34"/>  <!-- head -->
+          <path d="M263 64 a16 16 0 0 1 30 0" fill="none" stroke="#8792a6" stroke-opacity=".5" stroke-width="4"/> <!-- helmet -->
 
           <!-- FIT SKELETON overlay -->
           <g fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M178 108 L250 86" stroke="#16a34a"/>            <!-- torso green -->
-            <path d="M250 86 L286 110 L313 121" stroke="#d97706"/>   <!-- arm amber -->
-            <path d="M178 108 L197 152 L210 208" stroke="#dc2626"/>  <!-- leg red -->
+            <path d="M174 102 L252 84" stroke="#16a34a"/>           <!-- torso -->
+            <path d="M252 84 L290 106 L310 116" stroke="#d97706"/>  <!-- arm -->
+            <path d="M174 102 L200 152 L196 226" stroke="#dc2626"/> <!-- leg -->
           </g>
           <g fill="#fff" stroke="#0a0d13" stroke-width="1.5">
-            <circle cx="178" cy="108" r="5"/><circle cx="250" cy="86" r="5"/>
-            <circle cx="286" cy="110" r="5"/><circle cx="313" cy="121" r="5"/>
-            <circle cx="197" cy="152" r="5"/><circle cx="210" cy="208" r="5"/>
+            <circle cx="174" cy="102" r="5"/><circle cx="252" cy="84" r="5"/>
+            <circle cx="290" cy="106" r="5"/><circle cx="310" cy="116" r="5"/>
+            <circle cx="200" cy="152" r="5"/><circle cx="196" cy="226" r="5"/>
           </g>
 
-          <!-- angle tags -->
+          <!-- BIKE GEOMETRY MARKS (cyan dashed) -->
+          <g stroke="#38bdf8" fill="none" stroke-width="1.4">
+            <!-- reach: saddle nose -> bars -->
+            <line x1="150" y1="74" x2="312" y2="74" marker-start="url(#ah)" marker-end="url(#ah)"/>
+            <line x1="150" y1="92" x2="150" y2="70" stroke-dasharray="2 3"/>
+            <line x1="312" y1="117" x2="312" y2="70" stroke-dasharray="2 3"/>
+            <!-- drop: saddle height -> bar height -->
+            <line x1="336" y1="93" x2="336" y2="117" marker-start="url(#ah)" marker-end="url(#ah)"/>
+            <line x1="312" y1="117" x2="340" y2="117" stroke-dasharray="2 3"/>
+            <line x1="186" y1="93" x2="340" y2="93" stroke-dasharray="2 3" stroke-opacity=".5"/>
+            <!-- saddle height along seat tube -->
+            <line x1="200" y1="208" x2="168" y2="94" stroke-dasharray="5 3" stroke-opacity=".9"/>
+            <!-- wheelbase -->
+            <line x1="120" y1="256" x2="306" y2="256" marker-start="url(#ah)" marker-end="url(#ah)"/>
+            <line x1="120" y1="200" x2="120" y2="258" stroke-dasharray="2 3"/>
+            <line x1="306" y1="200" x2="306" y2="258" stroke-dasharray="2 3"/>
+          </g>
+          <g font-family="system-ui" font-size="11" font-weight="600" fill="#7dd3fc">
+            <text x="205" y="68">reach</text>
+            <text x="344" y="108">drop</text>
+            <text x="120" y="150" transform="rotate(-73 120 150)">saddle height</text>
+            <text x="182" y="270">wheelbase</text>
+          </g>
+
+          <!-- joint angle tags -->
           <g font-family="system-ui" font-size="12.5" font-weight="700">
-            <rect x="150" y="146" width="40" height="19" rx="5" fill="#dc2626"/>
-            <text x="157" y="159" fill="#fff">37°</text>
-            <rect x="256" y="66" width="40" height="19" rx="5" fill="#16a34a"/>
-            <text x="263" y="79" fill="#fff">86°</text>
+            <rect x="152" y="148" width="40" height="19" rx="5" fill="#dc2626"/>
+            <text x="159" y="161" fill="#fff">37°</text>
+            <rect x="258" y="64" width="40" height="19" rx="5" fill="#16a34a"/>
+            <text x="265" y="77" fill="#fff">86°</text>
           </g>
         </svg>
         <div class="verdict">Overall: 🟠 Minor tweaks · 5 pedal strokes</div>
