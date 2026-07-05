@@ -18,9 +18,13 @@
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
+  html,body{max-width:100%;overflow-x:hidden}
   body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif;
-    background:var(--bg);color:var(--fg);line-height:1.5}
+    background:var(--bg);color:var(--fg);line-height:1.5;overflow-wrap:break-word}
   .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+  img,svg,canvas,video{max-width:100%;height:auto}
+  .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{width:100%;min-width:0}
 
   /* header */
   header{padding:30px 0 10px}
@@ -83,6 +87,24 @@
   .sw{width:13px;height:13px;border-radius:4px;display:inline-block}
   footer{border-top:1px solid var(--line);padding:22px 0 50px;color:var(--mut);font-size:.84rem}
   a{color:var(--accent)}
+  /* ---- mobile ---- */
+  @media(max-width:600px){
+    header{padding:22px 0 6px}
+    .hero{padding:18px 0 14px}
+    .hero h1{font-size:1.62rem}
+    .hero p{font-size:.98rem}
+    .chip{font-size:.74rem;padding:5px 9px}
+    .app{gap:14px;margin:12px 0 26px}
+    .panel{padding:16px;border-radius:15px}
+    #drop{padding:26px 14px}
+    .cols{gap:12px}
+    th,td{padding:8px 5px;font-size:.85rem}
+    .verdict{font-size:1rem}
+    .btn{width:100%}
+    .try{flex-direction:column;align-items:stretch}
+    .try .foot{text-align:center}
+  }
+  @media(max-width:380px){ .hero h1{font-size:1.45rem} .wrap{padding:0 14px} }
 </style>
 </head>
 <body>
@@ -234,7 +256,7 @@
           </g>
         </svg>
         <div class="verdict">Overall: 🟠 Minor tweaks · 5 pedal strokes</div>
-        <table>
+        <div class="tscroll"><table>
           <thead><tr><th>Angle</th><th>Reading</th><th>Target</th><th>Grade</th></tr></thead>
           <tbody>
             <tr><td>Knee at bottom</td><td class="val">37°</td><td>30–40°</td><td><span class="pill GREEN">GREEN</span></td></tr>
@@ -242,7 +264,7 @@
             <tr><td>Elbow bend</td><td class="val">12°</td><td>15–30°</td><td><span class="pill AMBER">AMBER</span></td></tr>
             <tr><td>Shoulder (reach)</td><td class="val">86°</td><td>80–95°</td><td><span class="pill GREEN">GREEN</span></td></tr>
           </tbody>
-        </table>
+        </table></div>
         <ul class="fixes"><li>Elbow 12° → arms a touch straight; soften them slightly for comfort.</li></ul>
         <div class="foot">This is a sample. Drop your own clip on the left to get your real numbers.</div>
       </div>
@@ -250,8 +272,8 @@
       <div id="results" hidden>
         <div class="badge" style="color:var(--accent);background:var(--soft)">Your result</div>
         <div class="verdict" id="verdict"></div>
-        <table><thead><tr><th>Angle</th><th>Reading</th><th>Target</th><th>Grade</th></tr></thead>
-          <tbody id="tbody"></tbody></table>
+        <div class="tscroll"><table><thead><tr><th>Angle</th><th>Reading</th><th>Target</th><th>Grade</th></tr></thead>
+          <tbody id="tbody"></tbody></table></div>
         <h4 style="margin:16px 0 4px">Do this</h4>
         <ul class="fixes" id="fixes"></ul>
         <div class="foot">2D side-view estimate, not a 3D pro fit. Change one thing at a time, then re-film.</div>
@@ -357,7 +379,7 @@ async function start(f){
         torso_from_horiz:torsoFromHoriz(P.hip,P.shoulder),
         elbow_flexion:180-angleAt(P.shoulder,P.elbow,P.wrist),
         shoulder_angle:angleAt(P.hip,P.shoulder,P.elbow) };
-      frames.push({ankleY:P.ankle.y,A,P});
+      frames.push({t:vid.currentTime,ankleY:P.ankle.y,A,P});
       drawSkeleton(P,{knee_flexion_bdc:"GRAY",torso_from_horiz:"GRAY",elbow_flexion:"GRAY",shoulder_angle:"GRAY"});
     }
     fill.style.width=(vid.currentTime/vid.duration*100).toFixed(0)+"%";
@@ -411,8 +433,10 @@ function finish(){
 
   $("#example").hidden=true; $("#results").hidden=false;
   const deepest=bdc.reduce((a,b)=>frames[b].ankleY>frames[a].ankleY?b:a,bdc[0]);
-  vid.pause(); vid.currentTime=Math.min(vid.duration,deepest/fps);
+  // seek to the EXACT captured time of that frame so the skeleton lines up
+  vid.pause();
   vid.onseeked=()=>{ ctx.drawImage(vid,0,0,cv.width,cv.height); drawSkeleton(frames[deepest].P,G); vid.onseeked=null; };
+  vid.currentTime=Math.min(vid.duration-0.001, frames[deepest].t);
 }
 </script>
 </body>
