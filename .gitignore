@@ -1,0 +1,24 @@
+# Your private videos and analysis outputs — never committed
+uploads/
+out_fit*/
+*.mp4
+*.mov
+*.m4v
+*.avi
+*.mkv
+
+# Large downloaded artifacts (fetched on demand, not stored in git)
+.venv/
+wheels/
+yolo11x-pose.pt
+*.pt
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
