@@ -165,7 +165,7 @@
       <div id="example">
         <div class="badge">Example result</div>
         <!-- self-contained illustrative figure (no external assets) -->
-        <svg class="demoimg" viewBox="0 0 500 306" role="img" aria-label="Example: road bike geometry and fit skeleton">
+        <svg class="demoimg" viewBox="0 0 520 306" role="img" aria-label="Example: road bike geometry and fit skeleton">
           <defs>
             <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stop-color="#10151f"/><stop offset="1" stop-color="#0a0d13"/>
@@ -174,7 +174,7 @@
               <path d="M0 0 L8 4 L0 8 z" fill="#38bdf8"/>
             </marker>
           </defs>
-          <rect width="500" height="306" rx="12" fill="url(#bg)"/>
+          <rect width="520" height="306" rx="12" fill="url(#bg)"/>
           <text x="18" y="28" fill="#9aa3b2" font-family="system-ui" font-size="13">example &#183; bike geometry + fit</text>
 
           <!-- WHEELS -->
@@ -241,13 +241,23 @@
             <line x1="120" y1="290" x2="300" y2="290" marker-start="url(#ah)" marker-end="url(#ah)"/>
             <line x1="120" y1="266" x2="120" y2="292" stroke-dasharray="2 3" stroke-opacity=".55"/>
             <line x1="300" y1="266" x2="300" y2="292" stroke-dasharray="2 3" stroke-opacity=".55"/>
+            <!-- wheel size (front wheel diameter) -->
+            <line x1="440" y1="150" x2="440" y2="266" marker-start="url(#ah)" marker-end="url(#ah)"/>
+            <line x1="300" y1="150" x2="442" y2="150" stroke-dasharray="2 3" stroke-opacity=".3"/>
+            <line x1="300" y1="266" x2="442" y2="266" stroke-dasharray="2 3" stroke-opacity=".3"/>
+            <!-- head tube angle arc -->
+            <path d="M290 148 A22 22 0 0 0 281 129" stroke-opacity=".85"/>
+            <!-- seat tube angle arc -->
+            <path d="M169 220 A22 22 0 0 0 178 201" stroke-opacity=".85"/>
           </g>
           <g font-family="system-ui" font-size="11" font-weight="600" fill="#7dd3fc">
             <text x="186" y="99">top tube</text>
             <text x="404" y="176" transform="rotate(-90 404 176)">stack</text>
             <text x="208" y="236">reach</text>
-            <text x="132" y="196" transform="rotate(-73 132 196)">seat tube</text>
+            <text x="130" y="200" transform="rotate(-73 130 200)">seat tube 73°</text>
             <text x="186" y="303">wheelbase</text>
+            <text x="296" y="140">head 72°</text>
+            <text x="452" y="214" transform="rotate(-90 452 214)">700c</text>
           </g>
 
           <!-- fit angle tags -->
