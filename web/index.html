@@ -91,6 +91,17 @@
     font-size:.84rem;line-height:1.4;background:color-mix(in srgb,var(--amber) 12%,transparent);
     border:1px solid color-mix(in srgb,var(--amber) 45%,var(--line))}
   .warn b{color:var(--amber)} .warn .i{color:var(--amber);font-weight:700;flex:none}
+  /* view selector + frontal (beta) metrics */
+  .viewsel{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:0 0 14px}
+  .viewsel button{border:0;background:transparent;color:var(--mut);font-family:var(--mono);font-size:.72rem;
+    letter-spacing:.06em;text-transform:uppercase;padding:7px 14px;cursor:pointer}
+  .viewsel button+button{border-left:1px solid var(--line)}
+  .viewsel button.active{background:var(--accent);color:var(--accent-ink)}
+  .fmetric{display:flex;gap:10px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--grid)}
+  .fmetric .dot{width:10px;height:10px;border-radius:2px;margin-top:4px;flex:none}
+  .fmetric b{display:block;font-size:.92rem;margin-bottom:2px}
+  .fmetric span{font-size:.85rem;color:var(--mut);line-height:1.4}
+  .dot.GREEN{background:var(--green)} .dot.AMBER{background:var(--amber)} .dot.RED{background:var(--red)} .dot.GRAY{background:var(--gray)}
 
   /* film + how sections */
   .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:8px 0 40px}
@@ -153,6 +164,11 @@
     <!-- LEFT: upload / live analysis -->
     <section class="panel">
       <h2>1 · Your clip</h2>
+      <div class="viewsel">
+        <button class="active" data-view="side">Side</button>
+        <button data-view="front">Front</button>
+        <button data-view="rear">Rear</button>
+      </div>
       <p class="lead">Side-on, 20–30s, phone at hip height, pedaling steadily.</p>
       <div id="drop">
         <svg class="drop-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8"/><path d="m8 17 4-4 4 4"/><path d="M20 16.5A4.5 4.5 0 0 0 17.5 8h-1.8A7 7 0 1 0 4 14.9"/></svg>
@@ -284,6 +300,18 @@
         <div class="foot">2D side-view estimate, not a 3D pro fit. Saddle height (knee) is the most reliable number here; reach/shoulder is the softest — don't change your stem on one clip. Change one thing at a time, then re-film.</div>
         <button class="btn primary" style="margin-top:14px" onclick="location.reload()">Analyze another clip</button>
       </div>
+
+      <div id="frontresults" hidden>
+        <div class="badge" style="color:var(--accent);background:var(--soft)"><span id="frontview">Front view</span> · beta</div>
+        <div class="warn" style="background:color-mix(in srgb,var(--accent) 8%,transparent);border-color:color-mix(in srgb,var(--accent) 40%,var(--line))">
+          <span class="i" style="color:var(--accent)">&#9432;</span>
+          <span>Frontal-plane readings are <b style="color:var(--accent)">experimental</b> and less reliable than the side view. Treat them as directional hints, not verdicts.</span>
+        </div>
+        <div class="verdict" id="frontverdict"></div>
+        <div id="frontout"></div>
+        <div class="foot">Knee tracking uses the frontal projection angle (FPPA); pelvic rock is peak-to-peak hip-line tilt across the stroke. For real decisions, the side-view saddle-height (knee) reading is the trustworthy one.</div>
+        <button class="btn primary" style="margin-top:14px" onclick="location.reload()">Analyze another clip</button>
+      </div>
     </section>
   </div>
 
@@ -324,7 +352,16 @@ const $ = s => document.querySelector(s);
 const drop=$("#drop"), file=$("#file"), vid=$("#vid"), cv=$("#cv"), ctx=cv.getContext("2d");
 const bar=$("#bar"), fill=$("#fill"), status=$("#status"), stage=$("#stage");
 
-let landmarker=null;
+let landmarker=null, viewMode="side";
+document.querySelectorAll(".viewsel button").forEach(b=>b.onclick=()=>{
+  viewMode=b.dataset.view;
+  document.querySelectorAll(".viewsel button").forEach(x=>x.classList.toggle("active",x===b));
+  $(".panel .lead").textContent = viewMode==="side"
+    ? "Side-on, 20–30s, phone at hip height, pedaling steadily."
+    : viewMode==="front"
+      ? "Facing the camera, 20–30s, pedaling steadily. Beta — frontal-plane hints."
+      : "From directly behind, 20–30s, pedaling steadily. Beta — frontal-plane hints.";
+});
 async function initModel(){
   status.textContent="Loading pose model (first time only)…";
   const files=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm");
@@ -402,7 +439,7 @@ function findPeaks(y,minDist,prom){const peaks=[];
     if(y[i]-Math.max(bL,bR)>=prom){ if(peaks.length&&i-peaks[peaks.length-1]<minDist){ if(y[i]>y[peaks[peaks.length-1]])peaks[peaks.length-1]=i;} else peaks.push(i);} }
   return peaks;}
 
-let frames=[], sideConf={left:0,right:0}, viewRatios=[];
+let frames=[], sideConf={left:0,right:0}, viewRatios=[], frontalFrames=[];
 // Recorded webm blobs often report duration=Infinity until forced; seek to the end to resolve it.
 function resolveDuration(v){
   return new Promise(res=>{
@@ -421,7 +458,7 @@ async function start(f, knownDur){
   vid.src=URL.createObjectURL(f);
   await new Promise(res=>{ vid.onloadeddata=res; vid.onerror=res; });
   cv.width=vid.videoWidth||848; cv.height=vid.videoHeight||478;
-  frames=[]; sideConf={left:0,right:0}; viewRatios=[]; status.textContent="Analyzing — detecting your body each frame…";
+  frames=[]; sideConf={left:0,right:0}; viewRatios=[]; frontalFrames=[]; status.textContent="Analyzing — detecting your body each frame…";
   vid.pause();
   // Step through the clip by seeking frame-by-frame (driven by 'seeked' events) so
   // every frame is sampled deterministically. Unlike rAF on a playing video, this
@@ -435,6 +472,8 @@ async function start(f, knownDur){
     ctx.drawImage(vid,0,0,cv.width,cv.height);
     if(res.landmarks&&res.landmarks[0]){
       const lm=res.landmarks[0];
+      if(viewMode!=="side"){ const fm=frontalMetrics(lm); frontalFrames.push(fm); drawFrontal(fm); }
+      else{
       // Lock onto the near (camera) side by confidence accumulated over the whole
       // clip, so a noisy frame can't flip us to the far leg mid-stroke.
       for(const s in SIDE) sideConf[s]+=Object.values(SIDE[s]).reduce((a,i)=>a+(lm[i].visibility??0),0);
@@ -456,6 +495,7 @@ async function start(f, knownDur){
         hip_angle: okv("shoulder","hip","knee")?angleAt(P.shoulder,P.hip,P.knee):NaN };
       frames.push({t:vid.currentTime,ankleY:okv("ankle")?P.ankle.y:NaN,A,P});
       drawSkeleton(P,{knee_flexion_bdc:"GRAY",torso_from_horiz:"GRAY",elbow_flexion:"GRAY",shoulder_angle:"GRAY"});
+      }
     }
     fill.style.width=Math.min(100,vid.currentTime/dur*100).toFixed(0)+"%";
     const next=vid.currentTime+dt;
@@ -477,6 +517,7 @@ function drawSkeleton(P,g){
 }
 
 function finish(){
+  if(viewMode!=="side"){ finishFrontal(); return; }
   status.textContent=""; bar.style.display="none";
   if(frames.length<5){ status.textContent="Couldn't track your body — try a clearer side-on clip."; return; }
   const ankle=frames.map(f=>f.ankleY);
@@ -522,6 +563,67 @@ function finish(){
   vid.pause();
   vid.onseeked=()=>{ ctx.drawImage(vid,0,0,cv.width,cv.height); drawSkeleton(frames[deepest].P,G); vid.onseeked=null; };
   vid.currentTime=Math.min(vid.duration-0.001, frames[deepest].t);
+}
+
+// ---- Front / Rear (frontal-plane) analysis — beta, report-only ----
+function frontalMetrics(lm){
+  const Pt=i=>({x:lm[i].x*cv.width,y:lm[i].y*cv.height,v:lm[i].visibility??0});
+  const hL=Pt(23),hR=Pt(24),kL=Pt(25),kR=Pt(26),aL=Pt(27),aR=Pt(28);
+  const center=(hL.x+hR.x)/2;
+  const leg=(h,k,a)=>{
+    if(Math.abs(a.y-h.y)<1) return null;
+    const lineX=h.x+(a.x-h.x)*((k.y-h.y)/(a.y-h.y));   // hip→ankle line at knee height
+    const dev=k.x-lineX;                                // knee offset from that line
+    const medial=(h.x<center)? dev : -dev;             // signed toward the body midline
+    return { fppa:180-angleAt(h,k,a), medialSign:Math.sign(medial) };
+  };
+  const ok=(...p)=>p.every(q=>q.v>=MIN_VIS);
+  return {
+    L: ok(hL,kL,aL)?leg(hL,kL,aL):null,
+    R: ok(hR,kR,aR)?leg(hR,kR,aR):null,
+    hipTilt: ok(hL,hR)?deg(Math.atan2(hR.y-hL.y,hR.x-hL.x)):NaN,
+    P:{hL,hR,kL,kR,aL,aR},
+  };
+}
+function drawFrontal(f){
+  if(!f||!f.P) return; const P=f.P;
+  ctx.lineWidth=Math.max(3,cv.width/220); ctx.lineCap="round"; ctx.strokeStyle="#9aa3b2";
+  const seg=(a,b)=>{ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();};
+  seg(P.hL,P.hR); seg(P.hL,P.kL); seg(P.kL,P.aL); seg(P.hR,P.kR); seg(P.kR,P.aR);
+  ctx.fillStyle="#fff"; ["hL","hR","kL","kR","aL","aR"].forEach(k=>{ctx.beginPath();ctx.arc(P[k].x,P[k].y,Math.max(4,cv.width/280),0,7);ctx.fill();});
+}
+function finishFrontal(){
+  status.textContent=""; bar.style.display="none";
+  const F=frontalFrames.filter(Boolean);
+  if(F.length<5){ status.textContent="Couldn't track your body — try a clearer, well-lit clip square to the camera."; return; }
+  const legStat=s=>{ const v=F.map(f=>f[s]).filter(Boolean).map(x=>x.medialSign*x.fppa);
+    if(v.length<3) return null; const q=[...v].sort((a,b)=>a-b);
+    return { peak:q[Math.floor(q.length*0.9)], med:median(v) }; };
+  const L=legStat("L"), R=legStat("R");
+  const t=F.map(f=>f.hipTilt).filter(x=>!isNaN(x)); let rock=null;
+  if(t.length>=5){ const q=[...t].sort((a,b)=>a-b); rock=q[Math.floor(q.length*0.95)]-q[Math.floor(q.length*0.05)]; }
+
+  const kneeRow=(name,st)=>{
+    if(!st) return ["GRAY",name,"not tracked — leg not clearly visible."];
+    const v=st.peak;
+    if(v>=8) return ["AMBER",name,`caves inward ~${v.toFixed(0)}° at the power phase (valgus) — knee drifting toward the top tube.`];
+    if(v<=-8) return ["AMBER",name,`bows outward ~${(-v).toFixed(0)}° — knee drifting away from the bike.`];
+    return ["GREEN",name,`tracks essentially straight (~${Math.abs(v).toFixed(0)}° off vertical).`];
+  };
+  const items=[ kneeRow("Left knee tracking",L), kneeRow("Right knee tracking",R) ];
+  if(rock!=null) items.push(rock>=6
+    ? ["AMBER","Pelvic rock",`hips rock ~${rock.toFixed(0)}° across the stroke. Often blamed on a high saddle, but it's an unreliable sign — confirm with the side-view knee angle before changing saddle height.`]
+    : ["GREEN","Pelvic rock",`hips stay fairly level (~${rock.toFixed(0)}° of tilt).`]);
+  if(L&&R){ const d=Math.abs(L.peak-R.peak); items.push(d>=6
+    ? ["AMBER","Left / right symmetry",`one knee tracks ~${d.toFixed(0)}° differently to the other — worth a look (cleat, saddle offset, or leg length).`]
+    : ["GREEN","Left / right symmetry",`legs track within ~${d.toFixed(0)}° of each other.`]); }
+
+  $("#frontout").innerHTML=items.map(([g,b,s])=>
+    `<div class="fmetric"><span class="dot ${g}"></span><div><b>${b}</b><span>${s}</span></div></div>`).join("");
+  const anyFlag=items.some(([g])=>g==="AMBER"||g==="RED");
+  $("#frontverdict").innerHTML=`<span class="vdot" style="background:${anyFlag?COL.AMBER:COL.GREEN}"></span>${anyFlag?"A couple of things to check":"Nothing obvious to flag"} &middot; ${F.length} frames`;
+  $("#frontview").textContent = viewMode==="front"?"Front view":"Rear view";
+  $("#example").hidden=true; $("#results").hidden=true; $("#frontresults").hidden=false;
 }
 </script>
 </body>
