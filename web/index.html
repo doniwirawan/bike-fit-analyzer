@@ -66,6 +66,11 @@
   #bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:14px;display:none}
   #fill{height:100%;width:0;background:var(--accent);transition:width .12s}
   #status{margin-top:12px;color:var(--mut);font-size:.86rem;min-height:1.2em;font-family:var(--mono)}
+  #camera{display:none;margin-top:14px}
+  #preview{display:block;width:100%;border-radius:10px;background:#000;border:1px solid var(--line)}
+  .camrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  #recbtn.live{background:var(--red)}
+  #rectime{font-family:var(--mono)}
 
   /* result / example card */
   .badge{display:inline-block;font-family:var(--mono);font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
@@ -157,7 +162,17 @@
       </div>
       <div class="try">
         <button class="btn ghost" id="pick">Choose a video</button>
+        <button class="btn ghost" id="rec">Record with webcam</button>
         <span class="foot" style="margin:0">Nothing is uploaded — analysis runs on your hardware.</span>
+      </div>
+      <div id="camera">
+        <video id="preview" playsinline muted autoplay></video>
+        <div class="camrow">
+          <button class="btn primary" id="recbtn"><span id="recdot">●</span> Record</button>
+          <button class="btn ghost" id="camcancel">Cancel</button>
+          <span class="foot" id="rectime" style="margin:0"></span>
+        </div>
+        <div class="hint" style="margin-top:8px;color:var(--mut);font-size:.8rem">Point the camera square to your side, ~hip height. Auto-stops at 30s.</div>
       </div>
       <div id="stage"><canvas id="cv"></canvas></div>
       <video id="vid" playsinline muted></video>
@@ -330,6 +345,43 @@ $("#pick").onclick=()=>file.click();
 drop.addEventListener("drop",e=>{ if(e.dataTransfer.files[0]) start(e.dataTransfer.files[0]); });
 file.onchange=e=>{ if(e.target.files[0]) start(e.target.files[0]); };
 
+// ---- record in-browser (webcam) ----
+const camera=$("#camera"), preview=$("#preview"), recbtn=$("#recbtn"), rectime=$("#rectime");
+let camStream=null, recorder=null, recChunks=[], recStart=0, recInt=null;
+const MAXREC=30;
+const fmt=s=>Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0");
+const pickMime=()=>['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm','video/mp4']
+  .find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported(t))||"";
+function closeCamera(restore){
+  if(recInt){ clearInterval(recInt); recInt=null; }
+  if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream=null; }
+  camera.style.display="none";
+  if(restore){ drop.style.display=""; $(".try").style.display=""; }
+}
+$("#rec").onclick=async()=>{
+  if(!navigator.mediaDevices?.getUserMedia){ status.textContent="This browser can't record — upload a clip instead."; return; }
+  try{ camStream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720}},audio:false}); }
+  catch(e){ status.textContent="Camera blocked — allow access, or just upload a clip instead."; return; }
+  preview.srcObject=camStream; drop.style.display="none"; $(".try").style.display="none"; camera.style.display="block";
+};
+$("#camcancel").onclick=()=>closeCamera(true);
+recbtn.onclick=()=>{
+  if(recorder&&recorder.state==="recording"){ recorder.stop(); return; }
+  recChunks=[]; const mime=pickMime();
+  recorder=new MediaRecorder(camStream, mime?{mimeType:mime}:undefined);
+  recorder.ondataavailable=e=>{ if(e.data&&e.data.size) recChunks.push(e.data); };
+  recorder.onstop=()=>{
+    const blob=new Blob(recChunks,{type:recChunks[0]?.type||mime||"video/webm"});
+    const elapsed=(Date.now()-recStart)/1000;
+    closeCamera(false);                 // stop camera; analysis takes over the UI
+    start(blob, elapsed);
+  };
+  recorder.start(); recStart=Date.now();
+  recbtn.classList.add("live"); recbtn.innerHTML='<span id="recdot">■</span> Stop';
+  recInt=setInterval(()=>{ const s=(Date.now()-recStart)/1000;
+    rectime.textContent=fmt(s)+" / 0:30"; if(s>=MAXREC) recorder.stop(); }, 200);
+};
+
 const deg=r=>r*180/Math.PI;
 function angleAt(a,b,c){const v1=[a.x-b.x,a.y-b.y],v2=[c.x-b.x,c.y-b.y];
   const n1=Math.hypot(...v1),n2=Math.hypot(...v2); if(!n1||!n2) return NaN;
@@ -351,7 +403,17 @@ function findPeaks(y,minDist,prom){const peaks=[];
   return peaks;}
 
 let frames=[], sideConf={left:0,right:0}, viewRatios=[];
-async function start(f){
+// Recorded webm blobs often report duration=Infinity until forced; seek to the end to resolve it.
+function resolveDuration(v){
+  return new Promise(res=>{
+    const done=d=>{ v.removeEventListener("durationchange",onc); clearTimeout(to); try{v.currentTime=0;}catch(e){} res(d); };
+    const onc=()=>{ if(isFinite(v.duration)&&v.duration>0) done(v.duration); };
+    v.addEventListener("durationchange",onc);
+    const to=setTimeout(()=>done(isFinite(v.duration)&&v.duration>0?v.duration:0),3000);
+    try{ v.currentTime=1e7; }catch(e){}
+  });
+}
+async function start(f, knownDur){
   drop.style.display="none"; $(".try").style.display="none"; $("#results").hidden=true;
   stage.style.display="block"; bar.style.display="block"; fill.style.width="0";
   if(!landmarker){ try{ await initModel(); }
@@ -364,7 +426,10 @@ async function start(f){
   // Step through the clip by seeking frame-by-frame (driven by 'seeked' events) so
   // every frame is sampled deterministically. Unlike rAF on a playing video, this
   // never undersamples on slow hardware and never stalls when the tab is backgrounded.
-  const dt=1/30, dur=vid.duration; let ts=0;
+  let dur=vid.duration;
+  if(!(dur>0&&isFinite(dur))) dur=await resolveDuration(vid);
+  if(!(dur>0&&isFinite(dur))&&knownDur>0) dur=knownDur;
+  const dt=1/30; let ts=0;
   const process=()=>{
     const res=landmarker.detectForVideo(vid, ts+=33);
     ctx.drawImage(vid,0,0,cv.width,cv.height);
