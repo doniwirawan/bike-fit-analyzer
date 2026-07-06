@@ -276,6 +276,7 @@
             <tr><td>Shoulder (reach)</td><td class="val">86°</td><td>80–95°</td><td><span class="pill GREEN">GREEN</span></td></tr>
           </tbody>
         </table></div>
+        <div class="foot" style="margin-top:10px">Hip at top of stroke: 96° (reference 85–110°, informational — depends on flexibility &amp; reach).</div>
         <ul class="fixes"><li>Elbow 12° → arms a touch straight; soften them slightly for comfort.</li></ul>
         <div class="foot">This is a sample. Drop your own clip on the left to get your real numbers.</div>
       </div>
@@ -285,6 +286,7 @@
         <div class="verdict" id="verdict"></div>
         <div class="tscroll"><table><thead><tr><th>Angle</th><th>Reading</th><th>Target</th><th>Grade</th></tr></thead>
           <tbody id="tbody"></tbody></table></div>
+        <div class="foot" id="hipinfo" style="margin-top:10px"></div>
         <h4 style="margin:16px 0 4px">Do this</h4>
         <ul class="fixes" id="fixes"></ul>
         <div class="foot">2D side-view estimate, not a 3D pro fit. Change one thing at a time, then re-film.</div>
@@ -324,6 +326,7 @@ const LABEL = {
   elbow_flexion:["Elbow bend","15–30°"], shoulder_angle:["Shoulder (reach)","80–95°"],
 };
 const COL = {GREEN:"#16a34a", AMBER:"#d97706", RED:"#dc2626", GRAY:"#9aa3b2"};
+const MIN_VIS = 0.5;   // ignore joints MediaPipe isn't confident are visible
 
 const $ = s => document.querySelector(s);
 const drop=$("#drop"), file=$("#file"), vid=$("#vid"), cv=$("#cv"), ctx=cv.getContext("2d");
@@ -333,10 +336,14 @@ let landmarker=null;
 async function initModel(){
   status.textContent="Loading pose model (first time only)…";
   const files=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm");
-  landmarker=await PoseLandmarker.createFromOptions(files,{
-    baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task",delegate:"GPU"},
+  const make=delegate=>PoseLandmarker.createFromOptions(files,{
+    baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task",delegate},
     runningMode:"VIDEO", numPoses:1,
   });
+  // Some GPUs/browsers hang or fail on GPU init; race it and fall back to CPU.
+  const timeout=(p,ms)=>Promise.race([p,new Promise((_,r)=>setTimeout(()=>r(new Error("gpu-timeout")),ms))]);
+  try{ landmarker=await timeout(make("GPU"),7000); }
+  catch(e){ status.textContent="Loading pose model (CPU mode, slower)…"; landmarker=await make("CPU"); }
 }
 
 drop.onclick=()=>file.click();
@@ -366,37 +373,50 @@ function findPeaks(y,minDist,prom){const peaks=[];
     if(y[i]-Math.max(bL,bR)>=prom){ if(peaks.length&&i-peaks[peaks.length-1]<minDist){ if(y[i]>y[peaks[peaks.length-1]])peaks[peaks.length-1]=i;} else peaks.push(i);} }
   return peaks;}
 
-let frames=[];
+let frames=[], sideConf={left:0,right:0};
 async function start(f){
   drop.style.display="none"; $(".try").style.display="none"; $("#results").hidden=true;
   stage.style.display="block"; bar.style.display="block"; fill.style.width="0";
-  if(!landmarker) await initModel();
+  if(!landmarker){ try{ await initModel(); }
+    catch(e){ status.textContent="Couldn't load the pose model — check your connection and try again."; return; } }
   vid.src=URL.createObjectURL(f);
-  await vid.play().catch(()=>{});
+  await new Promise(res=>{ vid.onloadeddata=res; vid.onerror=res; });
   cv.width=vid.videoWidth||848; cv.height=vid.videoHeight||478;
-  frames=[]; status.textContent="Analyzing — detecting your body each frame…";
-  let ts=0;
-  const step=()=>{
-    if(vid.paused||vid.ended){ finish(); return; }
+  frames=[]; sideConf={left:0,right:0}; status.textContent="Analyzing — detecting your body each frame…";
+  vid.pause();
+  // Step through the clip by seeking frame-by-frame (driven by 'seeked' events) so
+  // every frame is sampled deterministically. Unlike rAF on a playing video, this
+  // never undersamples on slow hardware and never stalls when the tab is backgrounded.
+  const dt=1/30, dur=vid.duration; let ts=0;
+  const process=()=>{
     const res=landmarker.detectForVideo(vid, ts+=33);
     ctx.drawImage(vid,0,0,cv.width,cv.height);
     if(res.landmarks&&res.landmarks[0]){
       const lm=res.landmarks[0];
-      const vis=s=>Object.values(SIDE[s]).reduce((a,i)=>a+(lm[i].visibility??0),0);
-      const near=vis("left")>=vis("right")?"left":"right"; const ids=SIDE[near];
+      // Lock onto the near (camera) side by confidence accumulated over the whole
+      // clip, so a noisy frame can't flip us to the far leg mid-stroke.
+      for(const s in SIDE) sideConf[s]+=Object.values(SIDE[s]).reduce((a,i)=>a+(lm[i].visibility??0),0);
+      const near=sideConf.left>=sideConf.right?"left":"right"; const ids=SIDE[near];
       const px=i=>({x:lm[i].x*cv.width,y:lm[i].y*cv.height});
       const P={}; for(const k in ids)P[k]=px(ids[k]);
-      const A={ knee_flexion_bdc:180-angleAt(P.hip,P.knee,P.ankle),
-        torso_from_horiz:torsoFromHoriz(P.hip,P.shoulder),
-        elbow_flexion:180-angleAt(P.shoulder,P.elbow,P.wrist),
-        shoulder_angle:angleAt(P.hip,P.shoulder,P.elbow) };
-      frames.push({t:vid.currentTime,ankleY:P.ankle.y,A,P});
+      // Only measure a joint when MediaPipe is confident it's visible; an occluded
+      // far-side limb otherwise poisons the median.
+      const v=k=>lm[ids[k]].visibility??0, okv=(...ks)=>ks.every(k=>v(k)>=MIN_VIS);
+      const A={ knee_flexion_bdc: okv("hip","knee","ankle")?180-angleAt(P.hip,P.knee,P.ankle):NaN,
+        torso_from_horiz: okv("hip","shoulder")?torsoFromHoriz(P.hip,P.shoulder):NaN,
+        elbow_flexion: okv("shoulder","elbow","wrist")?180-angleAt(P.shoulder,P.elbow,P.wrist):NaN,
+        shoulder_angle: okv("hip","shoulder","elbow")?angleAt(P.hip,P.shoulder,P.elbow):NaN,
+        hip_angle: okv("shoulder","hip","knee")?angleAt(P.shoulder,P.hip,P.knee):NaN };
+      frames.push({t:vid.currentTime,ankleY:okv("ankle")?P.ankle.y:NaN,A,P});
       drawSkeleton(P,{knee_flexion_bdc:"GRAY",torso_from_horiz:"GRAY",elbow_flexion:"GRAY",shoulder_angle:"GRAY"});
     }
-    fill.style.width=(vid.currentTime/vid.duration*100).toFixed(0)+"%";
-    requestAnimationFrame(step);
+    fill.style.width=Math.min(100,vid.currentTime/dur*100).toFixed(0)+"%";
+    const next=vid.currentTime+dt;
+    if(!isFinite(dur)||next>=dur){ vid.onseeked=null; finish(); return; }
+    vid.currentTime=next;
   };
-  requestAnimationFrame(step);
+  vid.onseeked=process;
+  vid.currentTime=1e-3;   // nudge off 0 so the first 'seeked' fires and processes frame 0
 }
 
 function drawSkeleton(P,g){
@@ -412,12 +432,17 @@ function drawSkeleton(P,g){
 function finish(){
   status.textContent=""; bar.style.display="none";
   if(frames.length<5){ status.textContent="Couldn't track your body — try a clearer side-on clip."; return; }
-  const ankle=frames.map(f=>f.ankleY), sorted=[...ankle].sort((a,b)=>a-b);
+  const ankle=frames.map(f=>f.ankleY);
+  const sorted=ankle.filter(v=>!isNaN(v)).sort((a,b)=>a-b);
+  if(sorted.length<5){ status.textContent="Couldn't track your body — try a clearer side-on clip."; return; }
   const amp=sorted[Math.floor(sorted.length*0.95)]-sorted[Math.floor(sorted.length*0.05)];
   const fps=frames.length/vid.duration;
-  const bdc=findPeaks(ankle,Math.max(3,Math.round(fps*0.35)),Math.max(2,0.25*amp));
+  const minDist=Math.max(3,Math.round(fps*0.35)), prom=Math.max(2,0.25*amp);
+  const bdc=findPeaks(ankle,minDist,prom);                 // bottom of stroke (ankle lowest)
+  const tdc=findPeaks(ankle.map(v=>-v),minDist,prom);      // top of stroke (ankle highest)
   if(!bdc.length){ status.textContent="No clear pedal strokes found — make sure you're actually pedaling, side-on."; return; }
   const med=m=>median(bdc.map(i=>frames[i].A[m]).filter(v=>!isNaN(v)));
+  const hipTop=tdc.length?median(tdc.map(i=>frames[i].A.hip_angle).filter(v=>!isNaN(v))):null;
   const R={knee_flexion_bdc:med("knee_flexion_bdc"),torso_from_horiz:med("torso_from_horiz"),
            elbow_flexion:med("elbow_flexion"),shoulder_angle:med("shoulder_angle")};
   const G={}; for(const m in ZONES)G[m]=grade(m,R[m]);
@@ -429,6 +454,7 @@ function finish(){
       <td>${LABEL[m][1]}</td><td><span class="pill ${G[m]}">${G[m]}</span></td>`; tb.appendChild(tr); }
   const vlabel={GREEN:"Dialed",AMBER:"Minor tweaks",RED:"Fix needed",GRAY:"Incomplete"}[overall];
   $("#verdict").innerHTML=`<span class="vdot" style="background:${COL[overall]}"></span>${vlabel} &middot; ${bdc.length} pedal strokes`;
+  $("#hipinfo").textContent=hipTop==null?"":`Hip at top of stroke: ${hipTop.toFixed(0)}° (reference 85–110°, informational — depends on flexibility & reach).`;
 
   const fixes=[];
   if(G.knee_flexion_bdc!=="GREEN"&&R.knee_flexion_bdc!=null)
