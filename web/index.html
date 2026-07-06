@@ -547,16 +547,27 @@ function finish(){
   $("#verdict").innerHTML=`<span class="vdot" style="background:${COL[overall]}"></span>${vlabel} &middot; ${bdc.length} pedal strokes`;
   $("#hipinfo").textContent=hipTop==null?"":`Hip at top of stroke: ${hipTop.toFixed(0)}° (reference 85–110°, informational — depends on flexibility & reach).`;
 
+  // Advice, most-actionable first. Saddle height (knee) is the reliable lever, so
+  // it's quantified; reach stays cautious because a 2D side view can't nail it.
   const fixes=[];
-  if(G.knee_flexion_bdc!=="GREEN"&&R.knee_flexion_bdc!=null)
-    fixes.push(R.knee_flexion_bdc>40?`Knee ${R.knee_flexion_bdc.toFixed(0)}° at bottom → saddle TOO LOW, raise it a little.`
-      :`Knee ${R.knee_flexion_bdc.toFixed(0)}° at bottom → saddle a bit HIGH, lower it a little.`);
+  if(G.knee_flexion_bdc!=="GREEN"&&R.knee_flexion_bdc!=null){
+    const k=R.knee_flexion_bdc, mm=Math.min(20,Math.round(Math.abs(k-35)*1.5));
+    fixes.push(k>40
+      ? `Saddle looks low — knee still bent ${k.toFixed(0)}° at the bottom (aim 30–40°). Raise it about ${mm}mm, in 2–3mm steps, and re-film. This is the most reliable reading here.`
+      : `Saddle looks high — leg nearly straight (${k.toFixed(0)}°) at the bottom (aim 30–40°). Lower it about ${mm}mm, in 2–3mm steps, and re-film. This is the most reliable reading here.`);
+  }
+  if(G.torso_from_horiz!=="GREEN"&&R.torso_from_horiz!=null)
+    fixes.push(R.torso_from_horiz>50
+      ? `Torso fairly upright (${R.torso_from_horiz.toFixed(0)}°). Comfortable — but if you want more power/aero and your flexibility allows, a slightly lower front end (spacers/stem) helps.`
+      : `Torso quite low/aggressive (${R.torso_from_horiz.toFixed(0)}°). If your lower back or neck complains, raise the bars or shorten the reach a touch.`);
+  if(G.elbow_flexion!=="GREEN"&&R.elbow_flexion!=null){
+    if(R.elbow_flexion<15) fixes.push(`Elbow ${R.elbow_flexion.toFixed(0)}° → arms look locked. Soften your elbows first — a slight bend absorbs road buzz and often fixes this without touching the bike.`);
+    else if(R.elbow_flexion>30) fixes.push(`Elbow ${R.elbow_flexion.toFixed(0)}° → arms quite bent. Usually fine; only if it feels cramped might the reach be a touch short.`);
+  }
   if(G.shoulder_angle!=="GREEN"&&R.shoulder_angle!=null)
-    fixes.push(R.shoulder_angle<80?`Shoulder ${R.shoulder_angle.toFixed(0)}° → cockpit looks a bit closed. Reach is the least reliable 2D angle — re-check hand position & camera before changing anything.`
-      :`Shoulder ${R.shoulder_angle.toFixed(0)}° → reach looks a bit long. Reach is the least reliable 2D angle — don't shorten your stem on one clip; re-film square-on first.`);
-  if(G.elbow_flexion!=="GREEN"&&R.elbow_flexion!=null&&R.elbow_flexion<15)
-    fixes.push(`Elbow ${R.elbow_flexion.toFixed(0)}° → arms look locked. Try softening your elbows first — that alone often fixes it without touching reach.`);
-  const ul=$("#fixes"); ul.innerHTML=fixes.length?"":"<li>Everything in range — nice fit.</li>";
+    fixes.push(R.shoulder_angle<80?`Shoulder ${R.shoulder_angle.toFixed(0)}° → cockpit looks a bit cramped. Reach is the least reliable 2D angle — re-check your hand position and that the camera is square before changing anything.`
+      :`Shoulder ${R.shoulder_angle.toFixed(0)}° → reach looks a bit long. Reach is the least reliable 2D angle — don't shorten the stem off one clip; re-film square-on, then change one thing at a time.`);
+  const ul=$("#fixes"); ul.innerHTML=fixes.length?"":"<li>Everything's in range — nice fit. Re-film if you change anything.</li>";
   fixes.forEach(t=>{const li=document.createElement("li");li.textContent=t;ul.appendChild(li);});
 
   $("#viewwarn").hidden = !(viewRatios.length>=5 && median(viewRatios)>0.55);
@@ -609,16 +620,16 @@ function finishFrontal(){
   const kneeRow=(name,st)=>{
     if(!st) return ["GRAY",name,"not tracked — leg not clearly visible."];
     const v=st.peak;
-    if(v>=8) return ["AMBER",name,`caves inward ~${v.toFixed(0)}° at the power phase (valgus) — knee drifting toward the top tube.`];
-    if(v<=-8) return ["AMBER",name,`bows outward ~${(-v).toFixed(0)}° — knee drifting away from the bike.`];
+    if(v>=8) return ["AMBER",name,`caves inward ~${v.toFixed(0)}° at the power phase (valgus). Common causes: cleat set too far inboard, low arch support, or hip stability — try nudging the cleat outward / a slightly wider stance, and confirm saddle height on the side view.`];
+    if(v<=-8) return ["AMBER",name,`bows outward ~${(-v).toFixed(0)}°. Often a stance too wide or cleats too far outboard — try nudging the cleat inward.`];
     return ["GREEN",name,`tracks essentially straight (~${Math.abs(v).toFixed(0)}° off vertical).`];
   };
   const items=[ kneeRow("Left knee tracking",L), kneeRow("Right knee tracking",R) ];
   if(rock!=null) items.push(rock>=6
-    ? ["AMBER","Pelvic rock",`hips rock ~${rock.toFixed(0)}° across the stroke. Often blamed on a high saddle, but it's an unreliable sign — confirm with the side-view knee angle before changing saddle height.`]
+    ? ["AMBER","Pelvic rock",`hips rock ~${rock.toFixed(0)}° across the stroke. Often blamed on a high saddle, but it's an unreliable sign — confirm the side-view knee angle first. If saddle height checks out, this is usually core stability, not the bike.`]
     : ["GREEN","Pelvic rock",`hips stay fairly level (~${rock.toFixed(0)}° of tilt).`]);
   if(L&&R){ const d=Math.abs(L.peak-R.peak); items.push(d>=6
-    ? ["AMBER","Left / right symmetry",`one knee tracks ~${d.toFixed(0)}° differently to the other — worth a look (cleat, saddle offset, or leg length).`]
+    ? ["AMBER","Left / right symmetry",`one knee tracks ~${d.toFixed(0)}° differently to the other. Check the more-affected side first (cleat position, saddle offset); persistent asymmetry can point to a leg-length difference worth a pro fit.`]
     : ["GREEN","Left / right symmetry",`legs track within ~${d.toFixed(0)}° of each other.`]); }
 
   $("#frontout").innerHTML=items.map(([g,b,s])=>
