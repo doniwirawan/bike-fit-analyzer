@@ -65,7 +65,15 @@
   video{display:none}
   #bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:14px;display:none}
   #fill{height:100%;width:0;background:var(--accent);transition:width .12s}
-  #status{margin-top:12px;color:var(--mut);font-size:.86rem;min-height:1.2em;font-family:var(--mono)}
+  .statusrow{display:flex;align-items:center;gap:8px;margin-top:12px;min-height:1.2em}
+  #status{color:var(--mut);font-size:.86rem;font-family:var(--mono)}
+  .spin{width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;
+    animation:spin .7s linear infinite;flex:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .errbox{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-radius:10px;
+    background:color-mix(in srgb,var(--red) 9%,transparent);border:1px solid color-mix(in srgb,var(--red) 40%,var(--line))}
+  .errbox .i{color:var(--red);font-weight:700;font-size:1.1rem;line-height:1;flex:none}
+  .errbox b{display:block;font-size:.9rem;font-weight:600;line-height:1.4}
   #camera{display:none;margin-top:14px}
   #preview{display:block;width:100%;border-radius:10px;background:#000;border:1px solid var(--line)}
   .camrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
@@ -193,7 +201,11 @@
       <div id="stage"><canvas id="cv"></canvas></div>
       <video id="vid" playsinline muted></video>
       <div id="bar"><div id="fill"></div></div>
-      <div id="status"></div>
+      <div class="statusrow"><span id="spin" class="spin" hidden></span><span id="status"></span></div>
+      <div id="errbox" class="errbox" hidden>
+        <span class="i">&#9888;</span>
+        <div><b id="errmsg"></b><button class="btn ghost" id="retry" style="margin-top:10px">Try another clip</button></div>
+      </div>
     </section>
 
     <!-- RIGHT: results (shows an EXAMPLE until a real clip is analyzed) -->
@@ -202,7 +214,8 @@
       <p class="lead" id="resultlead">Angles at the bottom of your stroke, graded against research ranges.</p>
 
       <div id="example">
-        <div class="badge">Example result</div>
+        <div class="badge" style="color:var(--amber);border-color:color-mix(in srgb,var(--amber) 45%,var(--line))">Sample — not your result</div>
+        <p class="lead" style="margin:-4px 0 14px">Here's what a finished analysis looks like. Your own numbers replace this once you add a clip on the left.</p>
         <!-- self-contained illustrative figure (no external assets) -->
         <svg class="demoimg" viewBox="0 0 520 306" role="img" aria-label="Example: road bike side view with fit skeleton and joint angles">
           <defs>
@@ -351,6 +364,7 @@ const MIN_VIS = 0.5;   // ignore joints MediaPipe isn't confident are visible
 const $ = s => document.querySelector(s);
 const drop=$("#drop"), file=$("#file"), vid=$("#vid"), cv=$("#cv"), ctx=cv.getContext("2d");
 const bar=$("#bar"), fill=$("#fill"), status=$("#status"), stage=$("#stage");
+const spin=$("#spin"), errbox=$("#errbox"), errmsg=$("#errmsg");
 
 let landmarker=null, viewMode="side";
 document.querySelectorAll(".viewsel button").forEach(b=>b.onclick=()=>{
@@ -399,9 +413,9 @@ function closeCamera(restore){
   if(restore){ drop.style.display=""; $(".try").style.display=""; }
 }
 $("#rec").onclick=async()=>{
-  if(!navigator.mediaDevices?.getUserMedia){ status.textContent="This browser can't record — upload a clip instead."; return; }
+  if(!navigator.mediaDevices?.getUserMedia){ fail("This browser can't record video — upload a clip instead."); return; }
   try{ camStream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720}},audio:false}); }
-  catch(e){ status.textContent="Camera blocked — allow access, or just upload a clip instead."; return; }
+  catch(e){ fail("Camera access was blocked — allow it in your browser settings, or just upload a clip instead."); return; }
   preview.srcObject=camStream; drop.style.display="none"; $(".try").style.display="none"; camera.style.display="block";
 };
 $("#camcancel").onclick=()=>closeCamera(true);
@@ -421,6 +435,19 @@ recbtn.onclick=()=>{
   recInt=setInterval(()=>{ const s=(Date.now()-recStart)/1000;
     rectime.textContent=fmt(s)+" / 0:30"; if(s>=MAXREC) recorder.stop(); }, 200);
 };
+
+// ---- UI states: loading / error+retry ----
+function fail(msg){
+  spin.hidden=true; status.textContent=""; errmsg.textContent=msg; errbox.hidden=false;
+  stage.style.display="none"; bar.style.display="none"; camera.style.display="none";
+}
+function resetToIdle(){
+  errbox.hidden=true; spin.hidden=true; status.textContent=""; fill.style.width="0";
+  stage.style.display="none"; bar.style.display="none"; camera.style.display="none";
+  drop.style.display=""; $(".try").style.display=""; file.value="";
+  $("#results").hidden=true; $("#frontresults").hidden=true; $("#example").hidden=false;
+}
+$("#retry").onclick=resetToIdle;
 
 const deg=r=>r*180/Math.PI;
 function angleAt(a,b,c){const v1=[a.x-b.x,a.y-b.y],v2=[c.x-b.x,c.y-b.y];
@@ -455,11 +482,13 @@ function resolveDuration(v){
 }
 async function start(f, knownDur){
   drop.style.display="none"; $(".try").style.display="none"; $("#results").hidden=true;
-  stage.style.display="block"; bar.style.display="block"; fill.style.width="0";
+  errbox.hidden=true; spin.hidden=false; stage.style.display="block"; bar.style.display="block"; fill.style.width="0";
   if(!landmarker){ try{ await initModel(); }
-    catch(e){ status.textContent="Couldn't load the pose model — check your connection and try again."; return; } }
+    catch(e){ fail("Couldn't load the pose model — check your connection and try again."); return; } }
+  let decodeErr=false;
   vid.src=URL.createObjectURL(f);
-  await new Promise(res=>{ vid.onloadeddata=res; vid.onerror=res; });
+  await new Promise(res=>{ vid.onloadeddata=res; vid.onerror=()=>{decodeErr=true;res();}; });
+  if(decodeErr||!vid.videoWidth){ fail("Couldn't read that video. Try a different clip or format (MP4, MOV, or WebM)."); return; }
   cv.width=vid.videoWidth||848; cv.height=vid.videoHeight||478;
   frames=[]; sideConf={left:0,right:0}; viewRatios=[]; frontalFrames=[]; status.textContent="Analyzing — detecting your body each frame…";
   vid.pause();
@@ -521,17 +550,17 @@ function drawSkeleton(P,g){
 
 function finish(){
   if(viewMode!=="side"){ finishFrontal(); return; }
-  status.textContent=""; bar.style.display="none";
-  if(frames.length<5){ status.textContent="Couldn't track your body — try a clearer side-on clip."; return; }
+  spin.hidden=true; status.textContent=""; bar.style.display="none";
+  if(frames.length<5){ fail("Couldn't track your body clearly. Re-film side-on, well-lit, with your whole body in frame."); return; }
   const ankle=frames.map(f=>f.ankleY);
   const sorted=ankle.filter(v=>!isNaN(v)).sort((a,b)=>a-b);
-  if(sorted.length<5){ status.textContent="Couldn't track your body — try a clearer side-on clip."; return; }
+  if(sorted.length<5){ fail("Couldn't track your body clearly. Re-film side-on, well-lit, with your whole body in frame."); return; }
   const amp=sorted[Math.floor(sorted.length*0.95)]-sorted[Math.floor(sorted.length*0.05)];
   const fps=frames.length/vid.duration;
   const minDist=Math.max(3,Math.round(fps*0.35)), prom=Math.max(2,0.25*amp);
   const bdc=findPeaks(ankle,minDist,prom);                 // bottom of stroke (ankle lowest)
   const tdc=findPeaks(ankle.map(v=>-v),minDist,prom);      // top of stroke (ankle highest)
-  if(!bdc.length){ status.textContent="No clear pedal strokes found — make sure you're actually pedaling, side-on."; return; }
+  if(!bdc.length){ fail("No clear pedal strokes found. Make sure you're actually pedaling and filmed side-on, then try again."); return; }
   const med=m=>median(bdc.map(i=>frames[i].A[m]).filter(v=>!isNaN(v)));
   const hipTop=tdc.length?median(tdc.map(i=>frames[i].A.hip_angle).filter(v=>!isNaN(v))):null;
   const R={knee_flexion_bdc:med("knee_flexion_bdc"),torso_from_horiz:med("torso_from_horiz"),
@@ -607,9 +636,9 @@ function drawFrontal(f){
   ctx.fillStyle="#fff"; ["hL","hR","kL","kR","aL","aR"].forEach(k=>{ctx.beginPath();ctx.arc(P[k].x,P[k].y,Math.max(4,cv.width/280),0,7);ctx.fill();});
 }
 function finishFrontal(){
-  status.textContent=""; bar.style.display="none";
+  spin.hidden=true; status.textContent=""; bar.style.display="none";
   const F=frontalFrames.filter(Boolean);
-  if(F.length<5){ status.textContent="Couldn't track your body — try a clearer, well-lit clip square to the camera."; return; }
+  if(F.length<5){ fail("Couldn't track your body clearly. Re-film square to the camera (front or rear), well-lit, whole body in frame."); return; }
   const legStat=s=>{ const v=F.map(f=>f[s]).filter(Boolean).map(x=>x.medialSign*x.fppa);
     if(v.length<3) return null; const q=[...v].sort((a,b)=>a-b);
     return { peak:q[Math.floor(q.length*0.9)], med:median(v) }; };
