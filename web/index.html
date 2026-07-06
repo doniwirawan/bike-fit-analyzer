@@ -199,7 +199,7 @@
     <!-- RIGHT: results (shows an EXAMPLE until a real clip is analyzed) -->
     <section class="panel">
       <h2>2 · Your result</h2>
-      <p class="lead">Angles at the bottom of your stroke, graded against research ranges.</p>
+      <p class="lead" id="resultlead">Angles at the bottom of your stroke, graded against research ranges.</p>
 
       <div id="example">
         <div class="badge">Example result</div>
@@ -361,6 +361,9 @@ document.querySelectorAll(".viewsel button").forEach(b=>b.onclick=()=>{
     : viewMode==="front"
       ? "Facing the camera, 20–30s, pedaling steadily. Beta — frontal-plane hints."
       : "From directly behind, 20–30s, pedaling steadily. Beta — frontal-plane hints.";
+  $("#resultlead").textContent = viewMode==="side"
+    ? "Angles at the bottom of your stroke, graded against research ranges."
+    : "Frontal-plane tracking hints — knee alignment, pelvic rock, symmetry. Beta.";
 });
 async function initModel(){
   status.textContent="Loading pose model (first time only)…";
