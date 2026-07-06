@@ -8,116 +8,124 @@
 <style>
   :root{
     color-scheme: light dark;
-    --bg:#f5f6f9; --card:#ffffff; --fg:#141821; --mut:#5b6473; --line:#e7e9f0;
-    --accent:#3b6df6; --accent-ink:#fff; --soft:#eef2fe;
+    --bg:#eceff4; --card:#ffffff; --fg:#0e1620; --mut:#59647a; --line:#dbe1ea;
+    --grid:#eef1f6; --accent:#1f6feb; --accent-ink:#fff; --soft:#e9eff9;
     --green:#16a34a; --amber:#d97706; --red:#dc2626; --gray:#9aa3b2;
-    --shadow:0 10px 40px rgba(20,30,60,.10);
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+    --shadow:0 1px 2px rgba(16,24,40,.05);
   }
   @media (prefers-color-scheme: dark){
-    :root{ --bg:#0d0f14; --card:#161a22; --fg:#e8ebf2; --mut:#98a2b4; --line:#262b36;
-           --accent:#5b86ff; --soft:#182238; --shadow:0 10px 40px rgba(0,0,0,.55); }
+    :root{ --bg:#0b0f16; --card:#111825; --fg:#dfe6f0; --mut:#8b97a8; --line:#1e2734;
+           --grid:#161e29; --accent:#4d8bff; --soft:#152033; --shadow:0 1px 0 rgba(0,0,0,.5); }
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   html,body{max-width:100%;overflow-x:hidden}
   body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif;
-    background:var(--bg);color:var(--fg);line-height:1.5;overflow-wrap:break-word}
+    background:var(--bg);color:var(--fg);line-height:1.5;overflow-wrap:break-word;-webkit-font-smoothing:antialiased}
   .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
   img,svg,canvas,video{max-width:100%;height:auto}
   .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
   table{width:100%;min-width:0}
 
   /* header */
-  header{padding:30px 0 10px}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem}
-  .brand .dot{width:11px;height:11px;border-radius:50%;background:var(--accent)}
-  .hero{padding:26px 0 20px;max-width:720px}
-  .hero h1{font-size:2.15rem;line-height:1.12;margin:0 0 12px;letter-spacing:-.02em}
+  header{padding:26px 0 8px;border-bottom:1px solid var(--line);margin-bottom:8px}
+  .brand{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-weight:700;
+    font-size:.95rem;letter-spacing:.14em;text-transform:uppercase}
+  .brand .v{color:var(--mut);font-weight:400;text-transform:none;letter-spacing:.02em}
+  .hero{padding:22px 0 18px;max-width:730px}
+  .hero h1{font-size:2rem;line-height:1.14;margin:0 0 12px;letter-spacing:-.015em;font-weight:700}
   .hero h1 .g{color:var(--green)} .hero h1 .a{color:var(--amber)} .hero h1 .r{color:var(--red)}
-  .hero p{font-size:1.08rem;color:var(--mut);margin:0}
-  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
-  .chip{font-size:.8rem;background:var(--soft);color:var(--accent);padding:5px 11px;border-radius:99px;font-weight:600}
+  .hero p{font-size:1.04rem;color:var(--mut);margin:0}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+  .chip{font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--mut);background:transparent;padding:4px 9px;border:1px solid var(--line);border-radius:5px}
 
   /* two-column app */
-  .app{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:14px 0 34px;align-items:start}
+  .app{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:14px 0 34px;align-items:start}
   @media(max-width:880px){ .app{grid-template-columns:1fr} }
-  .panel{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:22px;border:1px solid var(--line)}
-  .panel h2{margin:0 0 4px;font-size:1.02rem}
+  .panel{background:var(--card);border-radius:12px;box-shadow:var(--shadow);padding:20px;border:1px solid var(--line)}
+  .panel h2{margin:0 0 5px;font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
   .panel .lead{color:var(--mut);font-size:.9rem;margin:0 0 16px}
 
   /* dropzone */
-  #drop{border:2px dashed color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:14px;
-    padding:38px 18px;text-align:center;cursor:pointer;transition:.15s;background:color-mix(in srgb,var(--accent) 4%,transparent)}
-  #drop:hover,#drop.hi{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+  #drop{border:1.5px dashed color-mix(in srgb,var(--accent) 40%,var(--line));border-radius:10px;
+    padding:36px 18px;text-align:center;cursor:pointer;transition:.15s;background:color-mix(in srgb,var(--accent) 3%,transparent)}
+  #drop:hover,#drop.hi{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
   #drop .ic{font-size:2.4rem;line-height:1}
-  #drop b{display:block;margin-top:8px}
-  #drop .hint{color:var(--mut);font-size:.82rem;margin-top:6px}
+  #drop b{display:block;margin-top:8px;font-weight:600}
+  #drop .hint{color:var(--mut);font-size:.8rem;margin-top:6px}
   .try{margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  .btn{border:0;border-radius:10px;padding:11px 16px;font-weight:700;font-size:.92rem;cursor:pointer}
+  .btn{border:0;border-radius:8px;padding:10px 15px;font-weight:600;font-size:.9rem;cursor:pointer;font-family:inherit}
   .btn.primary{background:var(--accent);color:var(--accent-ink)}
   .btn.ghost{background:transparent;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line))}
 
   #stage{position:relative;margin-top:4px;display:none}
-  canvas{width:100%;border-radius:12px;background:#000;display:block}
+  canvas{width:100%;border-radius:10px;background:#000;display:block;border:1px solid var(--line)}
   video{display:none}
-  #bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:14px;display:none}
+  #bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:14px;display:none}
   #fill{height:100%;width:0;background:var(--accent);transition:width .12s}
-  #status{margin-top:12px;color:var(--mut);font-size:.9rem;min-height:1.2em}
+  #status{margin-top:12px;color:var(--mut);font-size:.86rem;min-height:1.2em;font-family:var(--mono)}
 
   /* result / example card */
-  .badge{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
-    color:var(--mut);background:var(--line);padding:3px 9px;border-radius:6px;margin-bottom:12px}
-  .verdict{font-size:1.12rem;font-weight:800;margin:2px 0 14px}
+  .badge{display:inline-block;font-family:var(--mono);font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--mut);background:transparent;border:1px solid var(--line);padding:3px 8px;border-radius:4px;margin-bottom:14px}
+  .verdict{font-size:1.08rem;font-weight:700;margin:2px 0 14px}
   table{width:100%;border-collapse:collapse}
-  th,td{text-align:left;padding:9px 6px;border-bottom:1px solid var(--line);font-size:.93rem}
-  th{color:var(--mut);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
-  td.val{font-variant-numeric:tabular-nums;font-weight:700}
-  .pill{padding:3px 10px;border-radius:99px;color:#fff;font-weight:800;font-size:.74rem}
+  th,td{text-align:left;padding:9px 6px;border-bottom:1px solid var(--grid);font-size:.92rem}
+  thead th{border-bottom:1px solid var(--line)}
+  th{color:var(--mut);font-family:var(--mono);font-weight:600;font-size:.66rem;text-transform:uppercase;letter-spacing:.08em}
+  td.val{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:700}
+  td:nth-child(3){font-family:var(--mono);color:var(--mut);font-size:.84rem}
+  .pill{padding:2px 9px;border-radius:4px;color:#fff;font-family:var(--mono);font-weight:700;font-size:.66rem;letter-spacing:.06em}
   .GREEN{background:var(--green)} .AMBER{background:var(--amber)} .RED{background:var(--red)} .GRAY{background:var(--gray)}
-  .fixes{margin:14px 0 0;padding-left:18px} .fixes li{margin:6px 0;font-size:.93rem}
-  .demoimg{width:100%;border-radius:12px;border:1px solid var(--line);margin-bottom:14px;display:block}
-  .foot{color:var(--mut);font-size:.8rem;margin-top:12px}
+  .fixes{margin:14px 0 0;padding-left:18px} .fixes li{margin:6px 0;font-size:.9rem}
+  .demoimg{width:100%;border-radius:10px;border:1px solid var(--line);margin-bottom:14px;display:block}
+  .foot{color:var(--mut);font-size:.78rem;margin-top:12px;line-height:1.45}
+  .warn{display:flex;gap:9px;align-items:flex-start;margin:0 0 14px;padding:10px 12px;border-radius:8px;
+    font-size:.84rem;line-height:1.4;background:color-mix(in srgb,var(--amber) 12%,transparent);
+    border:1px solid color-mix(in srgb,var(--amber) 45%,var(--line))}
+  .warn b{color:var(--amber)} .warn .i{color:var(--amber);font-weight:700;flex:none}
 
   /* film + how sections */
-  .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:8px 0 40px}
+  .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:8px 0 40px}
   @media(max-width:760px){ .cols{grid-template-columns:1fr} }
-  .mini{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
-  .mini h3{margin:0 0 6px;font-size:.98rem} .mini p{margin:0;color:var(--mut);font-size:.88rem}
-  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:6px 0 26px;color:var(--mut);font-size:.86rem}
+  .mini{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .mini h3{margin:0 0 6px;font-family:var(--mono);font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase} .mini p{margin:0;color:var(--mut);font-size:.86rem}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:6px 0 22px;color:var(--mut);font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase}
   .legend span{display:inline-flex;align-items:center;gap:7px}
-  .sw{width:13px;height:13px;border-radius:4px;display:inline-block}
-  footer{border-top:1px solid var(--line);padding:22px 0 50px;color:var(--mut);font-size:.84rem}
+  .sw{width:11px;height:11px;border-radius:3px;display:inline-block}
+  footer{border-top:1px solid var(--line);padding:22px 0 50px;color:var(--mut);font-size:.82rem}
   a{color:var(--accent)}
   /* ---- icons ---- */
-  .brand svg{width:22px;height:22px;color:var(--accent);vertical-align:-5px;margin-right:2px}
-  .drop-ic{width:38px;height:38px;color:var(--accent);margin:0 auto 6px;display:block}
-  .mini .mi{width:36px;height:36px;border-radius:10px;background:var(--soft);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;margin-bottom:11px}
-  .mini .mi svg{width:20px;height:20px}
-  .vdot{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle;margin:0 7px 2px 0}
+  .brand svg{width:20px;height:20px;color:var(--accent);vertical-align:-4px}
+  .drop-ic{width:36px;height:36px;color:var(--accent);margin:0 auto 6px;display:block}
+  .mini .mi{width:34px;height:34px;border-radius:8px;background:var(--soft);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;margin-bottom:11px}
+  .mini .mi svg{width:19px;height:19px}
+  .vdot{display:inline-block;width:9px;height:9px;border-radius:2px;vertical-align:middle;margin:0 8px 2px 0}
   /* ---- mobile ---- */
   @media(max-width:600px){
-    header{padding:22px 0 6px}
-    .hero{padding:18px 0 14px}
-    .hero h1{font-size:1.62rem}
-    .hero p{font-size:.98rem}
-    .chip{font-size:.74rem;padding:5px 9px}
+    header{padding:20px 0 6px}
+    .hero{padding:16px 0 14px}
+    .hero h1{font-size:1.55rem}
+    .hero p{font-size:.96rem}
     .app{gap:14px;margin:12px 0 26px}
-    .panel{padding:16px;border-radius:15px}
+    .panel{padding:16px}
     #drop{padding:26px 14px}
     .cols{gap:12px}
-    th,td{padding:8px 5px;font-size:.85rem}
+    th,td{padding:8px 5px;font-size:.84rem}
     .verdict{font-size:1rem}
     .btn{width:100%}
     .try{flex-direction:column;align-items:stretch}
     .try .foot{text-align:center}
   }
-  @media(max-width:380px){ .hero h1{font-size:1.45rem} .wrap{padding:0 14px} }
+  @media(max-width:380px){ .hero h1{font-size:1.4rem} .wrap{padding:0 14px} }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg> Bike Fit Analyzer</div>
+    <div class="brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg> Bike Fit Analyzer <span class="v">· v2</span></div>
     <div class="hero">
       <h1>Grade your bike fit — <span class="g">green</span>, <span class="a">amber</span>, <span class="r">red</span> — right in your browser.</h1>
       <p>Drop a side-on clip of yourself pedaling. AI tracks your joints, measures the angles a
@@ -252,6 +260,7 @@
       <div id="results" hidden>
         <div class="badge" style="color:var(--accent);background:var(--soft)">Your result</div>
         <div class="verdict" id="verdict"></div>
+        <div class="warn" id="viewwarn" hidden><span class="i">&#9888;</span><span><b>This clip doesn't look square-on.</b> Off-axis footage stretches or squashes these angles — especially reach. Re-film with the camera directly beside you (90° to the bike, at hip height) for reliable numbers.</span></div>
         <div class="tscroll"><table><thead><tr><th>Angle</th><th>Reading</th><th>Target</th><th>Grade</th></tr></thead>
           <tbody id="tbody"></tbody></table></div>
         <div class="foot" id="hipinfo" style="margin-top:10px"></div>
@@ -341,7 +350,7 @@ function findPeaks(y,minDist,prom){const peaks=[];
     if(y[i]-Math.max(bL,bR)>=prom){ if(peaks.length&&i-peaks[peaks.length-1]<minDist){ if(y[i]>y[peaks[peaks.length-1]])peaks[peaks.length-1]=i;} else peaks.push(i);} }
   return peaks;}
 
-let frames=[], sideConf={left:0,right:0};
+let frames=[], sideConf={left:0,right:0}, viewRatios=[];
 async function start(f){
   drop.style.display="none"; $(".try").style.display="none"; $("#results").hidden=true;
   stage.style.display="block"; bar.style.display="block"; fill.style.width="0";
@@ -350,7 +359,7 @@ async function start(f){
   vid.src=URL.createObjectURL(f);
   await new Promise(res=>{ vid.onloadeddata=res; vid.onerror=res; });
   cv.width=vid.videoWidth||848; cv.height=vid.videoHeight||478;
-  frames=[]; sideConf={left:0,right:0}; status.textContent="Analyzing — detecting your body each frame…";
+  frames=[]; sideConf={left:0,right:0}; viewRatios=[]; status.textContent="Analyzing — detecting your body each frame…";
   vid.pause();
   // Step through the clip by seeking frame-by-frame (driven by 'seeked' events) so
   // every frame is sampled deterministically. Unlike rAF on a playing video, this
@@ -364,6 +373,11 @@ async function start(f){
       // Lock onto the near (camera) side by confidence accumulated over the whole
       // clip, so a noisy frame can't flip us to the far leg mid-stroke.
       for(const s in SIDE) sideConf[s]+=Object.values(SIDE[s]).reduce((a,i)=>a+(lm[i].visibility??0),0);
+      // View quality: in a true side view left/right shoulders & hips overlap, so the body's
+      // horizontal spread is small vs torso length. Off-axis / front / rear inflates it.
+      const pxw=i=>lm[i].x*cv.width, pxh=i=>lm[i].y*cv.height;
+      const torsoLen=Math.hypot((pxw(11)+pxw(12))/2-(pxw(23)+pxw(24))/2,(pxh(11)+pxh(12))/2-(pxh(23)+pxh(24))/2);
+      if(torsoLen>5) viewRatios.push(Math.max(Math.abs(pxw(11)-pxw(12)),Math.abs(pxw(23)-pxw(24)))/torsoLen);
       const near=sideConf.left>=sideConf.right?"left":"right"; const ids=SIDE[near];
       const px=i=>({x:lm[i].x*cv.width,y:lm[i].y*cv.height});
       const P={}; for(const k in ids)P[k]=px(ids[k]);
@@ -436,6 +450,7 @@ function finish(){
   const ul=$("#fixes"); ul.innerHTML=fixes.length?"":"<li>Everything in range — nice fit.</li>";
   fixes.forEach(t=>{const li=document.createElement("li");li.textContent=t;ul.appendChild(li);});
 
+  $("#viewwarn").hidden = !(viewRatios.length>=5 && median(viewRatios)>0.55);
   $("#example").hidden=true; $("#results").hidden=false;
   const deepest=bdc.reduce((a,b)=>frames[b].ankleY>frames[a].ankleY?b:a,bdc[0]);
   // seek to the EXACT captured time of that frame so the skeleton lines up
