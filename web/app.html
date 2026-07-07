@@ -19,6 +19,7 @@
            --grid:#161e29; --accent:#4d8bff; --soft:#152033; --shadow:0 1px 0 rgba(0,0,0,.5); }
   }
   *{box-sizing:border-box}
+  [hidden]{display:none!important}   /* ensure the hidden attribute always wins over .errbox/.warn display */
   html{scroll-behavior:smooth}
   html,body{max-width:100%;overflow-x:hidden}
   body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif;
@@ -745,7 +746,7 @@ async function start(f, knownDur){
   vid.currentTime=1e-3;   // nudge off 0 so the first 'seeked' fires and processes frame 0
 }
 
-function drawSkeleton(P,g){
+function drawSkeleton(P,g,A){
   const c=k=>COL[g[k]||"GRAY"];
   const seg=(a,b,col)=>{ctx.strokeStyle=col;ctx.lineWidth=Math.max(3,cv.width/220);ctx.lineCap="round";
     ctx.beginPath();ctx.moveTo(P[a].x,P[a].y);ctx.lineTo(P[b].x,P[b].y);ctx.stroke();};
@@ -753,6 +754,24 @@ function drawSkeleton(P,g){
   seg("hip","knee",c("knee_flexion_bdc")); seg("knee","ankle",c("knee_flexion_bdc"));
   seg("shoulder","hip",c("torso_from_horiz")); seg("shoulder","elbow",arm); seg("elbow","wrist",arm);
   for(const k in P){ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(P[k].x,P[k].y,Math.max(4,cv.width/280),0,7);ctx.fill();}
+  // angle readouts on the joints (only on the final graded frame, when A is passed)
+  if(A){
+    const fs=Math.max(12,cv.width/40), h=fs+8, pad=Math.max(5,fs*0.45), off=Math.max(8,cv.width/70);
+    ctx.font=`700 ${fs}px ui-monospace,Menlo,Consolas,monospace`; ctx.textBaseline="middle";
+    const lbl=(x,y,val,col)=>{
+      if(val==null||isNaN(val)) return;
+      const txt=Math.round(val)+"°", w=ctx.measureText(txt).width+pad*2;
+      let rx=x+off; if(rx+w>cv.width-2) rx=x-off-w;         // flip if it would clip the right edge
+      const ry=Math.max(2,Math.min(cv.height-h-2,y-h/2));
+      ctx.fillStyle=col;
+      if(ctx.roundRect){ ctx.beginPath(); ctx.roundRect(rx,ry,w,h,5); ctx.fill(); } else ctx.fillRect(rx,ry,w,h);
+      ctx.fillStyle="#fff"; ctx.textAlign="left"; ctx.fillText(txt,rx+pad,ry+h/2+1);
+    };
+    lbl(P.knee.x,P.knee.y,A.knee_flexion_bdc,c("knee_flexion_bdc"));
+    lbl(P.elbow.x,P.elbow.y,A.elbow_flexion,c("elbow_flexion"));
+    lbl(P.shoulder.x,P.shoulder.y,A.shoulder_angle,c("shoulder_angle"));
+    lbl((P.shoulder.x+P.hip.x)/2,(P.shoulder.y+P.hip.y)/2,A.torso_from_horiz,c("torso_from_horiz"));
+  }
 }
 
 function finish(){
@@ -779,7 +798,7 @@ function finish(){
   const deepest=bdc.reduce((a,b)=>frames[b].ankleY>frames[a].ankleY?b:a,bdc[0]);
   // seek to the EXACT captured time of that frame so the skeleton lines up
   vid.pause();
-  vid.onseeked=()=>{ ctx.drawImage(vid,0,0,cv.width,cv.height); drawSkeleton(frames[deepest].P,G); vid.onseeked=null; };
+  vid.onseeked=()=>{ ctx.drawImage(vid,0,0,cv.width,cv.height); drawSkeleton(frames[deepest].P,G,R); vid.onseeked=null; };
   vid.currentTime=Math.min(vid.duration-0.001, frames[deepest].t);
 }
 
