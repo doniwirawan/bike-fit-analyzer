@@ -186,9 +186,9 @@
   </header>
 
   <div class="legend">
-    <span><i class="sw" style="background:var(--green)"></i> dialed</span>
-    <span><i class="sw" style="background:var(--amber)"></i> borderline</span>
-    <span><i class="sw" style="background:var(--red)"></i> fix it</span>
+    <span><i class="sw" style="background:var(--green)"></i> <span data-i18n="legend.dialed">dialed</span></span>
+    <span><i class="sw" style="background:var(--amber)"></i> <span data-i18n="legend.borderline">borderline</span></span>
+    <span><i class="sw" style="background:var(--red)"></i> <span data-i18n="legend.fixit">fix it</span></span>
   </div>
 
   <!-- side-by-side app -->
@@ -240,7 +240,7 @@
       <div class="statusrow"><span id="spin" class="spin" hidden></span><span id="status"></span></div>
       <div id="errbox" class="errbox" hidden>
         <span class="i">&#9888;</span>
-        <div><b id="errmsg"></b><button class="btn ghost" id="retry" style="margin-top:10px">Try another clip</button></div>
+        <div><b id="errmsg"></b><button class="btn ghost" id="retry" style="margin-top:10px" data-i18n="retry">Try another clip</button></div>
       </div>
     </section>
 
@@ -458,6 +458,8 @@ const I18N = {
   "front.name.rock":{en:"Pelvic rock",id:"Goyangan panggul"}, "front.name.sym":{en:"Left / right symmetry",id:"Simetri kiri / kanan"},
   "front.notTracked":{en:"not tracked — leg not clearly visible.",id:"tidak terlacak — kaki tidak terlihat jelas."},
   "adv.allgood":{en:"Everything's in range — nice fit. Re-film if you change anything.",id:"Semua dalam rentang — fit yang bagus. Rekam ulang kalau kamu mengubah sesuatu."},
+  "legend.dialed":{en:"dialed",id:"pas"}, "legend.borderline":{en:"borderline",id:"batas"}, "legend.fixit":{en:"fix it",id:"perbaiki"},
+  "retry":{en:"Try another clip",id:"Coba klip lain"},
 };
 const ID_TZ=/Asia\/(Jakarta|Pontianak|Makassar|Jayapura)/;
 function detectLang(){
