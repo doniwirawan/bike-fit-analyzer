@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bike Fit Analyzer — grade your fit in your browser</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b6df6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='18.5' cy='17.5' r='3.5'/%3E%3Ccircle cx='5.5' cy='17.5' r='3.5'/%3E%3Ccircle cx='15' cy='5' r='1'/%3E%3Cpath d='M12 17.5V14l-3-3 4-3 2 3h2'/%3E%3C/svg%3E">
+<style>
+  :root{
+    color-scheme: light dark;
+    --bg:#eceff4; --card:#ffffff; --fg:#0e1620; --mut:#59647a; --line:#dbe1ea;
+    --grid:#eef1f6; --accent:#1f6feb; --accent-ink:#fff; --soft:#e9eff9;
+    --green:#16a34a; --amber:#d97706; --red:#dc2626; --gray:#9aa3b2;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+    --shadow:0 1px 2px rgba(16,24,40,.05);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0b0f16; --card:#111825; --fg:#dfe6f0; --mut:#8b97a8; --line:#1e2734;
+           --grid:#161e29; --accent:#4d8bff; --soft:#152033; --shadow:0 1px 0 rgba(0,0,0,.5); }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  html,body{max-width:100%;overflow-x:hidden}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif;
+    background:var(--bg);color:var(--fg);line-height:1.5;overflow-wrap:break-word;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+  img,svg,canvas,video{max-width:100%;height:auto}
+  .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{width:100%;min-width:0}
+
+  /* header */
+  header{padding:26px 0 8px;border-bottom:1px solid var(--line);margin-bottom:8px}
+  .brand{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-weight:700;
+    font-size:.95rem;letter-spacing:.14em;text-transform:uppercase}
+  .brand .v{color:var(--mut);font-weight:400;text-transform:none;letter-spacing:.02em}
+  .hero{padding:22px 0 18px;max-width:730px}
+  .hero h1{font-size:2rem;line-height:1.14;margin:0 0 12px;letter-spacing:-.015em;font-weight:700}
+  .hero h1 .g{color:var(--green)} .hero h1 .a{color:var(--amber)} .hero h1 .r{color:var(--red)}
+  .hero p{font-size:1.04rem;color:var(--mut);margin:0}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+  .chip{font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--mut);background:transparent;padding:4px 9px;border:1px solid var(--line);border-radius:5px}
+
+  /* two-column app */
+  .app{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:14px 0 34px;align-items:start}
+  @media(max-width:880px){ .app{grid-template-columns:1fr} }
+  .panel{background:var(--card);border-radius:12px;box-shadow:var(--shadow);padding:20px;border:1px solid var(--line)}
+  .panel h2{margin:0 0 5px;font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+  .panel .lead{color:var(--mut);font-size:.9rem;margin:0 0 16px}
+
+  /* dropzone */
+  #drop{border:1.5px dashed color-mix(in srgb,var(--accent) 40%,var(--line));border-radius:10px;
+    padding:36px 18px;text-align:center;cursor:pointer;transition:.15s;background:color-mix(in srgb,var(--accent) 3%,transparent)}
+  #drop:hover,#drop.hi{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+  #drop .ic{font-size:2.4rem;line-height:1}
+  #drop b{display:block;margin-top:8px;font-weight:600}
+  #drop .hint{color:var(--mut);font-size:.8rem;margin-top:6px}
+  .try{margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .btn{border:0;border-radius:8px;padding:10px 15px;font-weight:600;font-size:.9rem;cursor:pointer;font-family:inherit}
+  .btn.primary{background:var(--accent);color:var(--accent-ink)}
+  .btn.ghost{background:transparent;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line))}
+
+  #stage{position:relative;margin-top:4px;display:none}
+  canvas{width:100%;border-radius:10px;background:#000;display:block;border:1px solid var(--line)}
+  video{display:none}
+  #bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:14px;display:none}
+  #fill{height:100%;width:0;background:var(--accent);transition:width .12s}
+  .statusrow{display:flex;align-items:center;gap:8px;margin-top:12px;min-height:1.2em}
+  #status{color:var(--mut);font-size:.86rem;font-family:var(--mono)}
+  .spin{width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;
+    animation:spin .7s linear infinite;flex:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .errbox{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-radius:10px;
+    background:color-mix(in srgb,var(--red) 9%,transparent);border:1px solid color-mix(in srgb,var(--red) 40%,var(--line))}
+  .errbox .i{color:var(--red);font-weight:700;font-size:1.1rem;line-height:1;flex:none}
+  .errbox b{display:block;font-size:.9rem;font-weight:600;line-height:1.4}
+  #camera{display:none;margin-top:14px}
+  #preview{display:block;width:100%;border-radius:10px;background:#000;border:1px solid var(--line)}
+  .camrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  #recbtn.live{background:var(--red)}
+  #rectime{font-family:var(--mono)}
+
+  /* result / example card */
+  .badge{display:inline-block;font-family:var(--mono);font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--mut);background:transparent;border:1px solid var(--line);padding:3px 8px;border-radius:4px;margin-bottom:14px}
+  .verdict{font-size:1.08rem;font-weight:700;margin:2px 0 14px}
+  table{width:100%;border-collapse:collapse}
+  th,td{text-align:left;padding:9px 6px;border-bottom:1px solid var(--grid);font-size:.92rem}
+  thead th{border-bottom:1px solid var(--line)}
+  th{color:var(--mut);font-family:var(--mono);font-weight:600;font-size:.66rem;text-transform:uppercase;letter-spacing:.08em}
+  td.val{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:700}
+  td:nth-child(3){font-family:var(--mono);color:var(--mut);font-size:.84rem}
+  .pill{padding:2px 9px;border-radius:4px;color:#fff;font-family:var(--mono);font-weight:700;font-size:.66rem;letter-spacing:.06em}
+  .GREEN{background:var(--green)} .AMBER{background:var(--amber)} .RED{background:var(--red)} .GRAY{background:var(--gray)}
+  .fixes{margin:14px 0 0;padding-left:18px} .fixes li{margin:6px 0;font-size:.9rem}
+  .demoimg{width:100%;border-radius:10px;border:1px solid var(--line);margin-bottom:14px;display:block}
+  .foot{color:var(--mut);font-size:.78rem;margin-top:12px;line-height:1.45}
+  .warn{display:flex;gap:9px;align-items:flex-start;margin:0 0 14px;padding:10px 12px;border-radius:8px;
+    font-size:.84rem;line-height:1.4;background:color-mix(in srgb,var(--amber) 12%,transparent);
+    border:1px solid color-mix(in srgb,var(--amber) 45%,var(--line))}
+  .warn b{color:var(--amber)} .warn .i{color:var(--amber);font-weight:700;flex:none}
+  /* view selector + frontal (beta) metrics */
+  .viewsel{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:0 0 14px}
+  .viewsel button{border:0;background:transparent;color:var(--mut);font-family:var(--mono);font-size:.72rem;
+    letter-spacing:.06em;text-transform:uppercase;padding:7px 14px;cursor:pointer}
+  .viewsel button+button{border-left:1px solid var(--line)}
+  .viewsel button.active{background:var(--accent);color:var(--accent-ink)}
+  .fmetric{display:flex;gap:10px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--grid)}
+  .fmetric .dot{width:10px;height:10px;border-radius:2px;margin-top:4px;flex:none}
+  .fmetric b{display:block;font-size:.92rem;margin-bottom:2px}
+  .fmetric span{font-size:.85rem;color:var(--mut);line-height:1.4}
+  .dot.GREEN{background:var(--green)} .dot.AMBER{background:var(--amber)} .dot.RED{background:var(--red)} .dot.GRAY{background:var(--gray)}
+
+  /* film + how sections */
+  .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:8px 0 40px}
+  @media(max-width:760px){ .cols{grid-template-columns:1fr} }
+  .mini{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .mini h3{margin:0 0 6px;font-family:var(--mono);font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase} .mini p{margin:0;color:var(--mut);font-size:.86rem}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:6px 0 22px;color:var(--mut);font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .sw{width:11px;height:11px;border-radius:3px;display:inline-block}
+  footer{border-top:1px solid var(--line);padding:22px 0 50px;color:var(--mut);font-size:.82rem}
+  a{color:var(--accent)}
+  /* ---- icons ---- */
+  .brand svg{width:20px;height:20px;color:var(--accent);vertical-align:-4px}
+  .drop-ic{width:36px;height:36px;color:var(--accent);margin:0 auto 6px;display:block}
+  .mini .mi{width:34px;height:34px;border-radius:8px;background:var(--soft);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;margin-bottom:11px}
+  .mini .mi svg{width:19px;height:19px}
+  .vdot{display:inline-block;width:9px;height:9px;border-radius:2px;vertical-align:middle;margin:0 8px 2px 0}
+  /* ---- mobile ---- */
+  @media(max-width:600px){
+    header{padding:20px 0 6px}
+    .hero{padding:16px 0 14px}
+    .hero h1{font-size:1.55rem}
+    .hero p{font-size:.96rem}
+    .app{gap:14px;margin:12px 0 26px}
+    .panel{padding:16px}
+    #drop{padding:26px 14px}
+    .cols{gap:12px}
+    th,td{padding:8px 5px;font-size:.84rem}
+    .verdict{font-size:1rem}
+    .btn{width:100%}
+    .try{flex-direction:column;align-items:stretch}
+    .try .foot{text-align:center}
+  }
+  @media(max-width:380px){ .hero h1{font-size:1.4rem} .wrap{padding:0 14px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand" href="index.html" style="color:inherit;text-decoration:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg> Bike Fit Analyzer <span class="v">· v2</span></a>
+    <div class="hero">
+      <h1>Grade your bike fit — <span class="g">green</span>, <span class="a">amber</span>, <span class="r">red</span> — right in your browser.</h1>
+      <p>Drop a side-on clip of yourself pedaling. AI tracks your joints, measures the angles a
+         fitter checks, and tells you the exact change. Your video never leaves your device.</p>
+      <div class="chips">
+        <span class="chip">100% on-device</span><span class="chip">No upload to a server</span>
+        <span class="chip">Free &amp; open source</span><span class="chip">Powered by MediaPipe Pose</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="legend">
+    <span><i class="sw" style="background:var(--green)"></i> dialed</span>
+    <span><i class="sw" style="background:var(--amber)"></i> borderline</span>
+    <span><i class="sw" style="background:var(--red)"></i> fix it</span>
+  </div>
+
+  <!-- side-by-side app -->
+  <div class="app">
+    <!-- LEFT: upload / live analysis -->
+    <section class="panel">
+      <h2>1 · Your clip</h2>
+      <div class="viewsel">
+        <button class="active" data-view="side">Side</button>
+        <button data-view="front">Front</button>
+        <button data-view="rear">Rear</button>
+      </div>
+      <p class="lead">Side-on, 20–30s, phone at hip height, pedaling steadily.</p>
+      <div id="drop">
+        <svg class="drop-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8"/><path d="m8 17 4-4 4 4"/><path d="M20 16.5A4.5 4.5 0 0 0 17.5 8h-1.8A7 7 0 1 0 4 14.9"/></svg>
+        <b>Drop your video here</b>
+        <div class="hint">or click to choose · .mp4 .mov .webm · stays on your device</div>
+        <input id="file" type="file" accept="video/*" hidden>
+      </div>
+      <div class="try">
+        <button class="btn ghost" id="pick">Choose a video</button>
+        <button class="btn ghost" id="rec">Record with webcam</button>
+        <span class="foot" style="margin:0">Nothing is uploaded — analysis runs on your hardware.</span>
+      </div>
+      <div id="camera">
+        <video id="preview" playsinline muted autoplay></video>
+        <div class="camrow">
+          <button class="btn primary" id="recbtn"><span id="recdot">●</span> Record</button>
+          <button class="btn ghost" id="camcancel">Cancel</button>
+          <span class="foot" id="rectime" style="margin:0"></span>
+        </div>
+        <div class="hint" style="margin-top:8px;color:var(--mut);font-size:.8rem">Point the camera square to your side, ~hip height. Auto-stops at 30s.</div>
+      </div>
+      <div id="stage"><canvas id="cv"></canvas></div>
+      <video id="vid" playsinline muted></video>
+      <div id="bar"><div id="fill"></div></div>
+      <div class="statusrow"><span id="spin" class="spin" hidden></span><span id="status"></span></div>
+      <div id="errbox" class="errbox" hidden>
+        <span class="i">&#9888;</span>
+        <div><b id="errmsg"></b><button class="btn ghost" id="retry" style="margin-top:10px">Try another clip</button></div>
+      </div>
+    </section>
+
+    <!-- RIGHT: results (shows an EXAMPLE until a real clip is analyzed) -->
+    <section class="panel">
+      <h2>2 · Your result</h2>
+      <p class="lead" id="resultlead">Angles at the bottom of your stroke, graded against research ranges.</p>
+
+      <div id="example">
+        <div class="badge" style="color:var(--amber);border-color:color-mix(in srgb,var(--amber) 45%,var(--line))">Sample — not your result</div>
+        <p class="lead" style="margin:-4px 0 14px">Here's what a finished analysis looks like. Your own numbers replace this once you add a clip on the left.</p>
+        <!-- self-contained illustrative figure (no external assets) -->
+        <svg class="demoimg" viewBox="0 0 520 306" role="img" aria-label="Example: road bike side view with fit skeleton and joint angles">
+          <defs>
+            <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#0f1520"/><stop offset="1" stop-color="#0a0d13"/>
+            </linearGradient>
+          </defs>
+          <rect width="520" height="306" rx="12" fill="url(#bg)"/>
+          <text x="18" y="26" fill="#8a93a5" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="12" letter-spacing="1.5">EXAMPLE · SIDE VIEW · FIT SKELETON</text>
+          <line x1="40" y1="258" x2="480" y2="258" stroke="#1c2431" stroke-width="2"/>
+
+          <!-- WHEELS (compact wheelbase) -->
+          <g fill="none">
+            <g stroke="#232c3a" stroke-width="1">
+              <path d="M132 206 L182 206M132 206 L157 249M132 206 L107 249M132 206 L82 206M132 206 L107 163M132 206 L157 163"/>
+              <path d="M292 206 L342 206M292 206 L317 249M292 206 L267 249M292 206 L242 206M292 206 L267 163M292 206 L317 163"/>
+            </g>
+            <circle cx="132" cy="206" r="50" stroke="#37414f" stroke-width="6"/>
+            <circle cx="132" cy="206" r="43" stroke="#232c3a" stroke-width="1.5"/>
+            <circle cx="292" cy="206" r="50" stroke="#37414f" stroke-width="6"/>
+            <circle cx="292" cy="206" r="43" stroke="#232c3a" stroke-width="1.5"/>
+          </g>
+          <g fill="#4a5566"><circle cx="132" cy="206" r="3.5"/><circle cx="292" cy="206" r="3.5"/></g>
+
+          <!-- FRAME (endurance road geometry, shorter front-centre) -->
+          <g fill="none" stroke="#59647a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M190 214 L132 206"/>
+            <path d="M172 140 L132 206"/>
+            <path d="M190 214 L172 140"/>
+            <path d="M172 140 L250 134"/>
+            <path d="M190 214 L246 150"/>
+            <path d="M250 134 L246 150"/>
+            <path d="M246 150 L292 206"/>
+            <path d="M250 134 L270 138"/>
+            <path d="M270 138 q11 0 12 8 q-1 8 -10 8" stroke-width="4"/>
+          </g>
+          <path d="M150 130 Q168 125 188 129 Q170 135 150 133 Z" fill="#6b7688"/>
+          <path d="M172 140 L166 132" stroke="#6b7688" stroke-width="4"/>
+          <circle cx="190" cy="214" r="10" fill="none" stroke="#59647a" stroke-width="3"/>
+          <circle cx="190" cy="214" r="4" fill="#59647a"/>
+          <path d="M190 214 L200 218" stroke="#8a94a8" stroke-width="4"/>
+          <rect x="196" y="216" width="14" height="5" rx="2" fill="#8a94a8"/>
+
+          <!-- RIDER: faint body + colored fit skeleton (relaxed endurance position) -->
+          <g fill="none" stroke="#8792a6" stroke-opacity=".28" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M172 130 L214 84"/><path d="M214 84 L247 124 L268 140"/><path d="M172 130 L203 174 L201 214"/>
+          </g>
+          <path d="M214 84 L221 71" stroke="#8792a6" stroke-opacity=".28" stroke-width="10" stroke-linecap="round"/>
+          <circle cx="224" cy="62" r="13" fill="#8792a6" fill-opacity=".28"/>
+          <path d="M211 60 a13 13 0 0 1 26 0" fill="none" stroke="#8792a6" stroke-opacity=".5" stroke-width="4"/>
+          <g fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M172 130 L214 84" stroke="#16a34a"/>
+            <path d="M214 84 L247 124 L268 140" stroke="#d97706"/>
+            <path d="M172 130 L203 174 L201 214" stroke="#16a34a"/>
+          </g>
+          <g fill="#fff" stroke="#0a0d13" stroke-width="1.4">
+            <circle cx="172" cy="130" r="5"/><circle cx="214" cy="84" r="5"/><circle cx="247" cy="124" r="5"/>
+            <circle cx="268" cy="140" r="5"/><circle cx="203" cy="174" r="5"/><circle cx="201" cy="214" r="5"/>
+          </g>
+
+          <!-- joint-angle readouts -->
+          <g font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" font-size="12">
+            <rect x="152" y="76" width="38" height="18" rx="4" fill="#16a34a"/><text x="157" y="89" fill="#fff">82&#176;</text>
+            <rect x="212" y="166" width="38" height="18" rx="4" fill="#16a34a"/><text x="217" y="179" fill="#fff">38&#176;</text>
+            <rect x="262" y="106" width="38" height="18" rx="4" fill="#d97706"/><text x="267" y="119" fill="#fff">13&#176;</text>
+          </g>
+          <g font-family="system-ui" font-size="10" font-weight="600" fill="#8a93a5" letter-spacing=".5">
+            <text x="152" y="72">SHOULDER</text><text x="212" y="195">KNEE</text><text x="262" y="102">ELBOW</text>
+          </g>
+        </svg>
+        <div class="verdict"><span class="vdot" style="background:#d97706"></span>Minor tweaks · 5 pedal strokes</div>
+        <div class="tscroll"><table>
+          <thead><tr><th>Angle</th><th>Reading</th><th>Target</th><th>Grade</th></tr></thead>
+          <tbody>
+            <tr><td>Knee at bottom</td><td class="val">38°</td><td>30–40°</td><td><span class="pill GREEN">GREEN</span></td></tr>
+            <tr><td>Torso from horizontal</td><td class="val">48°</td><td>40–50°</td><td><span class="pill GREEN">GREEN</span></td></tr>
+            <tr><td>Elbow bend</td><td class="val">13°</td><td>15–30°</td><td><span class="pill AMBER">AMBER</span></td></tr>
+            <tr><td>Shoulder (reach)</td><td class="val">82°</td><td>80–95°</td><td><span class="pill GREEN">GREEN</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="foot" style="margin-top:10px">Hip at top of stroke: 96° (reference 85–110°, informational — depends on flexibility &amp; reach).</div>
+        <ul class="fixes"><li>Elbow 13° → arms a touch straight; soften them slightly for comfort.</li></ul>
+        <div class="foot">This is a sample. Drop your own clip on the left to get your real numbers.</div>
+      </div>
+
+      <div id="results" hidden>
+        <div class="badge" style="color:var(--accent);background:var(--soft)">Your result</div>
+        <div class="verdict" id="verdict"></div>
+        <div class="warn" id="viewwarn" hidden><span class="i">&#9888;</span><span><b>This clip doesn't look square-on.</b> Off-axis footage stretches or squashes these angles — especially reach. Re-film with the camera directly beside you (90° to the bike, at hip height) for reliable numbers.</span></div>
+        <div class="tscroll"><table><thead><tr><th>Angle</th><th>Reading</th><th>Target</th><th>Grade</th></tr></thead>
+          <tbody id="tbody"></tbody></table></div>
+        <div class="foot" id="hipinfo" style="margin-top:10px"></div>
+        <h4 style="margin:16px 0 4px">Do this</h4>
+        <ul class="fixes" id="fixes"></ul>
+        <div class="foot">2D side-view estimate, not a 3D pro fit. Saddle height (knee) is the most reliable number here; reach/shoulder is the softest — don't change your stem on one clip. Change one thing at a time, then re-film.</div>
+        <button class="btn primary" style="margin-top:14px" onclick="location.reload()">Analyze another clip</button>
+      </div>
+
+      <div id="frontresults" hidden>
+        <div class="badge" style="color:var(--accent);background:var(--soft)"><span id="frontview">Front view</span> · beta</div>
+        <div class="warn" style="background:color-mix(in srgb,var(--accent) 8%,transparent);border-color:color-mix(in srgb,var(--accent) 40%,var(--line))">
+          <span class="i" style="color:var(--accent)">&#9432;</span>
+          <span>Frontal-plane readings are <b style="color:var(--accent)">experimental</b> and less reliable than the side view. Treat them as directional hints, not verdicts.</span>
+        </div>
+        <div class="verdict" id="frontverdict"></div>
+        <div id="frontout"></div>
+        <div class="foot">Knee tracking uses the frontal projection angle (FPPA); pelvic rock is peak-to-peak hip-line tilt across the stroke. For real decisions, the side-view saddle-height (knee) reading is the trustworthy one.</div>
+        <button class="btn primary" style="margin-top:14px" onclick="location.reload()">Analyze another clip</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- how to film -->
+  <div class="cols">
+    <div class="mini"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m16 10 4.4-2.6a1 1 0 0 1 1.6.9v7.4a1 1 0 0 1-1.6.9L16 14"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg></span><h3>Square-on</h3><p>Point the camera square to the view you picked — dead side-on, front-on, or straight behind. Off-axis skews the angles.</p></div>
+    <div class="mini"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 8.7 8.7 21.3a1 1 0 0 1-1.4 0l-4.6-4.6a1 1 0 0 1 0-1.4L15.3 2.7a1 1 0 0 1 1.4 0l4.6 4.6a1 1 0 0 1 0 1.4Z"/><path d="m7.5 10.5 2 2M10.5 7.5l2 2M13.5 4.5l2 2M4.5 13.5l2 2"/></svg></span><h3>Hip height</h3><p>Phone at hip/crank height on something stable — nothing blocking your legs (or arms, side-on).</p></div>
+    <div class="mini"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></span><h3>Pedal steady</h3><p>20–30s at an easy, normal cadence — a trainer is ideal. Good light = less blur.</p></div>
+  </div>
+
+  <footer>
+    Runs entirely in your browser with <a href="https://ai.google.dev/edge/mediapipe" target="_blank" rel="noopener">MediaPipe Pose</a>.
+    Ranges from the Holmes method + dynamic-fit research. Not medical advice.
+    Source on <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>.
+  </footer>
+</div>
+
+<script type="module">
+import { FilesetResolver, PoseLandmarker }
+  from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18";
+
+const SIDE = {
+  left:  {shoulder:11, elbow:13, wrist:15, hip:23, knee:25, ankle:27},
+  right: {shoulder:12, elbow:14, wrist:16, hip:24, knee:26, ankle:28},
+};
+const ZONES = {
+  knee_flexion_bdc:[30,40,28,42], torso_from_horiz:[40,50,34,56],
+  elbow_flexion:[15,30,8,45], shoulder_angle:[80,95,70,105],
+};
+const LABEL = {
+  knee_flexion_bdc:["Knee at bottom","30–40°"], torso_from_horiz:["Torso from horizontal","40–50°"],
+  elbow_flexion:["Elbow bend","15–30°"], shoulder_angle:["Shoulder (reach)","80–95°"],
+};
+const COL = {GREEN:"#16a34a", AMBER:"#d97706", RED:"#dc2626", GRAY:"#9aa3b2"};
+const MIN_VIS = 0.5;   // ignore joints MediaPipe isn't confident are visible
+
+const $ = s => document.querySelector(s);
+const drop=$("#drop"), file=$("#file"), vid=$("#vid"), cv=$("#cv"), ctx=cv.getContext("2d");
+const bar=$("#bar"), fill=$("#fill"), status=$("#status"), stage=$("#stage");
+const spin=$("#spin"), errbox=$("#errbox"), errmsg=$("#errmsg");
+
+let landmarker=null, viewMode="side";
+document.querySelectorAll(".viewsel button").forEach(b=>b.onclick=()=>{
+  viewMode=b.dataset.view;
+  document.querySelectorAll(".viewsel button").forEach(x=>x.classList.toggle("active",x===b));
+  $(".panel .lead").textContent = viewMode==="side"
+    ? "Side-on, 20–30s, phone at hip height, pedaling steadily."
+    : viewMode==="front"
+      ? "Facing the camera, 20–30s, pedaling steadily. Beta — frontal-plane hints."
+      : "From directly behind, 20–30s, pedaling steadily. Beta — frontal-plane hints.";
+  $("#resultlead").textContent = viewMode==="side"
+    ? "Angles at the bottom of your stroke, graded against research ranges."
+    : "Frontal-plane tracking hints — knee alignment, pelvic rock, symmetry. Beta.";
+});
+async function initModel(){
+  status.textContent="Loading pose model (first time only)…";
+  const files=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm");
+  const make=delegate=>PoseLandmarker.createFromOptions(files,{
+    baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task",delegate},
+    runningMode:"VIDEO", numPoses:1,
+  });
+  // Some GPUs/browsers hang or fail on GPU init; race it and fall back to CPU.
+  const timeout=(p,ms)=>Promise.race([p,new Promise((_,r)=>setTimeout(()=>r(new Error("gpu-timeout")),ms))]);
+  try{ landmarker=await timeout(make("GPU"),7000); }
+  catch(e){ status.textContent="Loading pose model (CPU mode, slower)…"; landmarker=await make("CPU"); }
+}
+
+drop.onclick=()=>file.click();
+$("#pick").onclick=()=>file.click();
+["dragover","dragenter"].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.add("hi");}));
+["dragleave","drop"].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.remove("hi");}));
+drop.addEventListener("drop",e=>{ if(e.dataTransfer.files[0]) start(e.dataTransfer.files[0]); });
+file.onchange=e=>{ if(e.target.files[0]) start(e.target.files[0]); };
+
+// ---- record in-browser (webcam) ----
+const camera=$("#camera"), preview=$("#preview"), recbtn=$("#recbtn"), rectime=$("#rectime");
+let camStream=null, recorder=null, recChunks=[], recStart=0, recInt=null;
+const MAXREC=30;
+const fmt=s=>Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0");
+const pickMime=()=>['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm','video/mp4']
+  .find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported(t))||"";
+function closeCamera(restore){
+  if(recInt){ clearInterval(recInt); recInt=null; }
+  if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream=null; }
+  camera.style.display="none";
+  if(restore){ drop.style.display=""; $(".try").style.display=""; }
+}
+$("#rec").onclick=async()=>{
+  if(!navigator.mediaDevices?.getUserMedia){ fail("This browser can't record video — upload a clip instead."); return; }
+  try{ camStream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720}},audio:false}); }
+  catch(e){ fail("Camera access was blocked — allow it in your browser settings, or just upload a clip instead."); return; }
+  preview.srcObject=camStream; drop.style.display="none"; $(".try").style.display="none"; camera.style.display="block";
+};
+$("#camcancel").onclick=()=>closeCamera(true);
+recbtn.onclick=()=>{
+  if(recorder&&recorder.state==="recording"){ recorder.stop(); return; }
+  recChunks=[]; const mime=pickMime();
+  recorder=new MediaRecorder(camStream, mime?{mimeType:mime}:undefined);
+  recorder.ondataavailable=e=>{ if(e.data&&e.data.size) recChunks.push(e.data); };
+  recorder.onstop=()=>{
+    const blob=new Blob(recChunks,{type:recChunks[0]?.type||mime||"video/webm"});
+    const elapsed=(Date.now()-recStart)/1000;
+    closeCamera(false);                 // stop camera; analysis takes over the UI
+    start(blob, elapsed);
+  };
+  recorder.start(); recStart=Date.now();
+  recbtn.classList.add("live"); recbtn.innerHTML='<span id="recdot">■</span> Stop';
+  recInt=setInterval(()=>{ const s=(Date.now()-recStart)/1000;
+    rectime.textContent=fmt(s)+" / 0:30"; if(s>=MAXREC) recorder.stop(); }, 200);
+};
+
+// ---- UI states: loading / error+retry ----
+function fail(msg){
+  spin.hidden=true; status.textContent=""; errmsg.textContent=msg; errbox.hidden=false;
+  stage.style.display="none"; bar.style.display="none"; camera.style.display="none";
+}
+function resetToIdle(){
+  errbox.hidden=true; spin.hidden=true; status.textContent=""; fill.style.width="0";
+  stage.style.display="none"; bar.style.display="none"; camera.style.display="none";
+  drop.style.display=""; $(".try").style.display=""; file.value="";
+  $("#results").hidden=true; $("#frontresults").hidden=true; $("#example").hidden=false;
+}
+$("#retry").onclick=resetToIdle;
+
+const deg=r=>r*180/Math.PI;
+function angleAt(a,b,c){const v1=[a.x-b.x,a.y-b.y],v2=[c.x-b.x,c.y-b.y];
+  const n1=Math.hypot(...v1),n2=Math.hypot(...v2); if(!n1||!n2) return NaN;
+  return deg(Math.acos(Math.max(-1,Math.min(1,(v1[0]*v2[0]+v1[1]*v2[1])/(n1*n2)))));}
+function torsoFromHoriz(hip,sh){return deg(Math.atan2(Math.abs(sh.y-hip.y),Math.abs(sh.x-hip.x)));}
+function grade(m,v){if(v==null||isNaN(v))return"GRAY";const[glo,ghi,rlo,rhi]=ZONES[m];
+  if(v>=glo&&v<=ghi)return"GREEN"; if(v<rlo||v>rhi)return"RED"; return"AMBER";}
+function worse(...g){const o={GRAY:0,GREEN:1,AMBER:2,RED:3};return g.reduce((a,b)=>o[b]>o[a]?b:a);}
+function median(a){if(!a.length)return null;const s=[...a].sort((x,y)=>x-y),m=s.length>>1;
+  return s.length%2?s[m]:(s[m-1]+s[m])/2;}
+function findPeaks(y,minDist,prom){const peaks=[];
+  for(let i=0;i<y.length;i++){ if(isNaN(y[i]))continue;
+    let lo=Math.max(0,i-minDist),hi=Math.min(y.length,i+minDist+1),isMax=true,bL=y[i],bR=y[i];
+    for(let j=lo;j<hi;j++) if(!isNaN(y[j])&&y[j]>y[i]){isMax=false;break;}
+    if(!isMax)continue;
+    for(let j=lo;j<i;j++) if(!isNaN(y[j])) bL=Math.min(bL,y[j]);
+    for(let j=i+1;j<hi;j++) if(!isNaN(y[j])) bR=Math.min(bR,y[j]);
+    if(y[i]-Math.max(bL,bR)>=prom){ if(peaks.length&&i-peaks[peaks.length-1]<minDist){ if(y[i]>y[peaks[peaks.length-1]])peaks[peaks.length-1]=i;} else peaks.push(i);} }
+  return peaks;}
+
+let frames=[], sideConf={left:0,right:0}, viewRatios=[], frontalFrames=[];
+// Recorded webm blobs often report duration=Infinity until forced; seek to the end to resolve it.
+function resolveDuration(v){
+  return new Promise(res=>{
+    const done=d=>{ v.removeEventListener("durationchange",onc); clearTimeout(to); try{v.currentTime=0;}catch(e){} res(d); };
+    const onc=()=>{ if(isFinite(v.duration)&&v.duration>0) done(v.duration); };
+    v.addEventListener("durationchange",onc);
+    const to=setTimeout(()=>done(isFinite(v.duration)&&v.duration>0?v.duration:0),3000);
+    try{ v.currentTime=1e7; }catch(e){}
+  });
+}
+async function start(f, knownDur){
+  drop.style.display="none"; $(".try").style.display="none"; $("#results").hidden=true;
+  errbox.hidden=true; spin.hidden=false; stage.style.display="block"; bar.style.display="block"; fill.style.width="0";
+  if(!landmarker){ try{ await initModel(); }
+    catch(e){ fail("Couldn't load the pose model — check your connection and try again."); return; } }
+  let decodeErr=false;
+  vid.src=URL.createObjectURL(f);
+  await new Promise(res=>{ vid.onloadeddata=res; vid.onerror=()=>{decodeErr=true;res();}; });
+  if(decodeErr||!vid.videoWidth){ fail("Couldn't read that video. Try a different clip or format (MP4, MOV, or WebM)."); return; }
+  cv.width=vid.videoWidth||848; cv.height=vid.videoHeight||478;
+  frames=[]; sideConf={left:0,right:0}; viewRatios=[]; frontalFrames=[]; status.textContent="Analyzing — detecting your body each frame…";
+  vid.pause();
+  // Step through the clip by seeking frame-by-frame (driven by 'seeked' events) so
+  // every frame is sampled deterministically. Unlike rAF on a playing video, this
+  // never undersamples on slow hardware and never stalls when the tab is backgrounded.
+  let dur=vid.duration;
+  if(!(dur>0&&isFinite(dur))) dur=await resolveDuration(vid);
+  if(!(dur>0&&isFinite(dur))&&knownDur>0) dur=knownDur;
+  const dt=1/30; let ts=0;
+  const process=()=>{
+    const res=landmarker.detectForVideo(vid, ts+=33);
+    ctx.drawImage(vid,0,0,cv.width,cv.height);
+    if(res.landmarks&&res.landmarks[0]){
+      const lm=res.landmarks[0];
+      if(viewMode!=="side"){ const fm=frontalMetrics(lm); frontalFrames.push(fm); drawFrontal(fm); }
+      else{
+      // Lock onto the near (camera) side by confidence accumulated over the whole
+      // clip, so a noisy frame can't flip us to the far leg mid-stroke.
+      for(const s in SIDE) sideConf[s]+=Object.values(SIDE[s]).reduce((a,i)=>a+(lm[i].visibility??0),0);
+      // View quality: in a true side view left/right shoulders & hips overlap, so the body's
+      // horizontal spread is small vs torso length. Off-axis / front / rear inflates it.
+      const pxw=i=>lm[i].x*cv.width, pxh=i=>lm[i].y*cv.height;
+      const torsoLen=Math.hypot((pxw(11)+pxw(12))/2-(pxw(23)+pxw(24))/2,(pxh(11)+pxh(12))/2-(pxh(23)+pxh(24))/2);
+      if(torsoLen>5) viewRatios.push(Math.max(Math.abs(pxw(11)-pxw(12)),Math.abs(pxw(23)-pxw(24)))/torsoLen);
+      const near=sideConf.left>=sideConf.right?"left":"right"; const ids=SIDE[near];
+      const px=i=>({x:lm[i].x*cv.width,y:lm[i].y*cv.height});
+      const P={}; for(const k in ids)P[k]=px(ids[k]);
+      // Only measure a joint when MediaPipe is confident it's visible; an occluded
+      // far-side limb otherwise poisons the median.
+      const v=k=>lm[ids[k]].visibility??0, okv=(...ks)=>ks.every(k=>v(k)>=MIN_VIS);
+      const A={ knee_flexion_bdc: okv("hip","knee","ankle")?180-angleAt(P.hip,P.knee,P.ankle):NaN,
+        torso_from_horiz: okv("hip","shoulder")?torsoFromHoriz(P.hip,P.shoulder):NaN,
+        elbow_flexion: okv("shoulder","elbow","wrist")?180-angleAt(P.shoulder,P.elbow,P.wrist):NaN,
+        shoulder_angle: okv("hip","shoulder","elbow")?angleAt(P.hip,P.shoulder,P.elbow):NaN,
+        hip_angle: okv("shoulder","hip","knee")?angleAt(P.shoulder,P.hip,P.knee):NaN };
+      frames.push({t:vid.currentTime,ankleY:okv("ankle")?P.ankle.y:NaN,A,P});
+      drawSkeleton(P,{knee_flexion_bdc:"GRAY",torso_from_horiz:"GRAY",elbow_flexion:"GRAY",shoulder_angle:"GRAY"});
+      }
+    }
+    fill.style.width=Math.min(100,vid.currentTime/dur*100).toFixed(0)+"%";
+    const next=vid.currentTime+dt;
+    if(!isFinite(dur)||next>=dur){ vid.onseeked=null; finish(); return; }
+    vid.currentTime=next;
+  };
+  vid.onseeked=process;
+  vid.currentTime=1e-3;   // nudge off 0 so the first 'seeked' fires and processes frame 0
+}
+
+function drawSkeleton(P,g){
+  const c=k=>COL[g[k]||"GRAY"];
+  const seg=(a,b,col)=>{ctx.strokeStyle=col;ctx.lineWidth=Math.max(3,cv.width/220);ctx.lineCap="round";
+    ctx.beginPath();ctx.moveTo(P[a].x,P[a].y);ctx.lineTo(P[b].x,P[b].y);ctx.stroke();};
+  const arm=COL[worse(g.shoulder_angle,g.elbow_flexion)];
+  seg("hip","knee",c("knee_flexion_bdc")); seg("knee","ankle",c("knee_flexion_bdc"));
+  seg("shoulder","hip",c("torso_from_horiz")); seg("shoulder","elbow",arm); seg("elbow","wrist",arm);
+  for(const k in P){ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(P[k].x,P[k].y,Math.max(4,cv.width/280),0,7);ctx.fill();}
+}
+
+function finish(){
+  if(viewMode!=="side"){ finishFrontal(); return; }
+  spin.hidden=true; status.textContent=""; bar.style.display="none";
+  if(frames.length<5){ fail("Couldn't track your body clearly. Re-film side-on, well-lit, with your whole body in frame."); return; }
+  const ankle=frames.map(f=>f.ankleY);
+  const sorted=ankle.filter(v=>!isNaN(v)).sort((a,b)=>a-b);
+  if(sorted.length<5){ fail("Couldn't track your body clearly. Re-film side-on, well-lit, with your whole body in frame."); return; }
+  const amp=sorted[Math.floor(sorted.length*0.95)]-sorted[Math.floor(sorted.length*0.05)];
+  const fps=frames.length/vid.duration;
+  const minDist=Math.max(3,Math.round(fps*0.35)), prom=Math.max(2,0.25*amp);
+  const bdc=findPeaks(ankle,minDist,prom);                 // bottom of stroke (ankle lowest)
+  const tdc=findPeaks(ankle.map(v=>-v),minDist,prom);      // top of stroke (ankle highest)
+  if(!bdc.length){ fail("No clear pedal strokes found. Make sure you're actually pedaling and filmed side-on, then try again."); return; }
+  const med=m=>median(bdc.map(i=>frames[i].A[m]).filter(v=>!isNaN(v)));
+  const hipTop=tdc.length?median(tdc.map(i=>frames[i].A.hip_angle).filter(v=>!isNaN(v))):null;
+  const R={knee_flexion_bdc:med("knee_flexion_bdc"),torso_from_horiz:med("torso_from_horiz"),
+           elbow_flexion:med("elbow_flexion"),shoulder_angle:med("shoulder_angle")};
+  const G={}; for(const m in ZONES)G[m]=grade(m,R[m]);
+  const overall=worse(...Object.values(G));
+
+  const tb=$("#tbody"); tb.innerHTML="";
+  for(const m in ZONES){ const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${LABEL[m][0]}</td><td class="val">${R[m]==null?"—":R[m].toFixed(0)+"°"}</td>
+      <td>${LABEL[m][1]}</td><td><span class="pill ${G[m]}">${G[m]}</span></td>`; tb.appendChild(tr); }
+  const vlabel={GREEN:"Dialed",AMBER:"Minor tweaks",RED:"Fix needed",GRAY:"Incomplete"}[overall];
+  $("#verdict").innerHTML=`<span class="vdot" style="background:${COL[overall]}"></span>${vlabel} &middot; ${bdc.length} pedal strokes`;
+  $("#hipinfo").textContent=hipTop==null?"":`Hip at top of stroke: ${hipTop.toFixed(0)}° (reference 85–110°, informational — depends on flexibility & reach).`;
+
+  // Advice, most-actionable first. Saddle height (knee) is the reliable lever, so
+  // it's quantified; reach stays cautious because a 2D side view can't nail it.
+  const fixes=[];
+  if(G.knee_flexion_bdc!=="GREEN"&&R.knee_flexion_bdc!=null){
+    const k=R.knee_flexion_bdc, mm=Math.min(20,Math.round(Math.abs(k-35)*1.5));
+    fixes.push(k>40
+      ? `Saddle looks low — knee still bent ${k.toFixed(0)}° at the bottom (aim 30–40°). Raise it about ${mm}mm, in 2–3mm steps, and re-film. This is the most reliable reading here.`
+      : `Saddle looks high — leg nearly straight (${k.toFixed(0)}°) at the bottom (aim 30–40°). Lower it about ${mm}mm, in 2–3mm steps, and re-film. This is the most reliable reading here.`);
+  }
+  if(G.torso_from_horiz!=="GREEN"&&R.torso_from_horiz!=null)
+    fixes.push(R.torso_from_horiz>50
+      ? `Torso fairly upright (${R.torso_from_horiz.toFixed(0)}°). Comfortable — but if you want more power/aero and your flexibility allows, a slightly lower front end (spacers/stem) helps.`
+      : `Torso quite low/aggressive (${R.torso_from_horiz.toFixed(0)}°). If your lower back or neck complains, raise the bars or shorten the reach a touch.`);
+  if(G.elbow_flexion!=="GREEN"&&R.elbow_flexion!=null){
+    if(R.elbow_flexion<15) fixes.push(`Elbow ${R.elbow_flexion.toFixed(0)}° → arms look locked. Soften your elbows first — a slight bend absorbs road buzz and often fixes this without touching the bike.`);
+    else if(R.elbow_flexion>30) fixes.push(`Elbow ${R.elbow_flexion.toFixed(0)}° → arms quite bent. Usually fine; only if it feels cramped might the reach be a touch short.`);
+  }
+  if(G.shoulder_angle!=="GREEN"&&R.shoulder_angle!=null)
+    fixes.push(R.shoulder_angle<80?`Shoulder ${R.shoulder_angle.toFixed(0)}° → cockpit looks a bit cramped. Reach is the least reliable 2D angle — re-check your hand position and that the camera is square before changing anything.`
+      :`Shoulder ${R.shoulder_angle.toFixed(0)}° → reach looks a bit long. Reach is the least reliable 2D angle — don't shorten the stem off one clip; re-film square-on, then change one thing at a time.`);
+  const ul=$("#fixes"); ul.innerHTML=fixes.length?"":"<li>Everything's in range — nice fit. Re-film if you change anything.</li>";
+  fixes.forEach(t=>{const li=document.createElement("li");li.textContent=t;ul.appendChild(li);});
+
+  $("#viewwarn").hidden = !(viewRatios.length>=5 && median(viewRatios)>0.55);
+  $("#example").hidden=true; $("#results").hidden=false;
+  const deepest=bdc.reduce((a,b)=>frames[b].ankleY>frames[a].ankleY?b:a,bdc[0]);
+  // seek to the EXACT captured time of that frame so the skeleton lines up
+  vid.pause();
+  vid.onseeked=()=>{ ctx.drawImage(vid,0,0,cv.width,cv.height); drawSkeleton(frames[deepest].P,G); vid.onseeked=null; };
+  vid.currentTime=Math.min(vid.duration-0.001, frames[deepest].t);
+}
+
+// ---- Front / Rear (frontal-plane) analysis — beta, report-only ----
+function frontalMetrics(lm){
+  const Pt=i=>({x:lm[i].x*cv.width,y:lm[i].y*cv.height,v:lm[i].visibility??0});
+  const hL=Pt(23),hR=Pt(24),kL=Pt(25),kR=Pt(26),aL=Pt(27),aR=Pt(28);
+  const center=(hL.x+hR.x)/2;
+  const leg=(h,k,a)=>{
+    if(Math.abs(a.y-h.y)<1) return null;
+    const lineX=h.x+(a.x-h.x)*((k.y-h.y)/(a.y-h.y));   // hip→ankle line at knee height
+    const dev=k.x-lineX;                                // knee offset from that line
+    const medial=(h.x<center)? dev : -dev;             // signed toward the body midline
+    return { fppa:180-angleAt(h,k,a), medialSign:Math.sign(medial) };
+  };
+  const ok=(...p)=>p.every(q=>q.v>=MIN_VIS);
+  return {
+    L: ok(hL,kL,aL)?leg(hL,kL,aL):null,
+    R: ok(hR,kR,aR)?leg(hR,kR,aR):null,
+    hipTilt: ok(hL,hR)?deg(Math.atan2(hR.y-hL.y,hR.x-hL.x)):NaN,
+    P:{hL,hR,kL,kR,aL,aR},
+  };
+}
+function drawFrontal(f){
+  if(!f||!f.P) return; const P=f.P;
+  ctx.lineWidth=Math.max(3,cv.width/220); ctx.lineCap="round"; ctx.strokeStyle="#9aa3b2";
+  const seg=(a,b)=>{ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();};
+  seg(P.hL,P.hR); seg(P.hL,P.kL); seg(P.kL,P.aL); seg(P.hR,P.kR); seg(P.kR,P.aR);
+  ctx.fillStyle="#fff"; ["hL","hR","kL","kR","aL","aR"].forEach(k=>{ctx.beginPath();ctx.arc(P[k].x,P[k].y,Math.max(4,cv.width/280),0,7);ctx.fill();});
+}
+function finishFrontal(){
+  spin.hidden=true; status.textContent=""; bar.style.display="none";
+  const F=frontalFrames.filter(Boolean);
+  if(F.length<5){ fail("Couldn't track your body clearly. Re-film square to the camera (front or rear), well-lit, whole body in frame."); return; }
+  const legStat=s=>{ const v=F.map(f=>f[s]).filter(Boolean).map(x=>x.medialSign*x.fppa);
+    if(v.length<3) return null; const q=[...v].sort((a,b)=>a-b);
+    return { peak:q[Math.floor(q.length*0.9)], med:median(v) }; };
+  const L=legStat("L"), R=legStat("R");
+  const t=F.map(f=>f.hipTilt).filter(x=>!isNaN(x)); let rock=null;
+  if(t.length>=5){ const q=[...t].sort((a,b)=>a-b); rock=q[Math.floor(q.length*0.95)]-q[Math.floor(q.length*0.05)]; }
+
+  const kneeRow=(name,st)=>{
+    if(!st) return ["GRAY",name,"not tracked — leg not clearly visible."];
+    const v=st.peak;
+    if(v>=8) return ["AMBER",name,`caves inward ~${v.toFixed(0)}° at the power phase (valgus). Common causes: cleat set too far inboard, low arch support, or hip stability — try nudging the cleat outward / a slightly wider stance, and confirm saddle height on the side view.`];
+    if(v<=-8) return ["AMBER",name,`bows outward ~${(-v).toFixed(0)}°. Often a stance too wide or cleats too far outboard — try nudging the cleat inward.`];
+    return ["GREEN",name,`tracks essentially straight (~${Math.abs(v).toFixed(0)}° off vertical).`];
+  };
+  const items=[ kneeRow("Left knee tracking",L), kneeRow("Right knee tracking",R) ];
+  if(rock!=null) items.push(rock>=6
+    ? ["AMBER","Pelvic rock",`hips rock ~${rock.toFixed(0)}° across the stroke. Often blamed on a high saddle, but it's an unreliable sign — confirm the side-view knee angle first. If saddle height checks out, this is usually core stability, not the bike.`]
+    : ["GREEN","Pelvic rock",`hips stay fairly level (~${rock.toFixed(0)}° of tilt).`]);
+  if(L&&R){ const d=Math.abs(L.peak-R.peak); items.push(d>=6
+    ? ["AMBER","Left / right symmetry",`one knee tracks ~${d.toFixed(0)}° differently to the other. Check the more-affected side first (cleat position, saddle offset); persistent asymmetry can point to a leg-length difference worth a pro fit.`]
+    : ["GREEN","Left / right symmetry",`legs track within ~${d.toFixed(0)}° of each other.`]); }
+
+  $("#frontout").innerHTML=items.map(([g,b,s])=>
+    `<div class="fmetric"><span class="dot ${g}"></span><div><b>${b}</b><span>${s}</span></div></div>`).join("");
+  const anyFlag=items.some(([g])=>g==="AMBER"||g==="RED");
+  $("#frontverdict").innerHTML=`<span class="vdot" style="background:${anyFlag?COL.AMBER:COL.GREEN}"></span>${anyFlag?"A couple of things to check":"Nothing obvious to flag"} &middot; ${F.length} frames`;
+  $("#frontview").textContent = viewMode==="front"?"Front view":"Rear view";
+  $("#example").hidden=true; $("#results").hidden=true; $("#frontresults").hidden=false;
+}
+</script>
+</body>
+</html>
