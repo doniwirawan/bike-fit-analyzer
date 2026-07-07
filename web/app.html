@@ -94,6 +94,19 @@
   .GREEN{background:var(--green)} .AMBER{background:var(--amber)} .RED{background:var(--red)} .GRAY{background:var(--gray)}
   .fixes{margin:14px 0 0;padding-left:18px} .fixes li{margin:6px 0;font-size:.9rem}
   .demoimg{width:100%;border-radius:10px;border:1px solid var(--line);margin-bottom:14px;display:block}
+  /* browser-frame mock for the sample figure */
+  .mock{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px}
+  .mock .bar{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--fg) 3%,var(--card))}
+  .mock .dots{display:flex;gap:6px}
+  .mock .dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+  .mock .url{flex:1;font-family:var(--mono);font-size:.66rem;color:var(--mut);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:4px 10px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mock .body{padding:14px}
+  .mock .demoimg{margin:0}
+  /* bike-type selector */
+  .biketype{margin:0 0 14px}
+  .biketype label{display:block;font-family:var(--mono);font-size:.66rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:6px}
+  .biketype select{width:100%;font-family:inherit;font-size:.92rem;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 11px;cursor:pointer}
+  .biketype .hint{color:var(--mut);font-size:.76rem;margin-top:6px;line-height:1.4}
   .foot{color:var(--mut);font-size:.78rem;margin-top:12px;line-height:1.45}
   .warn{display:flex;gap:9px;align-items:flex-start;margin:0 0 14px;padding:10px 12px;border-radius:8px;
     font-size:.84rem;line-height:1.4;background:color-mix(in srgb,var(--amber) 12%,transparent);
@@ -178,6 +191,18 @@
         <button data-view="rear">Rear</button>
       </div>
       <p class="lead">Side-on, 20–30s, phone at hip height, pedaling steadily.</p>
+      <div class="biketype">
+        <label for="biketype">Bike type</label>
+        <select id="biketype">
+          <option value="road_endurance">Road — endurance</option>
+          <option value="road_race">Road — race / aggressive</option>
+          <option value="tt_tri">TT / Triathlon</option>
+          <option value="gravel">Gravel</option>
+          <option value="mtb">Mountain (MTB)</option>
+          <option value="city">City / Hybrid</option>
+        </select>
+        <div class="hint">Tunes the target torso angle — more aggressive bikes sit lower. Saddle-height (knee) stays the same on any bike.</div>
+      </div>
       <div id="drop">
         <svg class="drop-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8"/><path d="m8 17 4-4 4 4"/><path d="M20 16.5A4.5 4.5 0 0 0 17.5 8h-1.8A7 7 0 1 0 4 14.9"/></svg>
         <b>Drop your video here</b>
@@ -216,7 +241,10 @@
       <div id="example">
         <div class="badge" style="color:var(--amber);border-color:color-mix(in srgb,var(--amber) 45%,var(--line))">Sample — not your result</div>
         <p class="lead" style="margin:-4px 0 14px">Here's what a finished analysis looks like. Your own numbers replace this once you add a clip on the left.</p>
-        <!-- self-contained illustrative figure (no external assets) -->
+        <!-- self-contained illustrative figure (no external assets), framed like the app window -->
+        <div class="mock">
+          <div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">bikefit-analyzer.vercel.app/app</div></div>
+          <div class="body">
         <svg class="demoimg" viewBox="0 0 520 306" role="img" aria-label="Example: road bike side view with fit skeleton and joint angles">
           <defs>
             <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
@@ -286,6 +314,8 @@
             <text x="152" y="72">SHOULDER</text><text x="212" y="195">KNEE</text><text x="262" y="102">ELBOW</text>
           </g>
         </svg>
+          </div>
+        </div>
         <div class="verdict"><span class="vdot" style="background:#d97706"></span>Minor tweaks · 5 pedal strokes</div>
         <div class="tscroll"><table>
           <thead><tr><th>Angle</th><th>Reading</th><th>Target</th><th>Grade</th></tr></thead>
@@ -358,6 +388,16 @@ const LABEL = {
   knee_flexion_bdc:["Knee at bottom","30–40°"], torso_from_horiz:["Torso from horizontal","40–50°"],
   elbow_flexion:["Elbow bend","15–30°"], shoulder_angle:["Shoulder (reach)","80–95°"],
 };
+// Torso "aggressiveness" varies by bike; saddle-height (knee), elbow, reach stay constant.
+// Each entry: green range + red bounds [glo,ghi,rlo,rhi], and the target label shown in the table.
+const BIKE_TORSO = {
+  road_endurance:{z:[40,50,34,56], t:"40–50°"},
+  road_race:     {z:[32,42,28,48], t:"32–42°"},
+  tt_tri:        {z:[12,28,8,34],  t:"12–28°"},
+  gravel:        {z:[42,52,36,58], t:"42–52°"},
+  mtb:           {z:[46,58,40,64], t:"46–58°"},
+  city:          {z:[55,70,48,78], t:"55–70°"},
+};
 const COL = {GREEN:"#16a34a", AMBER:"#d97706", RED:"#dc2626", GRAY:"#9aa3b2"};
 const MIN_VIS = 0.5;   // ignore joints MediaPipe isn't confident are visible
 
@@ -379,6 +419,16 @@ document.querySelectorAll(".viewsel button").forEach(b=>b.onclick=()=>{
     ? "Angles at the bottom of your stroke, graded against research ranges."
     : "Frontal-plane tracking hints — knee alignment, pelvic rock, symmetry. Beta.";
 });
+let bikeType="road_endurance";
+function applyBikeType(){
+  const b=BIKE_TORSO[bikeType]; if(!b) return;
+  ZONES.torso_from_horiz=b.z.slice();
+  LABEL.torso_from_horiz=["Torso from horizontal", b.t];
+}
+{ const bikeSel=$("#biketype");
+  if(bikeSel){ bikeSel.onchange=e=>{ bikeType=e.target.value; applyBikeType(); }; } }
+applyBikeType();
+
 async function initModel(){
   status.textContent="Loading pose model (first time only)…";
   const files=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm");
@@ -586,9 +636,9 @@ function finish(){
       : `Saddle looks high — leg nearly straight (${k.toFixed(0)}°) at the bottom (aim 30–40°). Lower it about ${mm}mm, in 2–3mm steps, and re-film. This is the most reliable reading here.`);
   }
   if(G.torso_from_horiz!=="GREEN"&&R.torso_from_horiz!=null)
-    fixes.push(R.torso_from_horiz>50
-      ? `Torso fairly upright (${R.torso_from_horiz.toFixed(0)}°). Comfortable — but if you want more power/aero and your flexibility allows, a slightly lower front end (spacers/stem) helps.`
-      : `Torso quite low/aggressive (${R.torso_from_horiz.toFixed(0)}°). If your lower back or neck complains, raise the bars or shorten the reach a touch.`);
+    fixes.push(R.torso_from_horiz>ZONES.torso_from_horiz[1]
+      ? `Torso more upright (${R.torso_from_horiz.toFixed(0)}°) than typical for this bike (aim ${LABEL.torso_from_horiz[1]}). Comfortable — but if you want more power/aero and your flexibility allows, a slightly lower front end (spacers/stem) helps.`
+      : `Torso lower/more aggressive (${R.torso_from_horiz.toFixed(0)}°) than typical for this bike (aim ${LABEL.torso_from_horiz[1]}). If your lower back or neck complains, raise the bars or shorten the reach a touch.`);
   if(G.elbow_flexion!=="GREEN"&&R.elbow_flexion!=null){
     if(R.elbow_flexion<15) fixes.push(`Elbow ${R.elbow_flexion.toFixed(0)}° → arms look locked. Soften your elbows first — a slight bend absorbs road buzz and often fixes this without touching the bike.`);
     else if(R.elbow_flexion>30) fixes.push(`Elbow ${R.elbow_flexion.toFixed(0)}° → arms quite bent. Usually fine; only if it feels cramped might the reach be a touch short.`);
