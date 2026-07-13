@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy — Bike Fit Analyzer</title>
+<meta name="description" id="metaDesc" content="How Bike Fit Analyzer handles your video and data: everything runs in your browser, nothing is uploaded.">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="legal.css">
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand" href="index.html"><img src="logo.png" alt="" width="26" height="26"> Bike Fit Analyzer</a>
+    <div class="langsw"><button data-lang="en">EN</button><button data-lang="id">ID</button></div>
+  </header>
+
+  <h1 data-i18n="h1">Privacy</h1>
+  <div class="updated" data-i18n="updated">Last updated 13 July 2026</div>
+
+  <div class="box">
+    <p data-i18n="tldr"><b>The short version:</b> your video is never uploaded. It is read and analyzed by your own browser, on your own device. There are no accounts and no cookies. Page-view analytics are counted, but they are anonymous and know nothing about your video.</p>
+  </div>
+
+  <h2 data-i18n="h.video">Your video and your camera</h2>
+  <p data-i18n="p.video">When you choose a file or record with your webcam, the video stays in your browser's memory. It is never sent to a server, and no copy of it is kept after you leave the page. Camera access is only requested at the moment you press Record, and the stream is only used to make that recording.</p>
+
+  <h2 data-i18n="h.stored">What is stored on your device</h2>
+  <p data-i18n="p.stored">Two things are saved in your browser's local storage, on your device only:</p>
+  <ul>
+    <li data-i18n="li.hist"><b>Your saved results</b> (<code>bfa-history</code>) — the measured angles, the grades, the bike type, and a small thumbnail image of the analyzed frame. This is what the "Saved results" list reads from. You can delete any entry, or all of them, with the buttons there.</li>
+    <li data-i18n="li.lang"><b>Your language choice</b> (<code>bfa-lang</code>) — so the page opens in the language you picked.</li>
+  </ul>
+  <p data-i18n="p.stored2">Neither is ever transmitted anywhere. Clearing your browser data deletes both.</p>
+
+  <h2 data-i18n="h.third">What your browser downloads from other servers</h2>
+  <p data-i18n="p.third">This is the one place where something leaves your device, so it is worth being precise about it. To analyze a clip, your browser downloads the pose-detection model and its runtime:</p>
+  <ul>
+    <li data-i18n="li.cdn">the MediaPipe runtime from <b>cdn.jsdelivr.net</b></li>
+    <li data-i18n="li.model">the pose model file from <b>storage.googleapis.com</b> (Google)</li>
+  </ul>
+  <p data-i18n="p.third2">As with downloading any file from any website, those servers can see your IP address, your browser type, and the fact that a file was requested. They receive <b>nothing about your video</b> — no frames, no images, no measurements. The analysis itself happens after the download, entirely on your device.</p>
+
+  <h2 data-i18n="h.analytics">Analytics</h2>
+  <p data-i18n="p.analytics">This site counts page views using Vercel Web Analytics. It is cookieless and does not build a profile of you or follow you across other sites. It records things like which page was opened, the referring site, and a coarse country and device type. It records <b>nothing</b> about your video, your camera, your measurements or your saved results — those never leave your device, so there is nothing for it to see.</p>
+
+  <h2 data-i18n="h.host">Hosting</h2>
+  <p data-i18n="p.host">The site is hosted on Vercel, which — like any web host — keeps standard server logs of requests (IP address, time, page). This site adds no tracking on top of that.</p>
+
+  <h2 data-i18n="h.links">Links out</h2>
+  <p data-i18n="p.links">The pages link to GitHub, Strava, and Ascent Analytics. If you follow one of those links, that site's own privacy policy applies. Nothing about your bike fit goes with you.</p>
+
+  <h2 data-i18n="h.contact">Questions</h2>
+  <p data-i18n="p.contact">The full source is published, so you can check every claim above for yourself. Questions or corrections are welcome on <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>.</p>
+
+  <footer>
+    <a href="index.html" data-i18n="f.home">Home</a>
+    <a href="app.html" data-i18n="f.app">Analyzer</a>
+    <a href="terms.html" data-i18n="f.terms">Terms</a>
+  </footer>
+</div>
+
+<script>
+const I18N = {
+  "doc.title":{en:"Privacy — Bike Fit Analyzer",id:"Privasi — Bike Fit Analyzer"},
+  "doc.desc":{en:"How Bike Fit Analyzer handles your video and data: everything runs in your browser, nothing is uploaded.",id:"Bagaimana Bike Fit Analyzer memperlakukan videomu: semuanya diproses di browser, tidak ada yang diunggah."},
+  "h1":{en:"Privacy",id:"Privasi"},
+  "updated":{en:"Last updated 13 July 2026",id:"Diperbarui 13 Juli 2026"},
+  "tldr":{en:"<b>The short version:</b> your video is never uploaded. It is read and analyzed by your own browser, on your own device. There are no accounts and no cookies. Page-view analytics are counted, but they are anonymous and know nothing about your video.",id:"<b>Ringkasnya:</b> videomu tidak pernah diunggah. Semuanya dibaca dan dianalisis oleh browser di perangkatmu sendiri. Tidak ada akun dan tidak ada cookie. Kunjungan halaman memang dihitung, tapi anonim dan tidak tahu apa pun tentang videomu."},
+  "h.video":{en:"Your video and your camera",id:"Video dan kameramu"},
+  "p.video":{en:"When you choose a file or record with your webcam, the video stays in your browser's memory. It is never sent to a server, and no copy of it is kept after you leave the page. Camera access is only requested at the moment you press Record, and the stream is only used to make that recording.",id:"Saat kamu memilih file atau merekam lewat webcam, videonya hanya berada di memori browser. Tidak pernah dikirim ke server, dan tidak ada salinan yang disimpan setelah kamu menutup halaman. Akses kamera baru diminta tepat ketika kamu menekan Rekam, dan streamnya hanya dipakai untuk rekaman itu."},
+  "h.stored":{en:"What is stored on your device",id:"Apa yang disimpan di perangkatmu"},
+  "p.stored":{en:"Two things are saved in your browser's local storage, on your device only:",id:"Ada dua hal yang disimpan di local storage browser, dan hanya di perangkatmu:"},
+  "li.hist":{en:"<b>Your saved results</b> (<code>bfa-history</code>) — the measured angles, the grades, the bike type, and a small thumbnail image of the analyzed frame. This is what the \"Saved results\" list reads from. You can delete any entry, or all of them, with the buttons there.",id:"<b>Hasil tersimpan</b> (<code>bfa-history</code>) — sudut yang terukur, nilainya, jenis sepeda, dan thumbnail kecil dari frame yang dianalisis. Inilah isi daftar \"Hasil tersimpan\". Kamu bisa menghapusnya satu per satu atau semuanya lewat tombol di sana."},
+  "li.lang":{en:"<b>Your language choice</b> (<code>bfa-lang</code>) — so the page opens in the language you picked.",id:"<b>Pilihan bahasamu</b> (<code>bfa-lang</code>) — supaya halaman terbuka dalam bahasa yang kamu pilih."},
+  "p.stored2":{en:"Neither is ever transmitted anywhere. Clearing your browser data deletes both.",id:"Keduanya tidak pernah dikirim ke mana pun. Kalau data browser kamu hapus, keduanya ikut terhapus."},
+  "h.third":{en:"What your browser downloads from other servers",id:"Yang diunduh browser dari server lain"},
+  "p.third":{en:"This is the one place where something leaves your device, so it is worth being precise about it. To analyze a clip, your browser downloads the pose-detection model and its runtime:",id:"Ini satu-satunya bagian di mana ada sesuatu yang keluar dari perangkatmu, jadi perlu dijelaskan tepat. Untuk menganalisis klip, browser mengunduh model deteksi pose dan runtime-nya:"},
+  "li.cdn":{en:"the MediaPipe runtime from <b>cdn.jsdelivr.net</b>",id:"runtime MediaPipe dari <b>cdn.jsdelivr.net</b>"},
+  "li.model":{en:"the pose model file from <b>storage.googleapis.com</b> (Google)",id:"berkas model pose dari <b>storage.googleapis.com</b> (Google)"},
+  "p.third2":{en:"As with downloading any file from any website, those servers can see your IP address, your browser type, and the fact that a file was requested. They receive <b>nothing about your video</b> — no frames, no images, no measurements. The analysis itself happens after the download, entirely on your device.",id:"Seperti saat mengunduh berkas apa pun dari situs mana pun, server tersebut bisa melihat alamat IP, jenis browser, dan bahwa ada berkas yang diminta. Mereka <b>tidak menerima apa pun tentang videomu</b> — tidak ada frame, gambar, atau hasil pengukuran. Analisisnya sendiri berjalan setelah unduhan selesai, sepenuhnya di perangkatmu."},
+  "h.analytics":{en:"Analytics",id:"Analytics"},
+  "p.analytics":{en:"This site counts page views using Vercel Web Analytics. It is cookieless and does not build a profile of you or follow you across other sites. It records things like which page was opened, the referring site, and a coarse country and device type. It records <b>nothing</b> about your video, your camera, your measurements or your saved results — those never leave your device, so there is nothing for it to see.",id:"Situs ini menghitung kunjungan halaman memakai Vercel Web Analytics. Tanpa cookie, tidak membuat profil tentangmu, dan tidak mengikutimu ke situs lain. Yang tercatat hal seperti halaman apa yang dibuka, situs perujuk, serta negara dan jenis perangkat secara kasar. Yang <b>tidak</b> tercatat: apa pun tentang videomu, kameramu, hasil pengukuranmu, atau hasil tersimpanmu — semua itu tidak pernah keluar dari perangkatmu, jadi tidak ada yang bisa dilihat."},
+  "h.host":{en:"Hosting",id:"Hosting"},
+  "p.host":{en:"The site is hosted on Vercel, which — like any web host — keeps standard server logs of requests (IP address, time, page). This site adds no tracking on top of that.",id:"Situs ini di-host di Vercel yang — seperti hosting mana pun — menyimpan log permintaan standar (alamat IP, waktu, halaman). Situs ini tidak menambahkan pelacakan apa pun di atas itu."},
+  "h.links":{en:"Links out",id:"Tautan ke luar"},
+  "p.links":{en:"The pages link to GitHub, Strava, and Ascent Analytics. If you follow one of those links, that site's own privacy policy applies. Nothing about your bike fit goes with you.",id:"Halaman ini punya tautan ke GitHub, Strava, dan Ascent Analytics. Kalau kamu mengikuti salah satunya, kebijakan privasi situs tersebut yang berlaku. Tidak ada data bike fit-mu yang ikut terbawa."},
+  "h.contact":{en:"Questions",id:"Pertanyaan"},
+  "p.contact":{en:"The full source is published, so you can check every claim above for yourself. Questions or corrections are welcome on <a href=\"https://github.com/doniwirawan/bike-fit-analyzer\" target=\"_blank\" rel=\"noopener\">GitHub</a>.",id:"Kodenya dipublikasikan, jadi kamu bisa memeriksa sendiri setiap klaim di atas. Pertanyaan atau koreksi sangat diterima lewat <a href=\"https://github.com/doniwirawan/bike-fit-analyzer\" target=\"_blank\" rel=\"noopener\">GitHub</a>."},
+  "f.home":{en:"Home",id:"Beranda"},
+  "f.app":{en:"Analyzer",id:"Analyzer"},
+  "f.terms":{en:"Terms",id:"Ketentuan"},
+};
+const ID_TZ=/Asia\/(Jakarta|Pontianak|Makassar|Jayapura)/;
+function detectLang(){
+  const s=localStorage.getItem('bfa-lang'); if(s==='en'||s==='id')return s;
+  const n=((navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'en']).join(',')).toLowerCase();
+  if(/\bid\b|id[-_]|in[-_]/.test(n))return 'id';
+  try{ if(ID_TZ.test(Intl.DateTimeFormat().resolvedOptions().timeZone||''))return 'id'; }catch(e){}
+  return 'en';
+}
+function applyLang(l){
+  document.documentElement.lang=l;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const e=I18N[el.getAttribute('data-i18n')]; if(e) el.innerHTML=e[l]||e.en;});
+  document.title=(I18N['doc.title'][l]||I18N['doc.title'].en);
+  const md=document.getElementById('metaDesc'); if(md) md.setAttribute('content',I18N['doc.desc'][l]||I18N['doc.desc'].en);
+  document.querySelectorAll('.langsw button').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
+}
+document.querySelectorAll('.langsw button').forEach(b=>b.addEventListener('click',()=>{
+  localStorage.setItem('bfa-lang',b.dataset.lang); applyLang(b.dataset.lang);
+}));
+applyLang(detectLang());
+</script>
+</body>
+</html>

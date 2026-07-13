@@ -180,6 +180,7 @@
   }
   @media(max-width:380px){ .hero h1{font-size:1.4rem} .wrap{padding:0 14px} }
 </style>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -197,7 +198,7 @@
          fitter checks, and tells you the exact change. Your video never leaves your device.</p>
       <div class="chips">
         <span class="chip" data-i18n="chip.ondevice">100% on-device</span><span class="chip" data-i18n="chip.noupload">No upload to a server</span>
-        <span class="chip" data-i18n="chip.oss">Free &amp; open source</span><span class="chip" data-i18n="chip.mp">Powered by MediaPipe Pose</span>
+        <span class="chip" data-i18n="chip.oss">Free to use</span><span class="chip" data-i18n="chip.mp">Powered by MediaPipe Pose</span>
       </div>
     </div>
   </header>
@@ -413,6 +414,8 @@
     Ranges from the Holmes method + dynamic-fit research. Not medical advice.
     Source on <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>.
   </footer>
+  <div class="foot" style="margin-top:8px"><a href="privacy.html" data-i18n="foot.privacy">Privacy</a> &middot; <a href="terms.html" data-i18n="foot.terms">Terms</a></div>
+
 </div>
 
 <script type="module">
@@ -427,7 +430,7 @@ const I18N = {
   "hero.p":{en:"Drop a side-on clip of yourself pedaling. AI tracks your joints, measures the angles a fitter checks, and tells you the exact change. Your video never leaves your device.",id:"Rekam dirimu dari samping saat mengayuh. AI mendeteksi posisi tubuhmu, mengukur sudut yang biasa dipakai saat bike fitting, lalu menunjukkan bagian mana yang sudah pas dan mana yang masih perlu disesuaikan. Videomu tidak diunggah ke server."},
   "chip.ondevice":{en:"100% on-device",id:"Diproses di browser"},
   "chip.noupload":{en:"No upload to a server",id:"Video tetap di perangkatmu"},
-  "chip.oss":{en:"Free & open source",id:"Gratis & open source"},
+  "chip.oss":{en:"Free to use",id:"Gratis dipakai"},
   "chip.mp":{en:"Powered by MediaPipe Pose",id:"Pakai MediaPipe Pose"},
   "panel.h2":{en:"1 · Your clip",id:"1 · Klipmu"},
   "view.side":{en:"Side",id:"Samping"}, "view.front":{en:"Front",id:"Depan"}, "view.rear":{en:"Rear",id:"Belakang"},
@@ -500,6 +503,8 @@ const I18N = {
   "hist.clear":{en:"Clear all",id:"Hapus semua"},
   "hist.load":{en:"Open",id:"Buka"},
   "hist.del":{en:"Delete",id:"Hapus"},
+  "foot.privacy":{en:"Privacy",id:"Privasi"},
+  "foot.terms":{en:"Terms",id:"Ketentuan"},
   "hist.note":{en:"Saved in this browser only — never uploaded. Clearing your browser data removes them.",id:"Tersimpan di browser ini saja — tidak pernah diunggah. Kalau data browser dihapus, hasilnya ikut hilang."},
   "err.unsupported":{en:"This browser can't run the analyzer.",id:"Browser ini tidak bisa menjalankan analyzer."},
   "err.missing":{en:"Try a recent Chrome, Edge, Safari or Firefox. Missing here:",id:"Coba Chrome, Edge, Safari, atau Firefox versi baru. Yang tidak tersedia:"},

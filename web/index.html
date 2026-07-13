@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bike Fit Analyzer — grade your bike fit in your browser</title>
-<meta name="description" id="metaDesc" content="Drop a clip of yourself pedaling and get your bike-fit angles graded green / amber / red, right in your browser. Works with any bike. 100% on-device, free & open source.">
+<meta name="description" id="metaDesc" content="Drop a clip of yourself pedaling and get your bike-fit angles graded green / amber / red, right in your browser. Works with any bike. 100% on-device, free to use, source published.">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
@@ -229,6 +229,7 @@
     .cta{flex-direction:column;align-items:stretch}
   }
 </style>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -551,7 +552,7 @@
       <details><summary data-i18n="faq.q3">How accurate is it?</summary><p data-i18n="faq.a3">Accurate enough to find the obvious problems, like a saddle that's too high or too low. The knee angle is the most consistent measurement, while reach is the least precise. This is still 2D analysis and it can't replace a professional 3D bike fitting.</p></details>
       <details><summary data-i18n="faq.q4">What kind of clip should I film?</summary><p data-i18n="faq.a4">Film about 20–30 seconds with the camera square to your side and at hip height. Pedal as you normally would, at a steady rhythm. With a turbo trainer and enough light, the result is usually more consistent.</p></details>
       <details><summary data-i18n="faq.q5">Does it work on my phone?</summary><p data-i18n="faq.a5">Yes. The analyzer runs in modern browsers on both phones and computers. Devices that support WebGPU will process the video faster, while older ones fall back to the CPU. That can be a little slower, but it still works.</p></details>
-      <details><summary data-i18n="faq.q6">Is it free and open source?</summary><p data-i18n="faq.a6">Yes. Bike Fit Analyzer is completely free and open source. If you're curious how it works, or you'd like to contribute, you can <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">read the code on GitHub</a>.</p></details>
+      <details><summary data-i18n="faq.q6">Is it free? Can I see the code?</summary><p data-i18n="faq.a6">Yes, it is completely free to use. The full source is published so you can see exactly how it works and check the privacy claims for yourself — <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">read the code on GitHub</a>. It is source-available rather than open source: you are welcome to read it, learn from it and use the tool, but not to build a competing product from it.</p></details>
       <details><summary data-i18n="faq.q7">Can it replace a professional bike fit?</summary><p data-i18n="faq.a7">Not yet. This tool is built to help you run a basic check and find the clearly visible problems, before you adjust anything yourself or go to a bike fitter. For a genuinely precise result — especially if you have pain or specific fitting needs — a professional session is still the better option.</p></details>
     </div>
   </section>
@@ -620,6 +621,8 @@
         <a href="app.html" data-i18n="foot.launch">Launch analyzer</a>
         <a href="#" data-i18n="foot.how" onclick="return false">How it works</a>
         <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>
+        <a href="privacy.html" data-i18n="foot.privacy">Privacy</a>
+        <a href="terms.html" data-i18n="foot.terms">Terms</a>
       </div>
       <div class="foot-col">
         <h4 data-i18n="foot.projects">Projects</h4>
@@ -643,7 +646,7 @@
 <script>
   const I18N = {
     "doc.title":{en:"Bike Fit Analyzer — grade your bike fit in your browser",id:"Bike Fit Analyzer — nilai bike fit-mu langsung di browser"},
-    "doc.desc":{en:"Drop a clip of yourself pedaling and get your bike-fit angles graded green / amber / red, right in your browser. Works with any bike. 100% on-device, free & open source.",id:"Masukkan klip saat kamu mengayuh, dan sudut bike fit-mu langsung dinilai hijau / kuning / merah di browser. Cocok untuk sepeda apa pun. 100% di perangkatmu, gratis & open source."},
+    "doc.desc":{en:"Drop a clip of yourself pedaling and get your bike-fit angles graded green / amber / red, right in your browser. Works with any bike. 100% on-device, free to use, source published.",id:"Masukkan klip saat kamu mengayuh, dan sudut bike fit-mu langsung dinilai hijau / kuning / merah di browser. Cocok untuk sepeda apa pun. 100% di perangkatmu, gratis dipakai, kodenya terbuka."},
 
     "hero.h1":{en:'Grade your bike fit — <span class="g">green</span>, <span class="a">amber</span>, <span class="r">red</span>.',id:'Cek apakah bike fit-mu sudah pas.'},
     "hero.sub":{en:"Film yourself pedaling for about 20–30 seconds. The analyzer reads your body position in every frame, measures the angles used in bike fitting, and shows you which parts are already right and which ones still need adjusting. Everything runs in your browser. Your video is never uploaded to a server.",id:"Rekam dirimu mengayuh selama sekitar 20–30 detik. Analyzer akan membaca posisi tubuhmu di tiap frame, mengukur sudut yang biasa dipakai saat bike fitting, lalu menunjukkan bagian mana yang sudah pas dan mana yang masih bisa diperbaiki. Semua diproses langsung di browser. Videomu tidak diunggah ke server."},
@@ -651,7 +654,7 @@
     "hero.source":{en:"Source on GitHub",id:"Lihat kode di GitHub"},
     "chip.ondevice":{en:"Runs in your browser",id:"Diproses di browser"},
     "chip.noupload":{en:"No video upload",id:"Tanpa upload video"},
-    "chip.opensource":{en:"Open source",id:"Open source"},
+    "chip.opensource":{en:"Source available",id:"Kode terbuka"},
     "chip.anybike":{en:"Any bike",id:"Semua sepeda"},
 
     "mock.verdict":{en:"Minor tweaks · 5 pedal strokes",id:"Perlu sedikit tweak · 5 kayuhan"},
@@ -763,10 +766,12 @@
     "final.p":{en:"Drop a clip and get a graded read in under a minute — free, in your browser.",id:"Masukkan klipmu dan lihat hasilnya kurang dari semenit — gratis, langsung di browser."},
     "final.btn":{en:"Launch the analyzer",id:"Buka analyzer"},
 
-    "foot.tagline":{en:"Grade your bike fit in your browser. Works with any bike. Free &amp; open source.",id:"Nilai bike fit-mu langsung di browser. Cocok untuk sepeda apa pun. Gratis &amp; open source."},
+    "foot.tagline":{en:"Grade your bike fit in your browser. Works with any bike. Free to use.",id:"Nilai bike fit-mu langsung di browser. Cocok untuk sepeda apa pun. Gratis dipakai."},
     "foot.product":{en:"Product",id:"Produk"},
     "foot.launch":{en:"Launch analyzer",id:"Buka analyzer"},
     "foot.how":{en:"How it works",id:"Cara kerja"},
+    "foot.privacy":{en:"Privacy",id:"Privasi"},
+    "foot.terms":{en:"Terms",id:"Ketentuan"},
     "foot.projects":{en:"Projects",id:"Proyek"},
     "foot.connect":{en:"Connect",id:"Kontak"},
     "foot.legal":{en:"Runs entirely in your browser with MediaPipe Pose. Ranges from the Holmes method + dynamic-fit research. Not medical advice, and not a substitute for a professional bike fit.",id:"Semuanya diproses langsung di browser pakai MediaPipe Pose. Target diambil dari metode Holmes + riset dynamic-fit. Bukan nasihat medis, dan bukan pengganti bike fit profesional."},
@@ -802,8 +807,8 @@
     "faq.a4":{en:"Film about 20–30 seconds with the camera square to your side and at hip height. Pedal as you normally would, at a steady rhythm. With a turbo trainer and enough light, the result is usually more consistent.",id:"Rekam sekitar 20–30 detik dengan kamera tepat dari samping dan setinggi pinggul. Kayuh seperti biasa dengan ritme yang stabil. Kalau memakai turbo trainer dan pencahayaan yang cukup, hasilnya biasanya lebih konsisten."},
     "faq.q5":{en:"Does it work on my phone?",id:"Apakah jalan di HP saya?"},
     "faq.a5":{en:"Yes. The analyzer runs in modern browsers on both phones and computers. Devices that support WebGPU will process the video faster, while older ones fall back to the CPU. That can be a little slower, but it still works.",id:"Ya. Analyzer berjalan di browser modern di HP maupun komputer. Perangkat yang mendukung WebGPU akan memproses video lebih cepat, sedangkan perangkat yang lebih lama akan menggunakan CPU. Prosesnya mungkin sedikit lebih lambat, tetapi tetap bisa digunakan."},
-    "faq.q6":{en:"Is it free and open source?",id:"Apakah gratis dan open source?"},
-    "faq.a6":{en:'Yes. Bike Fit Analyzer is completely free and open source. If you\'re curious how it works, or you\'d like to contribute, you can <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">read the code on GitHub</a>.',id:'Ya. Bike Fit Analyzer sepenuhnya gratis dan bersifat open source. Kalau penasaran cara kerjanya atau ingin ikut berkontribusi, kamu bisa <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">melihat kodenya di GitHub</a>.'},
+    "faq.q6":{en:"Is it free? Can I see the code?",id:"Apakah gratis? Bisakah saya lihat kodenya?"},
+    "faq.a6":{en:'Yes, it is completely free to use. The full source is published so you can see exactly how it works and check the privacy claims for yourself — <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">read the code on GitHub</a>. It is source-available rather than open source: you are welcome to read it, learn from it and use the tool, but not to build a competing product from it.',id:'Ya, sepenuhnya gratis dipakai. Kodenya dipublikasikan supaya kamu bisa melihat persis cara kerjanya dan memeriksa sendiri klaim privasinya — <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">lihat kodenya di GitHub</a>. Sifatnya source-available, bukan open source: silakan dibaca, dipelajari, dan alatnya dipakai, tapi tidak untuk membuat produk saingan.'},
     "faq.q7":{en:"Can it replace a professional bike fit?",id:"Bisakah ini menggantikan bike fit profesional?"},
     "faq.a7":{en:"Not yet. This tool is built to help you run a basic check and find the clearly visible problems, before you adjust anything yourself or go to a bike fitter. For a genuinely precise result — especially if you have pain or specific fitting needs — a professional session is still the better option.",id:"Belum. Alat ini dibuat untuk membantu melakukan pengecekan dasar dan menemukan masalah yang cukup jelas sebelum melakukan penyesuaian atau datang ke bike fitter. Untuk hasil yang benar-benar presisi, terutama kalau ada keluhan atau kebutuhan fit yang spesifik, sesi bike fitting profesional tetap menjadi pilihan terbaik."}
   };
