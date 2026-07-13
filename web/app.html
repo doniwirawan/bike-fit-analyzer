@@ -26,7 +26,6 @@
     background:var(--bg);color:var(--fg);line-height:1.5;overflow-wrap:break-word;-webkit-font-smoothing:antialiased}
   .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
   img,svg,canvas,video{max-width:100%;height:auto}
-  .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
   table{width:100%;min-width:0}
 
   /* header */
@@ -90,14 +89,19 @@
   .badge{display:inline-block;font-family:var(--mono);font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
     color:var(--mut);background:transparent;border:1px solid var(--line);padding:3px 8px;border-radius:4px;margin-bottom:14px}
   .verdict{font-size:1.08rem;font-weight:700;margin:2px 0 14px}
-  table{width:100%;border-collapse:collapse}
-  th,td{text-align:left;padding:9px 6px;border-bottom:1px solid var(--grid);font-size:.92rem}
-  thead th{border-bottom:1px solid var(--line)}
-  th{color:var(--mut);font-family:var(--mono);font-weight:600;font-size:.66rem;text-transform:uppercase;letter-spacing:.08em}
-  td.val{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:700}
-  td:nth-child(3){font-family:var(--mono);color:var(--mut);font-size:.84rem}
-  .pill{padding:2px 9px;border-radius:4px;color:#fff;font-family:var(--mono);font-weight:700;font-size:.66rem;letter-spacing:.06em}
   .GREEN{background:var(--green)} .AMBER{background:var(--amber)} .RED{background:var(--red)} .GRAY{background:var(--gray)}
+  /* per-angle cards: the reading, its target, and where it sits in the range */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:560px){ .cards{grid-template-columns:1fr} }
+  .mcard{border:1px solid var(--line);border-radius:12px;padding:12px 13px;background:var(--soft)}
+  .mcard .cname{color:var(--mut);font-family:var(--mono);font-size:.62rem;font-weight:600;
+    text-transform:uppercase;letter-spacing:.09em}
+  .mcard .cval{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:800;
+    font-size:1.7rem;line-height:1.15;margin:3px 0 1px}
+  .mcard .ctgt{color:var(--mut);font-family:var(--mono);font-size:.72rem}
+  .rbar{position:relative;height:6px;border-radius:99px;margin:10px 2px 5px}
+  .rbar .mk{position:absolute;top:-4px;width:3px;height:14px;border-radius:2px;background:#fff;
+    box-shadow:0 0 0 1.5px rgba(0,0,0,.45);transform:translateX(-1.5px)}
   .fixes{margin:14px 0 0;padding-left:18px} .fixes li{margin:6px 0;font-size:.9rem}
   .demoimg{width:100%;border-radius:10px;border:1px solid var(--line);margin-bottom:14px;display:block}
   /* browser-frame mock for the sample figure */
@@ -329,15 +333,7 @@
           </div>
         </div>
         <div class="verdict"><span class="vdot" style="background:#d97706"></span><span data-i18n="ex.verdict">Minor tweaks · 5 pedal strokes</span></div>
-        <div class="tscroll"><table>
-          <thead><tr><th data-i18n="th.angle">Angle</th><th data-i18n="th.reading">Reading</th><th data-i18n="th.target">Target</th><th data-i18n="th.grade">Grade</th></tr></thead>
-          <tbody>
-            <tr><td data-i18n="ex.knee">Knee at bottom</td><td class="val">38°</td><td>30–40°</td><td><span class="pill GREEN" data-i18n="grade.GREEN">GREEN</span></td></tr>
-            <tr><td data-i18n="ex.torso">Torso from horizontal</td><td class="val">48°</td><td>40–50°</td><td><span class="pill GREEN" data-i18n="grade.GREEN">GREEN</span></td></tr>
-            <tr><td data-i18n="ex.elbow">Elbow bend</td><td class="val">13°</td><td>15–30°</td><td><span class="pill AMBER" data-i18n="grade.AMBER">AMBER</span></td></tr>
-            <tr><td data-i18n="ex.shoulder">Shoulder (reach)</td><td class="val">82°</td><td>80–95°</td><td><span class="pill GREEN" data-i18n="grade.GREEN">GREEN</span></td></tr>
-          </tbody>
-        </table></div>
+        <div class="cards" id="excards"></div>
         <div class="foot" style="margin-top:10px" data-i18n="ex.hip">Hip at top of stroke: 96° (reference 85–110°, informational — depends on flexibility &amp; reach).</div>
         <ul class="fixes"><li data-i18n="ex.fix">Elbow 13° → arms a touch straight; soften them slightly for comfort.</li></ul>
         <div class="foot" data-i18n="ex.sample">This is a sample. Drop your own clip on the left to get your real numbers.</div>
@@ -347,13 +343,16 @@
         <div class="badge" style="color:var(--accent);background:var(--soft)" data-i18n="res.badge">Your result</div>
         <div class="verdict" id="verdict"></div>
         <div class="warn" id="viewwarn" hidden><span class="i">&#9888;</span><span data-i18n="res.viewwarn"><b>This clip doesn't look square-on.</b> Off-axis footage stretches or squashes these angles — especially reach. Re-film with the camera directly beside you (90° to the bike, at hip height) for reliable numbers.</span></div>
-        <div class="tscroll"><table><thead><tr><th data-i18n="th.angle">Angle</th><th data-i18n="th.reading">Reading</th><th data-i18n="th.target">Target</th><th data-i18n="th.grade">Grade</th></tr></thead>
-          <tbody id="tbody"></tbody></table></div>
+        <div class="cards" id="cards"></div>
         <div class="foot" id="hipinfo" style="margin-top:10px"></div>
         <h4 style="margin:16px 0 4px" data-i18n="res.dothis">Do this</h4>
         <ul class="fixes" id="fixes"></ul>
         <div class="foot" data-i18n="res.foot">2D side-view estimate, not a 3D pro fit. Saddle height (knee) is the most reliable number here; reach/shoulder is the softest — don't change your stem on one clip. Change one thing at a time, then re-film.</div>
-        <button class="btn primary" style="margin-top:14px" onclick="location.reload()" data-i18n="res.again">Analyze another clip</button>
+        <div class="try" style="margin-top:14px">
+          <button class="btn primary" onclick="location.reload()" data-i18n="res.again">Analyze another clip</button>
+          <button class="btn ghost" id="dl" data-i18n="btn.download">Download image</button>
+          <button class="btn ghost" id="share" hidden data-i18n="btn.share">Share my result</button>
+        </div>
       </div>
 
       <div id="frontresults" hidden>
@@ -413,10 +412,8 @@ const I18N = {
   "ex.badge":{en:"Sample — not your result",id:"Contoh — bukan hasilmu"},
   "ex.lead":{en:"Here's what a finished analysis looks like. Your own numbers replace this once you add a clip on the left.",id:"Tampilan hasilmu nanti kurang lebih seperti ini. Angka aslimu muncul begitu kamu masukkan klip di sebelah kiri."},
   "ex.verdict":{en:"Minor tweaks · 5 pedal strokes",id:"Perlu sedikit tweak · 5 kayuhan"},
-  "th.angle":{en:"Angle",id:"Sudut"}, "th.reading":{en:"Reading",id:"Bacaan"}, "th.target":{en:"Target",id:"Target"}, "th.grade":{en:"Grade",id:"Nilai"},
   "ex.knee":{en:"Knee at bottom",id:"Lutut di bawah"}, "ex.torso":{en:"Torso from horizontal",id:"Torso dari horizontal"},
   "ex.elbow":{en:"Elbow bend",id:"Tekukan siku"}, "ex.shoulder":{en:"Shoulder (reach)",id:"Bahu (jangkauan)"},
-  "grade.GREEN":{en:"GREEN",id:"HIJAU"}, "grade.AMBER":{en:"AMBER",id:"KUNING"}, "grade.RED":{en:"RED",id:"MERAH"}, "grade.GRAY":{en:"GRAY",id:"ABU"},
   "ex.hip":{en:"Hip at top of stroke: 96° (reference 85–110°, informational — depends on flexibility & reach).",id:"Pinggul di titik teratas kayuhan: 96° (acuan 85–110°, sekadar info — tergantung kelenturan dan jangkauan)."},
   "ex.fix":{en:"Elbow 13° → arms a touch straight; soften them slightly for comfort.",id:"Siku 13° → lengan agak lurus. Tekuk sedikit biar lebih nyaman."},
   "ex.sample":{en:"This is a sample. Drop your own clip on the left to get your real numbers.",id:"Ini cuma contoh. Masukkan klipmu di kiri untuk lihat angka aslimu."},
@@ -461,6 +458,9 @@ const I18N = {
   "adv.allgood":{en:"Everything's in range — nice fit. Re-film if you change anything.",id:"Semua sudah pas — fit-nya bagus. Rekam ulang kalau kamu ubah sesuatu."},
   "legend.dialed":{en:"dialed",id:"pas"}, "legend.borderline":{en:"borderline",id:"batas"}, "legend.fixit":{en:"fix it",id:"perbaiki"},
   "retry":{en:"Try another clip",id:"Coba klip lain"},
+  "btn.download":{en:"Download image",id:"Unduh gambar"},
+  "btn.share":{en:"Share my result",id:"Bagikan hasilku"},
+  "share.text":{en:"My bike fit, graded in the browser with Bike Fit Analyzer.",id:"Bike fit-ku, dinilai langsung di browser pakai Bike Fit Analyzer."},
 };
 const ID_TZ=/Asia\/(Jakarta|Pontianak|Makassar|Jayapura)/;
 function detectLang(){
@@ -495,13 +495,53 @@ function updateLeads(){
   const rl=document.querySelector("#resultlead");
   if(rl) rl.textContent = t(viewMode==="side"?"reslead.side":"reslead.front");
 }
+// The bar's colour bands are derived from ZONES itself, so it can never disagree with the
+// grade shown next to it. Domain is the red bounds plus a margin, so an out-of-range reading
+// still lands somewhere visible instead of falling off the end.
+function barScale(m,zones){
+  const [glo,ghi,rlo,rhi]=(zones||ZONES)[m], pad=Math.max(4,(rhi-rlo)*0.28);
+  const lo=rlo-pad, hi=rhi+pad;
+  // clamp just inside the ends: a reading far past the red still shows a visible marker
+  // pinned at the edge, rather than a half-cut sliver hanging off the bar.
+  return {lo,hi,glo,ghi,rlo,rhi,pos:v=>Math.max(2,Math.min(98,(v-lo)/(hi-lo)*100))};
+}
+function zoneGradient(m,zones){
+  const s=barScale(m,zones), p=x=>s.pos(x).toFixed(1)+"%";
+  const R_=COL.RED, A_=COL.AMBER, G_=COL.GREEN;
+  return `linear-gradient(90deg,`+
+    `${R_} 0 ${p(s.rlo)},${A_} ${p(s.rlo)} ${p(s.glo)},`+
+    `${G_} ${p(s.glo)} ${p(s.ghi)},${A_} ${p(s.ghi)} ${p(s.rhi)},${R_} ${p(s.rhi)} 100%)`;
+}
+function rangeMarker(m,v,zones){
+  if(v==null||isNaN(v)) return "";
+  return `<span class="mk" style="left:${barScale(m,zones).pos(v).toFixed(1)}%"></span>`;
+}
+function angleCard(m,v,g,target,zones){
+  return `<div class="mcard"><div class="cname">${t(LABEL[m][0])}</div>`+
+    `<div class="cval" style="color:${COL[g]}">${v==null||isNaN(v)?"—":Math.round(v)+"°"}</div>`+
+    `<div class="rbar" style="background:${zoneGradient(m,zones)}">${rangeMarker(m,v,zones)}</div>`+
+    `<div class="ctgt">${target}</div></div>`;
+}
+// The sample card set is pinned to the road-endurance zones so it stays a stable illustration
+// and doesn't turn red when someone picks a TT bike before uploading anything.
+const EX_ZONES={knee_flexion_bdc:[30,40,28,42],torso_from_horiz:[40,50,34,56],
+  elbow_flexion:[15,30,8,45],shoulder_angle:[80,95,70,105]};
+const EX_VALS={knee_flexion_bdc:[38,"30–40°"],torso_from_horiz:[48,"40–50°"],
+  elbow_flexion:[13,"15–30°"],shoulder_angle:[82,"80–95°"]};
+function renderExample(){
+  const box=document.querySelector("#excards"); if(!box) return;
+  box.innerHTML=Object.keys(EX_VALS).map(m=>{
+    const [v,tg]=EX_VALS[m];
+    const [glo,ghi,rlo,rhi]=EX_ZONES[m];
+    const g = v<rlo||v>rhi ? "RED" : (v<glo||v>ghi ? "AMBER" : "GREEN");
+    return angleCard(m,v,g,tg,EX_ZONES);
+  }).join("");
+}
 function renderSide(){
   const {R,G,strokes,hipTop,offAxis}=lastSide;
   const overall=worse(...Object.values(G));
-  const tb=document.querySelector("#tbody"); tb.innerHTML="";
-  for(const m in ZONES){ const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${t(LABEL[m][0])}</td><td class="val">${R[m]==null?"—":R[m].toFixed(0)+"°"}</td>`+
-      `<td>${LABEL[m][1]}</td><td><span class="pill ${G[m]}">${t('grade.'+G[m])}</span></td>`; tb.appendChild(tr); }
+  document.querySelector("#cards").innerHTML =
+    Object.keys(ZONES).map(m=>angleCard(m,R[m],G[m],LABEL[m][1])).join("");
   document.querySelector("#verdict").innerHTML=`<span class="vdot" style="background:${COL[overall]}"></span>${t('vd.'+overall)} &middot; ${strokes} ${t('word.strokes')}`;
   document.querySelector("#hipinfo").textContent=hipTop==null?"":DX.hipInfo(hipTop.toFixed(0));
   const fixes=[];
@@ -536,6 +576,7 @@ function applyLang(l){
   document.querySelectorAll('[data-i18n]').forEach(el=>{const e=I18N[el.getAttribute('data-i18n')]; if(e) el.innerHTML=e[l]||e.en;});
   document.title=t('doc.title');
   updateLeads();
+  renderExample();
   if(lastSide) renderSide();
   if(lastFront) renderFront();
   document.querySelectorAll('.langsw button').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
@@ -892,6 +933,26 @@ function finishFrontal(){
   lastFront={L,R,rock,frames:F.length,view:viewMode};
   renderFront();
   $("#example").hidden=true; $("#results").hidden=true; $("#frontresults").hidden=false;
+}
+
+/* download / share the graded frame (the canvas already holds it) */
+const shotName=()=>`bikefit-${new Date().toISOString().slice(0,10)}.png`;
+const shot=()=>new Promise(r=>cv.toBlob(r,"image/png"));
+$("#dl").onclick=async()=>{
+  const b=await shot(); if(!b) return;
+  const u=URL.createObjectURL(b), a=document.createElement("a");
+  a.href=u; a.download=shotName(); a.click(); URL.revokeObjectURL(u);
+};
+{ const sb=$("#share");
+  // only offer Share where the browser can actually share a file — otherwise Download is it
+  if(navigator.canShare && navigator.canShare({files:[new File([""],"x.png",{type:"image/png"})]})){
+    sb.hidden=false;
+    sb.onclick=async()=>{
+      const b=await shot(); if(!b) return;
+      try{ await navigator.share({files:[new File([b],shotName(),{type:"image/png"})],
+        title:"Bike Fit Analyzer", text:t('share.text')}); }catch(e){}
+    };
+  }
 }
 
 /* language toggle + initial apply */
