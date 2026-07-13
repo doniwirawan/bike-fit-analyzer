@@ -76,12 +76,19 @@ private fun App(handed: Uri? = null) {
     val infos by work.getWorkInfosForUniqueWorkLiveData("analysis")
         .observeAsStateCompat()
 
-    val running = infos?.firstOrNull()?.state == WorkInfo.State.RUNNING
-    val progress = infos?.firstOrNull()?.progress?.getInt(AnalysisWorker.PROGRESS, 0) ?: 0
+    // A worker killed with the process (crash, force-stop) can leave its WorkInfo stuck in
+    // RUNNING, which left a progress bar on screen forever. Clear a stale run on start.
+    val info = infos?.firstOrNull()
+    LaunchedEffect(Unit) {
+        if (info?.state == WorkInfo.State.RUNNING && info.progress.getInt(AnalysisWorker.PROGRESS, 0) == 0)
+            work.cancelUniqueWork("analysis")
+    }
+    val running = info?.state == WorkInfo.State.RUNNING
+    val progress = info?.progress?.getInt(AnalysisWorker.PROGRESS, 0) ?: 0
 
     // refresh the result when the worker finishes
-    LaunchedEffect(infos?.firstOrNull()?.state) {
-        if (infos?.firstOrNull()?.state?.isFinished == true) result = ResultStore.latest(ctx)
+    LaunchedEffect(info?.state) {
+        if (info?.state?.isFinished == true) result = ResultStore.latest(ctx)
     }
 
     val notifPerm = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
@@ -177,6 +184,114 @@ private fun App(handed: Uri? = null) {
             Spacer(Modifier.height(24.dp))
             ResultView(r)
         }
+
+        val history = remember(result) { ResultStore.raw(ctx) }
+        if (history.length() > 1) {
+            Spacer(Modifier.height(28.dp))
+            HistoryView(history) { result = ResultStore.latest(ctx) }
+        }
+    }
+}
+
+/** Saved results, and a before/after when two are ticked. */
+@Composable
+private fun HistoryView(history: org.json.JSONArray, onChanged: () -> Unit) {
+    val ctx = androidx.compose.ui.platform.LocalContext.current
+    var picked by remember { mutableStateOf(listOf<Long>()) }
+    var shown by remember { mutableStateOf<JSONObject?>(null) }
+
+    Text("SAVED RESULTS", color = MUT, fontFamily = FontFamily.Monospace,
+        fontSize = 11.sp, letterSpacing = 1.sp)
+    Spacer(Modifier.height(2.dp))
+    Text("Tick two to compare them. Saved on this phone only.", color = MUT, fontSize = 11.sp)
+    Spacer(Modifier.height(8.dp))
+
+    if (picked.size == 2) {
+        val pair = (0 until history.length()).map { history.getJSONObject(it) }
+            .filter { it.optLong("at") in picked }
+            .sortedBy { it.optLong("at") }
+        if (pair.size == 2) CompareView(pair[0], pair[1])
+    }
+
+    for (i in 0 until history.length()) {
+        val e = history.getJSONObject(i)
+        val at = e.optLong("at")
+        val when_ = java.text.SimpleDateFormat("dd MMM, HH:mm", java.util.Locale.getDefault())
+            .format(java.util.Date(at))
+        val knee = e.optJSONObject("angles")?.optDouble(Fit.KNEE)
+        Row(
+            Modifier.fillMaxWidth().padding(vertical = 3.dp)
+                .background(CARD, RoundedCornerShape(10.dp)).padding(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = picked.contains(at),
+                onCheckedChange = { on ->
+                    picked = if (on) (picked + at).takeLast(2) else picked - at
+                }
+            )
+            Column(Modifier.weight(1f)) {
+                Text(when_, color = MUT, fontFamily = FontFamily.Monospace, fontSize = 10.sp)
+                Text(
+                    Fit.verdict(Fit.Grade.valueOf(e.optString("overall", "GRAY"))) +
+                        (knee?.takeIf { !it.isNaN() }?.let { " · knee ${it.roundToInt()}°" } ?: ""),
+                    color = colorOf(e.optString("overall")), fontSize = 13.sp, fontWeight = FontWeight.Bold
+                )
+            }
+            TextButton(onClick = { shown = e }) { Text("Open", fontSize = 12.sp) }
+        }
+    }
+
+    Spacer(Modifier.height(6.dp))
+    TextButton(onClick = { ResultStore.clear(ctx); picked = emptyList(); onChanged() }) {
+        Text("Clear all", color = MUT, fontSize = 12.sp)
+    }
+
+    shown?.let { e ->
+        Spacer(Modifier.height(16.dp))
+        ResultView(e)
+    }
+}
+
+/** Before/after. "Better" means the reading moved into a better band, not that the number went up. */
+@Composable
+private fun CompareView(before: JSONObject, after: JSONObject) {
+    fun angle(o: JSONObject, m: String): Float? =
+        o.optJSONObject("angles")?.let { if (it.has(m)) it.getDouble(m).toFloat() else null }
+    fun gradeOf(o: JSONObject, m: String, v: Float?): Fit.Grade {
+        val z = Fit.zonesFor(o.optString("bike", "road_endurance"))[m]!!
+        return Fit.grade(v, z)
+    }
+    val rank = mapOf(Fit.Grade.GRAY to 0, Fit.Grade.RED to 1, Fit.Grade.AMBER to 2, Fit.Grade.GREEN to 3)
+
+    Column(
+        Modifier.fillMaxWidth().padding(bottom = 10.dp)
+            .background(CARD, RoundedCornerShape(12.dp)).padding(12.dp)
+    ) {
+        Text("BEFORE  →  AFTER", color = MUT, fontFamily = FontFamily.Monospace,
+            fontSize = 10.sp, letterSpacing = 1.sp)
+        Spacer(Modifier.height(6.dp))
+        listOf(Fit.KNEE, Fit.TORSO, Fit.ELBOW, Fit.SHOULDER).forEach { m ->
+            val a = angle(before, m); val b = angle(after, m)
+            val ga = gradeOf(before, m, a); val gb = gradeOf(after, m, b)
+            val moved = (rank[gb] ?: 0) - (rank[ga] ?: 0)
+            val tone = if (moved > 0) GREEN else if (moved < 0) RED else MUT
+            val delta = if (a != null && b != null && !a.isNaN() && !b.isNaN())
+                "${if (b - a > 0) "+" else ""}${(b - a).roundToInt()}°" else ""
+            Row(Modifier.fillMaxWidth().padding(vertical = 3.dp)) {
+                Text(LABEL[m]!!, color = FG, fontSize = 12.sp, modifier = Modifier.weight(1f))
+                Text(a?.takeIf { !it.isNaN() }?.let { "${it.roundToInt()}°" } ?: "—",
+                    color = colorOf(ga.name), fontFamily = FontFamily.Monospace, fontSize = 12.sp)
+                Text("  →  ", color = MUT, fontSize = 12.sp)
+                Text(b?.takeIf { !it.isNaN() }?.let { "${it.roundToInt()}°" } ?: "—",
+                    color = colorOf(gb.name), fontFamily = FontFamily.Monospace, fontSize = 12.sp)
+                Text("  $delta", color = tone, fontFamily = FontFamily.Monospace,
+                    fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            }
+        }
+        Spacer(Modifier.height(4.dp))
+        Text("Green = moved into a better band. Red = moved out of one.",
+            color = MUT, fontSize = 10.sp)
     }
 }
 
