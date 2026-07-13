@@ -196,7 +196,9 @@
   .avatar svg{width:24px;height:24px}
   .strava .avatar{background:#fc4c02} .strava .btn{background:#fc4c02;color:#fff}
   .ascent{background:linear-gradient(155deg,color-mix(in srgb,var(--accent) 16%,var(--card)),var(--card) 70%);border-color:color-mix(in srgb,var(--accent) 30%,var(--line))}
-  .ascent .avatar{background:var(--accent)}
+  /* the Ascent icon ships its own dark squircle, so the avatar chip gets out of its way */
+  .ascent .avatar{background:none;border-radius:12px}
+  .ascent .avatar img{width:46px;height:46px;border-radius:12px;display:block}
 
   /* final cta */
   .finalcta{text-align:center;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:44px 24px;box-shadow:var(--shadow);position:relative;overflow:hidden}
@@ -580,7 +582,7 @@
       </div>
       <div class="promo ascent">
         <p class="kicker" data-i18n="promo.also">Also by the creator</p>
-        <span class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-5 3 3 5-7"/></svg></span>
+        <span class="avatar"><img src="ascent-icon.png" alt="Ascent Analytics" width="46" height="46" loading="lazy"></span>
         <h3>Ascent Analytics</h3>
         <p data-i18n="promo.ascent.p">Deeper cycling data and performance analytics to turn your rides into insight. If this fit tool is useful, you'll want to check out Ascent.</p>
         <a class="btn primary" href="https://ascent-analytics.vercel.app/" target="_blank" rel="noopener">
@@ -644,11 +646,11 @@
     "doc.desc":{en:"Drop a clip of yourself pedaling and get your bike-fit angles graded green / amber / red, right in your browser. Works with any bike. 100% on-device, free & open source.",id:"Masukkan klip saat kamu mengayuh, dan sudut bike fit-mu langsung dinilai hijau / kuning / merah di browser. Cocok untuk sepeda apa pun. 100% di perangkatmu, gratis & open source."},
 
     "hero.h1":{en:'Grade your bike fit — <span class="g">green</span>, <span class="a">amber</span>, <span class="r">red</span>.',id:'Cek apakah bike fit-mu sudah pas.'},
-    "hero.sub":{en:"Film yourself pedaling for 20–30 seconds. AI tracks your joints frame-by-frame, measures the angles a professional fitter checks, and tells you the exact change to make. Your video never leaves your device.",id:"Rekam dirimu mengayuh selama sekitar 20–30 detik. Analyzer akan membaca posisi tubuhmu di tiap frame, mengukur sudut yang biasa dipakai saat bike fitting, lalu menunjukkan bagian mana yang sudah pas dan mana yang masih bisa diperbaiki. Semua diproses langsung di browser. Videomu tidak diunggah ke server."},
+    "hero.sub":{en:"Film yourself pedaling for about 20–30 seconds. The analyzer reads your body position in every frame, measures the angles used in bike fitting, and shows you which parts are already right and which ones still need adjusting. Everything runs in your browser. Your video is never uploaded to a server.",id:"Rekam dirimu mengayuh selama sekitar 20–30 detik. Analyzer akan membaca posisi tubuhmu di tiap frame, mengukur sudut yang biasa dipakai saat bike fitting, lalu menunjukkan bagian mana yang sudah pas dan mana yang masih bisa diperbaiki. Semua diproses langsung di browser. Videomu tidak diunggah ke server."},
     "hero.launch":{en:"Launch the analyzer",id:"Buka analyzer"},
     "hero.source":{en:"Source on GitHub",id:"Lihat kode di GitHub"},
-    "chip.ondevice":{en:"100% on-device",id:"Diproses di browser"},
-    "chip.noupload":{en:"No upload",id:"Tanpa upload video"},
+    "chip.ondevice":{en:"Runs in your browser",id:"Diproses di browser"},
+    "chip.noupload":{en:"No video upload",id:"Tanpa upload video"},
     "chip.opensource":{en:"Open source",id:"Open source"},
     "chip.anybike":{en:"Any bike",id:"Semua sepeda"},
 
@@ -658,36 +660,36 @@
     "mock.elbow":{en:"Elbow bend",id:"Tekukan siku"},
 
     "how.eyebrow":{en:"How it works",id:"Cara kerja"},
-    "how.h2":{en:"Three steps, no account, no upload",id:"Cara kerjanya sederhana"},
-    "how.lead":{en:"Everything runs locally in your browser using Google's MediaPipe Pose model. There's no server compute — the video is analyzed on your own hardware and never sent anywhere.",id:"Analyzer menggunakan MediaPipe Pose dari Google yang berjalan langsung di browser. Semua pemrosesan dilakukan di perangkatmu sendiri, jadi video tidak pernah dikirim ke server."},
+    "how.h2":{en:"It takes three steps",id:"Cara kerjanya sederhana"},
+    "how.lead":{en:"The analyzer uses Google's MediaPipe Pose, which runs directly in your browser. All the processing happens on your own device, so your video is never sent to a server.",id:"Analyzer menggunakan MediaPipe Pose dari Google yang berjalan langsung di browser. Semua pemrosesan dilakukan di perangkatmu sendiri, jadi video tidak pernah dikirim ke server."},
     "step1.label":{en:"Step 1",id:"Langkah 1"},
     "step1.h3":{en:"Film your ride",id:"Rekam saat mengayuh"},
-    "step1.p":{en:"Camera square-on at hip height, pedaling steadily for 20–30 seconds. A turbo trainer is ideal. Upload a clip or record with your webcam on the spot.",id:"Letakkan kamera tepat dari samping, kira-kira setinggi pinggul. Kayuh dengan ritme yang stabil selama sekitar 20–30 detik. Kalau punya turbo trainer, hasilnya biasanya lebih konsisten."},
+    "step1.p":{en:"Put the camera square to your side, roughly at hip height. Pedal at a steady rhythm for about 20–30 seconds. If you have a turbo trainer, the result is usually more consistent.",id:"Letakkan kamera tepat dari samping, kira-kira setinggi pinggul. Kayuh dengan ritme yang stabil selama sekitar 20–30 detik. Kalau punya turbo trainer, hasilnya biasanya lebih konsisten."},
     "step2.label":{en:"Step 2",id:"Langkah 2"},
     "step2.h3":{en:"AI tracks your joints",id:"AI melacak sendimu"},
-    "step2.p":{en:"The pose model finds your shoulder, elbow, wrist, hip, knee and ankle in every frame, locks onto your near side, and skips joints it can't clearly see.",id:"AI akan mendeteksi posisi bahu, siku, pinggul, lutut, pergelangan kaki, dan titik tubuh lainnya di setiap frame. Sistem otomatis memilih sisi tubuh yang paling terlihat dan mengabaikan frame yang kualitasnya kurang baik."},
+    "step2.p":{en:"The AI detects your shoulder, elbow, hip, knee, ankle and other body points in every frame. It automatically picks the side of your body that's most visible and ignores frames that aren't clear enough.",id:"AI akan mendeteksi posisi bahu, siku, pinggul, lutut, pergelangan kaki, dan titik tubuh lainnya di setiap frame. Sistem otomatis memilih sisi tubuh yang paling terlihat dan mengabaikan frame yang kualitasnya kurang baik."},
     "step3.label":{en:"Step 3",id:"Langkah 3"},
     "step3.h3":{en:"Get graded advice",id:"Dapat nilai dan saran"},
-    "step3.p":{en:"Your angles at the bottom of the pedal stroke are graded against research ranges, with a plain-English fix for anything out of range — one change at a time.",id:"Setelah itu analyzer menghitung sudut-sudut penting, membandingkannya dengan rentang yang umum dipakai dalam bike fitting, lalu memberikan saran yang mudah dipahami."},
+    "step3.p":{en:"The analyzer then measures the key angles, compares them against the ranges used in bike fitting, and gives you advice in plain language.",id:"Setelah itu analyzer menghitung sudut-sudut penting, membandingkannya dengan rentang yang umum dipakai dalam bike fitting, lalu memberikan saran yang mudah dipahami."},
     "legend.dialed":{en:"dialed",id:"pas"},
     "legend.borderline":{en:"borderline",id:"batas"},
     "legend.fixit":{en:"fix it",id:"perbaiki"},
 
     "bikes.eyebrow":{en:"Any bike",id:"Semua sepeda"},
     "bikes.h2":{en:"Road, MTB, gravel — any bike works",id:"Road, MTB, gravel — semua sepeda bisa"},
-    "bikes.lead":{en:"The analyzer tracks your body, not your bike — and you pick your bike type in the app (road, MTB, gravel, TT, hybrid, e-bike) so the target torso angle matches how aggressive your position should be. Saddle height (the most reliable reading) stays the same on any bike.",id:"Yang dianalisis adalah posisi tubuhmu. Kamu tinggal memilih jenis sepeda yang dipakai (road, MTB, gravel, TT, hybrid, atau e-bike), lalu target beberapa sudut akan menyesuaikan karakter posisi berkendara masing-masing. Pengukuran tinggi sadel tetap menggunakan acuan yang sama."},
+    "bikes.lead":{en:"What gets analyzed is your body position, not the bike. You pick the bike you ride (road, MTB, gravel, TT, hybrid, or e-bike) and the target angles adjust to how that bike is normally ridden. The saddle-height measurement uses the same reference on any bike.",id:"Yang dianalisis adalah posisi tubuhmu. Kamu tinggal memilih jenis sepeda yang dipakai (road, MTB, gravel, TT, hybrid, atau e-bike), lalu target beberapa sudut akan menyesuaikan karakter posisi berkendara masing-masing. Pengukuran tinggi sadel tetap menggunakan acuan yang sama."},
 
     "ideal.eyebrow":{en:"What good looks like",id:"Fit ideal itu gimana"},
     "ideal.h2":{en:"What an ideal fit looks like",id:"Seperti apa fit yang ideal"},
-    "ideal.lead":{en:"A good fit balances power, comfort, and control. Here's the target for each key joint — and what it means when you're off.",id:"Bike fit yang baik bukan cuma soal tenaga. Posisi yang tepat juga membantu menjaga kenyamanan dan kontrol saat berkendara."},
+    "ideal.lead":{en:"A good bike fit isn't only about power. The right position also keeps you comfortable and in control.",id:"Bike fit yang baik bukan cuma soal tenaga. Posisi yang tepat juga membantu menjaga kenyamanan dan kontrol saat berkendara."},
     "ideal.knee.h":{en:"Knee at the bottom",id:"Lutut di titik terbawah"},
-    "ideal.knee.p":{en:"Leg nearly — but not fully — extended at the bottom of the stroke. Too bent means the saddle's too low (knee strain, less power); nearly locked out means it's too high (rocking hips, sore Achilles).",id:"Di titik terbawah kayuhan, lutut sebaiknya masih sedikit menekuk. Kalau terlalu menekuk biasanya sadel terlalu rendah. Kalau hampir lurus sepenuhnya, sadel kemungkinan terlalu tinggi sehingga panggul mulai bergoyang dan beban pada Achilles meningkat."},
+    "ideal.knee.p":{en:"At the bottom of the stroke your knee should still be slightly bent. Too much bend usually means the saddle is too low. Almost fully straight means it's probably too high, which is when the hips start rocking and the Achilles takes more load.",id:"Di titik terbawah kayuhan, lutut sebaiknya masih sedikit menekuk. Kalau terlalu menekuk biasanya sadel terlalu rendah. Kalau hampir lurus sepenuhnya, sadel kemungkinan terlalu tinggi sehingga panggul mulai bergoyang dan beban pada Achilles meningkat."},
     "ideal.torso.h":{en:"Back / torso angle",id:"Sudut punggung / torso"},
     "ideal.torso.p":{en:"Low enough to be efficient and aero, but high enough to breathe and stay comfortable for the length of your ride.",id:"Cukup rendah biar efisien dan aero, tapi cukup tinggi biar napas lega dan badan tetap nyaman sepanjang perjalanan."},
     "ideal.elbow.h":{en:"Elbow bend",id:"Tekukan siku"},
-    "ideal.elbow.p":{en:"Arms softly bent, never locked — they soak up road buzz, help you steer, and take load off your hands.",id:"Siku sebaiknya tidak terkunci lurus. Sedikit tekukan membantu meredam getaran, membuat kontrol setang lebih nyaman, dan mengurangi tekanan pada tangan."},
+    "ideal.elbow.p":{en:"Your elbows shouldn't be locked straight. A slight bend absorbs vibration, makes the bars easier to control, and takes pressure off your hands.",id:"Siku sebaiknya tidak terkunci lurus. Sedikit tekukan membantu meredam getaran, membuat kontrol setang lebih nyaman, dan mengurangi tekanan pada tangan."},
     "ideal.reach.h":{en:"Reach to the bars",id:"Jangkauan ke setang"},
-    "ideal.reach.p":{en:"A reach that keeps your shoulders relaxed and open — not so long you're stretched thin, not so short you feel cramped.",id:"Reach yang pas membuat bahu tetap rileks tanpa terasa terlalu jauh atau terlalu sempit."},
+    "ideal.reach.p":{en:"A reach that fits keeps your shoulders relaxed, without feeling stretched out or cramped.",id:"Reach yang pas membuat bahu tetap rileks tanpa terasa terlalu jauh atau terlalu sempit."},
     "ideal.hips.h":{en:"Stable hips",id:"Panggul stabil"},
     "ideal.hips.g":{en:"from the rear",id:"tampak belakang"},
     "ideal.hips.p":{en:"A pelvis that stays level and doesn't rock side to side. Rocking usually means the saddle is a touch too high.",id:"Panggul tetap rata, tidak goyang kiri-kanan. Kalau goyang, biasanya sadelnya sedikit kelewat tinggi."},
@@ -697,10 +699,10 @@
 
     "metrics.eyebrow":{en:"The measurements",id:"Pengukuran"},
     "metrics.h2":{en:"Side view — the core fit read",id:"Tampak samping — angka inti bike fit"},
-    "metrics.lead":{en:"Angles are sampled at the bottom of every pedal stroke and reported as the median across the whole clip, so a single blurry frame can't skew the result. Each is graded green / amber / red against ranges from the Holmes method and dynamic-fit research.",id:"Pengukuran dilakukan pada titik terbawah setiap putaran pedal, lalu hasil dari seluruh kayuhan dirangkum menggunakan nilai median agar satu frame yang buram tidak memengaruhi hasil akhir. Tiap sudut dinilai hijau / kuning / merah memakai target dari metode Holmes dan riset dynamic-fit."},
+    "metrics.lead":{en:"Measurements are taken at the bottom of every pedal revolution, then summarised across all the strokes using the median, so one blurry frame can't affect the final result. Each angle is graded green / amber / red against ranges from the Holmes method and dynamic-fit research.",id:"Pengukuran dilakukan pada titik terbawah setiap putaran pedal, lalu hasil dari seluruh kayuhan dirangkum menggunakan nilai median agar satu frame yang buram tidak memengaruhi hasil akhir. Tiap sudut dinilai hijau / kuning / merah memakai target dari metode Holmes dan riset dynamic-fit."},
     "metrics.side.h":{en:"Side view",id:"Tampak samping"},
     "tag.primary":{en:"Primary",id:"Utama"},
-    "metrics.side.subp":{en:"The reliable read. Saddle height (knee angle) is the number to trust most; reach-related angles are softer on a 2D view.",id:"Pengukuran dari samping adalah yang paling akurat, terutama untuk menentukan tinggi sadel. Sudut yang berkaitan dengan reach tetap berguna, tetapi interpretasinya perlu lebih hati-hati karena hanya menggunakan video 2D."},
+    "metrics.side.subp":{en:"The side view is the most accurate, especially for setting saddle height. The reach-related angles are still useful, but they need more careful interpretation because they come from 2D video.",id:"Pengukuran dari samping adalah yang paling akurat, terutama untuk menentukan tinggi sadel. Sudut yang berkaitan dengan reach tetap berguna, tetapi interpretasinya perlu lebih hati-hati karena hanya menggunakan video 2D."},
     "th.measures":{en:"What it measures",id:"Yang diukur"},
     "th.target":{en:"Target",id:"Target"},
     "th.relia":{en:"Reliability",id:"Keandalan"},
@@ -723,7 +725,7 @@
     "r.soft":{en:"Soft",id:"Lemah"},
     "r.info":{en:"Info",id:"Info"},
     "metrics.front.h":{en:"Front &amp; rear views",id:"Tampak depan &amp; belakang"},
-    "metrics.front.subp":{en:"Frontal-plane hints, filmed facing the camera or from directly behind. Directional cues, not verdicts — for real decisions the side-view saddle-height read is the trustworthy one.",id:"Anggap hasil tampak depan dan belakang sebagai petunjuk tambahan. Untuk penyesuaian yang benar-benar penting, pengukuran dari tampak samping tetap lebih bisa diandalkan."},
+    "metrics.front.subp":{en:"Treat the front and rear readings as extra hints. For adjustments that really matter, the side view is still the one to rely on.",id:"Anggap hasil tampak depan dan belakang sebagai petunjuk tambahan. Untuk penyesuaian yang benar-benar penting, pengukuran dari tampak samping tetap lebih bisa diandalkan."},
     "f.fppa.b":{en:"Knee tracking (FPPA)",id:"Jalur lutut (FPPA)"},
     "f.fppa.s":{en:"Frontal-plane projection angle — whether your knee dives in or bows out through the stroke.",id:"Frontal-plane projection angle — apakah lututmu masuk ke dalam atau membuka keluar sepanjang kayuhan."},
     "f.fppa.t":{en:"Cleat / stability cues",id:"Petunjuk cleat / stabilitas"},
@@ -735,23 +737,23 @@
     "f.sym.t":{en:"Imbalance cues",id:"Petunjuk ketidakseimbangan"},
 
     "feat.eyebrow":{en:"More features",id:"Fitur lain"},
-    "feat.h2":{en:"Built to be easy and private",id:"Dibuat biar gampang dan privat"},
+    "feat.h2":{en:"What else the tool does",id:"Apa lagi yang bisa dilakukan alat ini"},
     "feat.add.h":{en:"Three ways to add your clip",id:"Tiga cara menambahkan klipmu"},
     "feat.add.l1":{en:"Drag &amp; drop a video file",id:"Seret &amp; lepas file video"},
     "feat.add.l2":{en:"Browse and pick from your device (.mp4, .mov, .webm)",id:"Pilih dari perangkatmu (.mp4, .mov, .webm)"},
     "feat.add.l3":{en:"Record straight from your webcam, up to 30 seconds",id:"Rekam langsung dari webcam, hingga 30 detik"},
-    "feat.priv.h":{en:"Nothing leaves your device",id:"Videomu tetap di perangkatmu"},
-    "feat.priv.p":{en:"All pose detection and math run in your browser. There's no upload, no account, and no server compute — so your footage stays yours.",id:"Semua analisis dilakukan langsung di browser tanpa proses upload."},
+    "feat.priv.h":{en:"Your video stays on your device",id:"Videomu tetap di perangkatmu"},
+    "feat.priv.p":{en:"All the analysis happens directly in your browser, with no upload step.",id:"Semua analisis dilakukan langsung di browser tanpa proses upload."},
     "feat.fast.h":{en:"Fast, with a safe fallback",id:"Cepat, dengan cadangan kalau perlu"},
     "feat.fast.p":{en:"Uses your GPU via WebGPU when available and automatically falls back to CPU/WASM on older browsers, so it works widely.",id:"Pakai GPU lewat WebGPU kalau tersedia, dan otomatis pindah ke CPU/WASM di browser lama — jadi tetap jalan di mana pun."},
     "feat.bad.h":{en:"Catches bad footage",id:"Mendeteksi rekaman yang kurang bagus"},
     "feat.bad.p":{en:"If your clip isn't square-on — which stretches or squashes the angles, especially reach — it warns you to re-film instead of trusting a skewed reading.",id:"Kalau klipmu tidak lurus dari samping — yang bikin sudutnya ketarik atau kependekan, apalagi jangkauan — kamu langsung diingatkan buat rekam ulang, daripada percaya angka yang miring."},
 
     "callout.h":{en:"Basic fitting for everyone — not a replacement for a pro fitter",id:"Fitting dasar untuk semua — bukan pengganti fitter profesional"},
-    "callout.p":{en:'A perfect fit still needs a professional and their hands-on judgement. What this tool does is make <b>basic fitting accessible</b>: a quick, free way to catch the obvious stuff — saddle far too high or low, wildly off angles — before you ever book a session. It\'s a 2D side-view estimate, not a 3D pro fit, and it\'s still a work in progress, <b>actively looking for input from qualified bike fitters</b> to sharpen its ranges and advice. If you\'re a fitter (or know one), feedback is very welcome — open an issue on GitHub. Treat the results as a starting point, change one thing at a time, and re-film. Not medical advice.',id:'Alat ini dibuat untuk membantu lebih banyak orang melakukan <b>pengecekan dasar bike fit</b> tanpa biaya. Hasilnya bisa menjadi titik awal sebelum melakukan penyesuaian sendiri atau sebelum datang ke fitter profesional. Karena hanya menggunakan analisis video 2D, hasilnya tetap memiliki keterbatasan dan tidak bisa menggantikan sesi bike fitting secara langsung. Kalau kamu seorang bike fitter, atau punya masukan berdasarkan pengalaman fitting, saya akan sangat senang menerima feedback lewat GitHub.'},
+    "callout.p":{en:'This tool exists to help more people run a <b>basic bike fit check</b> for free. The result is a starting point — something to work from before you adjust things yourself, or before you book a session with a professional fitter. Because it only uses 2D video analysis, it has real limits and it can\'t replace an in-person bike fitting. If you\'re a bike fitter, or you have feedback from actually fitting people, I\'d be very glad to hear it on GitHub.',id:'Alat ini dibuat untuk membantu lebih banyak orang melakukan <b>pengecekan dasar bike fit</b> tanpa biaya. Hasilnya bisa menjadi titik awal sebelum melakukan penyesuaian sendiri atau sebelum datang ke fitter profesional. Karena hanya menggunakan analisis video 2D, hasilnya tetap memiliki keterbatasan dan tidak bisa menggantikan sesi bike fitting secara langsung. Kalau kamu seorang bike fitter, atau punya masukan berdasarkan pengalaman fitting, saya akan sangat senang menerima feedback lewat GitHub.'},
 
     "promo.madeby":{en:"Made by",id:"Dibuat oleh"},
-    "promo.strava.p":{en:"A cyclist building tools for other cyclists. Follow the training and the projects — say hi on Strava.",id:"Saya suka bersepeda dan penasaran apakah bike fitting dasar bisa dibuat lebih mudah diakses. Proyek ini lahir dari rasa penasaran itu, lalu berkembang menjadi alat yang bisa dipakai siapa saja secara gratis."},
+    "promo.strava.p":{en:"I ride, and I was curious whether basic bike fitting could be made easier to get to. This project came out of that curiosity and turned into something anyone can use for free.",id:"Saya suka bersepeda dan penasaran apakah bike fitting dasar bisa dibuat lebih mudah diakses. Proyek ini lahir dari rasa penasaran itu, lalu berkembang menjadi alat yang bisa dipakai siapa saja secara gratis."},
     "promo.strava.btn":{en:"Follow on Strava",id:"Ikuti di Strava"},
     "promo.also":{en:"Also by the creator",id:"Juga dari pembuat"},
     "promo.ascent.p":{en:"Deeper cycling data and performance analytics to turn your rides into insight. If this fit tool is useful, you'll want to check out Ascent.",id:"Data bersepeda yang lebih dalam plus analitik performa, biar tiap ride jadi bahan evaluasi. Kalau alat fit ini kamu rasa berguna, Ascent layak dicoba."},
@@ -771,8 +773,8 @@
     "foot.made":{en:"Made by",id:"Dibuat oleh"},
 
     "tech.eyebrow":{en:"Technology",id:"Teknologi"},
-    "tech.h2":{en:"The tech under the hood — and why the numbers hold up",id:"Teknologi yang digunakan"},
-    "tech.lead":{en:"No black box. Here's exactly what runs, and the design choices that make the reliable readings trustworthy.",id:"Bukan kotak hitam. Ini isi mesinnya, plus pilihan desain yang bikin angkanya bisa dipegang."},
+    "tech.h2":{en:"The technology used",id:"Teknologi yang digunakan"},
+    "tech.lead":{en:"This is what actually runs when you drop in a clip, and the reasoning behind a few of the design choices.",id:"Ini yang sebenarnya berjalan saat kamu memasukkan klip, beserta alasan di balik beberapa pilihan desainnya."},
     "tech.model.h":{en:"MediaPipe BlazePose",id:"MediaPipe BlazePose"},
     "tech.model.p":{en:"Google's on-device pose model finds 33 body landmarks per frame. It's browser-native and Apache-2.0 licensed — no server, no install.",id:"Model pose on-device dari Google ini menemukan 33 titik tubuh di tiap frame. Jalan langsung di browser, lisensi Apache-2.0 — tanpa server, tanpa instal."},
     "tech.gpu.h":{en:"WebGPU, with WASM fallback",id:"WebGPU, dengan cadangan WASM"},
@@ -786,24 +788,24 @@
     "tech.ranges.h":{en:"Research-based ranges",id:"Rentang berbasis riset"},
     "tech.ranges.p":{en:"Green/amber/red thresholds come from the Holmes method and dynamic-fit research, not arbitrary guesses.",id:"Ambang hijau/kuning/merah diambil dari metode Holmes dan riset dynamic-fit, bukan tebakan sembarangan."},
     "tech.honest.h":{en:"How accurate is it, really?",id:"Seberapa akurat, sebenarnya?"},
-    "tech.honest.p":{en:"The saddle-height (knee) reading is the one to trust — it's stable and well-validated. Torso and elbow are solid; reach/shoulder is the softest, because a flat 2D side view can't perfectly judge depth. It's a proof-of-concept, so it won't match a 3D pro fit — but for spotting an obviously-off saddle or position, it's genuinely useful. Always change one thing at a time and re-film.",id:"Pengukuran sudut lutut adalah hasil yang paling konsisten karena memang paling mudah dianalisis dari video samping. Pengukuran torso dan siku juga cukup stabil, sedangkan sudut yang berkaitan dengan reach memiliki tingkat ketelitian yang lebih rendah karena video 2D tidak bisa menangkap kedalaman dengan sempurna. Ini masih proof of concept dan tentu belum bisa menggantikan sistem bike fitting 3D. Namun untuk menemukan masalah yang cukup jelas, seperti sadel terlalu tinggi atau terlalu rendah, hasilnya sudah sangat membantu. Kalau ingin melakukan penyesuaian, ubah satu hal saja lalu rekam ulang."},
+    "tech.honest.p":{en:"The knee angle is the most consistent measurement, because it's the easiest to read from a side-on video. Torso and elbow are fairly stable too, while the reach-related angles are less precise, because 2D video can't capture depth properly. This is still a proof of concept and it can't replace a 3D bike fitting system. But for finding the clearly visible problems, like a saddle that's too high or too low, it's genuinely useful. If you do adjust something, change one thing at a time and re-film.",id:"Pengukuran sudut lutut adalah hasil yang paling konsisten karena memang paling mudah dianalisis dari video samping. Pengukuran torso dan siku juga cukup stabil, sedangkan sudut yang berkaitan dengan reach memiliki tingkat ketelitian yang lebih rendah karena video 2D tidak bisa menangkap kedalaman dengan sempurna. Ini masih proof of concept dan tentu belum bisa menggantikan sistem bike fitting 3D. Namun untuk menemukan masalah yang cukup jelas, seperti sadel terlalu tinggi atau terlalu rendah, hasilnya sudah sangat membantu. Kalau ingin melakukan penyesuaian, ubah satu hal saja lalu rekam ulang."},
 
     "faq.eyebrow":{en:"FAQ",id:"Tanya jawab"},
     "faq.h2":{en:"Frequently asked questions",id:"Pertanyaan yang sering muncul"},
     "faq.q1":{en:"Is my video uploaded anywhere?",id:"Apakah video saya diupload ke mana-mana?"},
-    "faq.a1":{en:"No. All detection and calculation happen in your browser on your device. Nothing is uploaded, there's no account, and there's no server compute.",id:"Tidak. Semua deteksi pose dan perhitungan dilakukan langsung di browser, di perangkatmu sendiri. Videomu tidak pernah diunggah ke server, tidak perlu akun, dan tidak ada data yang dikirim selama proses analisis."},
+    "faq.a1":{en:"No. All the pose detection and calculation happen directly in your browser, on your own device. Your video is never uploaded to a server, no account is needed, and no data is sent while the analysis runs.",id:"Tidak. Semua deteksi pose dan perhitungan dilakukan langsung di browser, di perangkatmu sendiri. Videomu tidak pernah diunggah ke server, tidak perlu akun, dan tidak ada data yang dikirim selama proses analisis."},
     "faq.q2":{en:"Which bikes does it work with?",id:"Cocok untuk sepeda apa saja?"},
-    "faq.a2":{en:"Any bike — road, mountain (MTB), gravel, TT/triathlon, hybrid, commuter, or e-bike. It tracks your body, so the bike doesn't matter. Ranges are tuned for a general road/endurance position, so very aggressive or very upright setups read a little differently.",id:"Hampir semua jenis sepeda bisa dianalisis, termasuk road, MTB, gravel, TT/triathlon, hybrid, sepeda komuter, dan e-bike. Yang dianalisis adalah posisi tubuhmu, bukan sepedanya. Target sudut akan menyesuaikan jenis sepeda yang kamu pilih, meski posisi yang sangat agresif atau sangat tegak tetap punya keterbatasan kalau hanya dilihat dari video 2D."},
+    "faq.a2":{en:"Almost any bike — road, mountain (MTB), gravel, TT/triathlon, hybrid, commuter, or e-bike. What gets analyzed is your body position, not the bike. The target angles follow the bike type you select, though very aggressive or very upright positions still have limits when they're only seen through 2D video.",id:"Hampir semua jenis sepeda bisa dianalisis, termasuk road, MTB, gravel, TT/triathlon, hybrid, sepeda komuter, dan e-bike. Yang dianalisis adalah posisi tubuhmu, bukan sepedanya. Target sudut akan menyesuaikan jenis sepeda yang kamu pilih, meski posisi yang sangat agresif atau sangat tegak tetap punya keterbatasan kalau hanya dilihat dari video 2D."},
     "faq.q3":{en:"How accurate is it?",id:"Seberapa akurat?"},
-    "faq.a3":{en:"Accurate enough to catch obvious issues. The knee/saddle-height reading is the most reliable; reach is the softest. It's a 2D proof-of-concept, not a replacement for a professional 3D fit.",id:"Cukup akurat untuk menemukan masalah yang jelas, seperti sadel terlalu tinggi atau terlalu rendah. Pengukuran sudut lutut adalah yang paling konsisten, sedangkan pengukuran jangkauan memiliki tingkat ketelitian yang lebih rendah. Ini masih analisis 2D dan belum bisa menggantikan bike fitting profesional berbasis 3D."},
+    "faq.a3":{en:"Accurate enough to find the obvious problems, like a saddle that's too high or too low. The knee angle is the most consistent measurement, while reach is the least precise. This is still 2D analysis and it can't replace a professional 3D bike fitting.",id:"Cukup akurat untuk menemukan masalah yang jelas, seperti sadel terlalu tinggi atau terlalu rendah. Pengukuran sudut lutut adalah yang paling konsisten, sedangkan pengukuran jangkauan memiliki tingkat ketelitian yang lebih rendah. Ini masih analisis 2D dan belum bisa menggantikan bike fitting profesional berbasis 3D."},
     "faq.q4":{en:"What kind of clip should I film?",id:"Klip seperti apa yang harus saya rekam?"},
-    "faq.a4":{en:"20–30 seconds, camera square-on at hip height, pedaling at an easy steady cadence. A turbo trainer and good lighting give the cleanest read.",id:"Rekam sekitar 20–30 detik dengan kamera tepat dari samping dan setinggi pinggul. Kayuh seperti biasa dengan ritme yang stabil. Kalau memakai turbo trainer dan pencahayaan yang cukup, hasilnya biasanya lebih konsisten."},
+    "faq.a4":{en:"Film about 20–30 seconds with the camera square to your side and at hip height. Pedal as you normally would, at a steady rhythm. With a turbo trainer and enough light, the result is usually more consistent.",id:"Rekam sekitar 20–30 detik dengan kamera tepat dari samping dan setinggi pinggul. Kayuh seperti biasa dengan ritme yang stabil. Kalau memakai turbo trainer dan pencahayaan yang cukup, hasilnya biasanya lebih konsisten."},
     "faq.q5":{en:"Does it work on my phone?",id:"Apakah jalan di HP saya?"},
-    "faq.a5":{en:"Yes, in modern mobile browsers. Devices with WebGPU are faster; older ones fall back to a slower CPU mode but still work.",id:"Ya. Analyzer berjalan di browser modern di HP maupun komputer. Perangkat yang mendukung WebGPU akan memproses video lebih cepat, sedangkan perangkat yang lebih lama akan menggunakan CPU. Prosesnya mungkin sedikit lebih lambat, tetapi tetap bisa digunakan."},
+    "faq.a5":{en:"Yes. The analyzer runs in modern browsers on both phones and computers. Devices that support WebGPU will process the video faster, while older ones fall back to the CPU. That can be a little slower, but it still works.",id:"Ya. Analyzer berjalan di browser modern di HP maupun komputer. Perangkat yang mendukung WebGPU akan memproses video lebih cepat, sedangkan perangkat yang lebih lama akan menggunakan CPU. Prosesnya mungkin sedikit lebih lambat, tetapi tetap bisa digunakan."},
     "faq.q6":{en:"Is it free and open source?",id:"Apakah gratis dan open source?"},
-    "faq.a6":{en:'Completely free and open source. Browse or contribute to the code at <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">github.com/doniwirawan/bike-fit-analyzer</a>.',id:'Ya. Bike Fit Analyzer sepenuhnya gratis dan bersifat open source. Kalau penasaran cara kerjanya atau ingin ikut berkontribusi, kamu bisa <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">melihat kodenya di GitHub</a>.'},
+    "faq.a6":{en:'Yes. Bike Fit Analyzer is completely free and open source. If you\'re curious how it works, or you\'d like to contribute, you can <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">read the code on GitHub</a>.',id:'Ya. Bike Fit Analyzer sepenuhnya gratis dan bersifat open source. Kalau penasaran cara kerjanya atau ingin ikut berkontribusi, kamu bisa <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">melihat kodenya di GitHub</a>.'},
     "faq.q7":{en:"Can it replace a professional bike fit?",id:"Bisakah ini menggantikan bike fit profesional?"},
-    "faq.a7":{en:"No. It makes basic fitting accessible and helps you spot big problems, but a perfect fit still needs a qualified fitter's hands-on judgement.",id:"Belum. Alat ini dibuat untuk membantu melakukan pengecekan dasar dan menemukan masalah yang cukup jelas sebelum melakukan penyesuaian atau datang ke bike fitter. Untuk hasil yang benar-benar presisi, terutama kalau ada keluhan atau kebutuhan fit yang spesifik, sesi bike fitting profesional tetap menjadi pilihan terbaik."}
+    "faq.a7":{en:"Not yet. This tool is built to help you run a basic check and find the clearly visible problems, before you adjust anything yourself or go to a bike fitter. For a genuinely precise result — especially if you have pain or specific fitting needs — a professional session is still the better option.",id:"Belum. Alat ini dibuat untuk membantu melakukan pengecekan dasar dan menemukan masalah yang cukup jelas sebelum melakukan penyesuaian atau datang ke bike fitter. Untuk hasil yang benar-benar presisi, terutama kalau ada keluhan atau kebutuhan fit yang spesifik, sesi bike fitting profesional tetap menjadi pilihan terbaik."}
   };
 
   const metaDesc = document.getElementById('metaDesc');
