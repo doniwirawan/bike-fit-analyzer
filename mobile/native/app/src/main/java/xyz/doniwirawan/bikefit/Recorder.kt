@@ -93,36 +93,42 @@ fun RecorderScreen(
         return
     }
 
+    // Bind the camera exactly once per camera choice.
+    //
+    // This was originally done inside AndroidView's update block, which writes Compose state
+    // (capture, error) — that triggers recomposition, which re-runs update, which unbinds and
+    // rebinds the camera, forever. The encoder was torn down and rebuilt on every frame of state
+    // change, so by the time Record was pressed the VideoCapture was already being released and
+    // recording never started. Binding from a keyed effect breaks that loop.
+    val previewView = remember {
+        PreviewView(ctx).apply { scaleType = PreviewView.ScaleType.FIT_CENTER }
+    }
+    LaunchedEffect(backCamera, granted) {
+        if (!granted) return@LaunchedEffect
+        val provider = ProcessCameraProvider.getInstance(ctx).get()
+        val preview = Preview.Builder().build()
+            .also { it.setSurfaceProvider(previewView.surfaceProvider) }
+        val vc = VideoCapture.withOutput(
+            Recorder.Builder().setQualitySelector(QualitySelector.from(Quality.HD)).build()
+        )
+        try {
+            provider.unbindAll()
+            provider.bindToLifecycle(
+                owner,
+                if (backCamera) CameraSelector.DEFAULT_BACK_CAMERA else CameraSelector.DEFAULT_FRONT_CAMERA,
+                preview, vc
+            )
+            capture = vc
+            error = null
+        } catch (e: Exception) {
+            capture = null
+            error = "Couldn't open that camera (${e.message ?: "unknown"})."
+        }
+    }
+
     AndroidView(
         modifier = Modifier.fillMaxWidth().height(320.dp),
-        factory = { c ->
-            PreviewView(c).also { view ->
-                view.scaleType = PreviewView.ScaleType.FIT_CENTER
-            }
-        },
-        update = { view ->
-            val future = ProcessCameraProvider.getInstance(ctx)
-            future.addListener({
-                val provider = future.get()
-                val preview = Preview.Builder().build()
-                    .also { it.setSurfaceProvider(view.surfaceProvider) }
-                val rec = Recorder.Builder()
-                    .setQualitySelector(QualitySelector.from(Quality.HD))
-                    .build()
-                val vc = VideoCapture.withOutput(rec)
-                val selector =
-                    if (backCamera) CameraSelector.DEFAULT_BACK_CAMERA
-                    else CameraSelector.DEFAULT_FRONT_CAMERA
-                try {
-                    provider.unbindAll()
-                    provider.bindToLifecycle(owner, selector, preview, vc)
-                    capture = vc
-                    error = null
-                } catch (e: Exception) {
-                    error = "Couldn't open that camera (${e.message ?: "unknown"})."
-                }
-            }, ContextCompat.getMainExecutor(ctx))
-        }
+        factory = { previewView }
     )
 
     Spacer(Modifier.height(8.dp))
@@ -131,17 +137,25 @@ fun RecorderScreen(
     Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
         Button(
             onClick = {
-                val vc = capture ?: return@Button
+                // never fail silently: if the camera isn't bound yet, say so
+                val vc = capture
+                if (vc == null) { error = "Camera isn't ready yet — give it a second."; return@Button }
                 if (recording != null) { recording?.stop(); recording = null; return@Button }
                 val file = File(ctx.cacheDir, "recording.mp4")
                 if (file.exists()) file.delete()
                 val opts = FileOutputOptions.Builder(file).build()
-                recording = vc.output.prepareRecording(ctx, opts).start(exec) { ev ->
-                    if (ev is VideoRecordEvent.Finalize) {
-                        recording = null
-                        if (ev.hasError()) error = "Recording failed (${ev.error})."
-                        else onRecorded(Uri.fromFile(file))
-                    }
+                try {
+                    recording = vc.output.prepareRecording(ctx, opts)
+                        .start(ContextCompat.getMainExecutor(ctx)) { ev ->
+                            if (ev is VideoRecordEvent.Finalize) {
+                                recording = null
+                                if (ev.hasError()) error = "Recording failed (${ev.error})."
+                                else onRecorded(Uri.fromFile(file))
+                            }
+                        }
+                    error = null
+                } catch (e: Exception) {
+                    error = "Couldn't start recording (${e.message ?: "unknown"})."
                 }
             },
             colors = ButtonDefaults.buttonColors(
