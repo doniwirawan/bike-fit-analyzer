@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Bike Fit Analyzer — grade your fit in your browser</title>
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -25,6 +25,7 @@
   html,body{max-width:100%;overflow-x:hidden}
   body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif;
     background:var(--bg);color:var(--fg);line-height:1.5;overflow-wrap:break-word;-webkit-font-smoothing:antialiased}
+  body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
   .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
   img,svg,canvas,video{max-width:100%;height:auto}
   table{width:100%;min-width:0}
@@ -247,6 +248,7 @@
         <video id="preview" playsinline muted autoplay></video>
         <div class="camrow">
           <button class="btn primary" id="recbtn"><span id="recdot">●</span> <span data-i18n="rec.record">Record</span></button>
+          <button class="btn ghost" id="camflip" hidden data-i18n="cam.flip">Flip camera</button>
           <button class="btn ghost" id="camcancel" data-i18n="cam.cancel">Cancel</button>
           <span class="foot" id="rectime" style="margin:0"></span>
         </div>
@@ -442,6 +444,7 @@ const I18N = {
   "btn.rec":{en:"Record with webcam",id:"Rekam pakai webcam"},
   "foot.noupload":{en:"Nothing is uploaded — analysis runs on your hardware.",id:"Tidak ada yang diupload. Semua diproses di perangkatmu."},
   "cam.cancel":{en:"Cancel",id:"Batal"},
+  "cam.flip":{en:"Flip camera",id:"Ganti kamera"},
   "cam.hint":{en:"Point the camera square to your side, ~hip height. Auto-stops at 30s.",id:"Arahkan kamera lurus ke samping tubuh, kira-kira setinggi pinggul. Otomatis berhenti di 30 detik."},
   "result.h2":{en:"2 · Your result",id:"2 · Hasilmu"},
   "ex.badge":{en:"Sample — not your result",id:"Contoh — bukan hasilmu"},
@@ -751,11 +754,35 @@ function closeCamera(restore){
   camera.style.display="none";
   if(restore){ drop.style.display=""; $(".try").style.display=""; }
 }
+// On a phone the default camera is usually the front one, which is useless for filming yourself
+// side-on — that needs the rear camera, or a second person. Let people choose.
+let camFacing = "environment";
+async function openCamera(){
+  if(!navigator.mediaDevices?.getUserMedia){ fail(t('err.norec')); return false; }
+  if(camStream) camStream.getTracks().forEach(t=>t.stop());
+  try{
+    camStream=await navigator.mediaDevices.getUserMedia({
+      video:{width:{ideal:1280},height:{ideal:720},facingMode:{ideal:camFacing}},audio:false});
+  }catch(e){
+    // some laptops/phones have only one camera and reject an exact facingMode
+    try{ camStream=await navigator.mediaDevices.getUserMedia({video:true,audio:false}); }
+    catch(e2){ fail(t('err.camblocked')); return false; }
+  }
+  preview.srcObject=camStream;
+  return true;
+}
 $("#rec").onclick=async()=>{
-  if(!navigator.mediaDevices?.getUserMedia){ fail(t('err.norec')); return; }
-  try{ camStream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720}},audio:false}); }
-  catch(e){ fail(t('err.camblocked')); return; }
-  preview.srcObject=camStream; drop.style.display="none"; $(".try").style.display="none"; camera.style.display="block";
+  if(!await openCamera()) return;
+  drop.style.display="none"; $(".try").style.display="none"; camera.style.display="block";
+  // only offer the flip button when there really is more than one camera
+  try{
+    const cams=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==="videoinput");
+    $("#camflip").hidden = cams.length < 2;
+  }catch(e){ $("#camflip").hidden = true; }
+};
+$("#camflip").onclick=async()=>{
+  camFacing = camFacing==="environment" ? "user" : "environment";
+  await openCamera();
 };
 $("#camcancel").onclick=()=>closeCamera(true);
 recbtn.onclick=()=>{
@@ -777,6 +804,7 @@ recbtn.onclick=()=>{
 
 // ---- UI states: loading / error+retry ----
 function fail(msg){
+  releaseScreen();
   spin.hidden=true; status.textContent=""; errmsg.textContent=msg; errbox.hidden=false;
   stage.style.display="none"; bar.style.display="none"; camera.style.display="none";
 }
@@ -821,8 +849,22 @@ function resolveDuration(v){
     try{ v.currentTime=1e7; }catch(e){}
   });
 }
+// A phone screen sleeps after ~30s. Analysis on CPU can take a minute or two, and when the
+// screen sleeps the page is frozen and the run dies half-finished. Hold a wake lock for the
+// duration — this is the single biggest reason the tool fails on a phone.
+let wakeLock=null;
+async function holdScreen(){
+  try{ if(navigator.wakeLock) wakeLock=await navigator.wakeLock.request("screen"); }catch(e){}
+}
+function releaseScreen(){ try{ wakeLock?.release(); }catch(e){} wakeLock=null; }
+// the lock is dropped if the user tabs away; take it back when they return mid-analysis
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState==="visible" && !wakeLock && !spin.hidden) holdScreen();
+});
+
 async function start(f, knownDur){
   if(UNSUPPORTED) return;
+  holdScreen();
   drop.style.display="none"; $(".try").style.display="none"; $("#results").hidden=true;
   errbox.hidden=true; spin.hidden=false; stage.style.display="block"; bar.style.display="block"; fill.style.width="0";
   if(!landmarker){ try{ await initModel(); }
@@ -953,6 +995,7 @@ function drawSkeleton(P,g,A){
 }
 
 function finish(){
+  releaseScreen();
   if(viewMode!=="side"){ finishFrontal(); return; }
   spin.hidden=true; status.textContent=""; bar.style.display="none";
   if(frames.length<5){ fail(t('err.track')); return; }
