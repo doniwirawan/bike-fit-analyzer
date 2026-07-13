@@ -4,6 +4,10 @@
 
     <!-- Notifications for "your fit is ready" (Android 13+ asks the user). -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Only used when the user presses Record. The clip is written to the app's own storage
+         and never leaves the device (the app has no INTERNET permission). -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera.any" android:required="false" />
     <!-- Keeps the analysis alive when the user leaves the app. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />

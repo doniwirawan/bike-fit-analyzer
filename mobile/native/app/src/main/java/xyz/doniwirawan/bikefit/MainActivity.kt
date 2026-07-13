@@ -69,6 +69,7 @@ private fun App(handed: Uri? = null) {
     val ctx = androidx.compose.ui.platform.LocalContext.current
     var bike by remember { mutableStateOf("road_endurance") }
     var video by remember { mutableStateOf<Uri?>(handed) }
+    var recording by remember { mutableStateOf(false) }
     var result by remember { mutableStateOf(ResultStore.latest(ctx)) }
     var error by remember { mutableStateOf<String?>(null) }
 
@@ -133,12 +134,27 @@ private fun App(handed: Uri? = null) {
             color = MUT, fontSize = 11.sp)
 
         Spacer(Modifier.height(16.dp))
-        Button(
-            onClick = { pick.launch("video/*") },
-            enabled = !running,
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = ACCENT)
-        ) { Text(if (video == null) "Choose a video" else "Choose a different video") }
+
+        if (recording) {
+            RecorderScreen(
+                onRecorded = { uri -> video = uri; recording = false },
+                onCancel = { recording = false }
+            )
+        } else {
+            Button(
+                onClick = { pick.launch("video/*") },
+                enabled = !running,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = ACCENT)
+            ) { Text(if (video == null) "Choose a video" else "Choose a different video") }
+
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(
+                onClick = { recording = true },
+                enabled = !running,
+                modifier = Modifier.fillMaxWidth()
+            ) { Text("Record with camera", color = FG) }
+        }
 
         video?.let {
             Spacer(Modifier.height(10.dp))
