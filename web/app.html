@@ -518,13 +518,13 @@ function renderFront(){
   const kneeRow=(nameKey,st)=>{
     if(!st) return ["GRAY",t(nameKey),t('front.notTracked')];
     const v=st.peak;
-    if(v>=8) return ["AMBER",t(nameKey),DX.valgus(v.toFixed(0))];
-    if(v<=-8) return ["AMBER",t(nameKey),DX.varus((-v).toFixed(0))];
+    if(v>=FRONTAL.fppa) return ["AMBER",t(nameKey),DX.valgus(v.toFixed(0))];
+    if(v<=-FRONTAL.fppa) return ["AMBER",t(nameKey),DX.varus((-v).toFixed(0))];
     return ["GREEN",t(nameKey),DX.straight(Math.abs(v).toFixed(0))];
   };
   const items=[ kneeRow('front.name.left',L), kneeRow('front.name.right',R) ];
-  if(rock!=null) items.push(rock>=6 ? ["AMBER",t('front.name.rock'),DX.rockAmber(rock.toFixed(0))] : ["GREEN",t('front.name.rock'),DX.rockGreen(rock.toFixed(0))]);
-  if(L&&R){ const d=Math.abs(L.peak-R.peak); items.push(d>=6 ? ["AMBER",t('front.name.sym'),DX.symAmber(d.toFixed(0))] : ["GREEN",t('front.name.sym'),DX.symGreen(d.toFixed(0))]); }
+  if(rock!=null) items.push(rock>=FRONTAL.rock ? ["AMBER",t('front.name.rock'),DX.rockAmber(rock.toFixed(0))] : ["GREEN",t('front.name.rock'),DX.rockGreen(rock.toFixed(0))]);
+  if(L&&R){ const d=Math.abs(L.peak-R.peak); items.push(d>=FRONTAL.sym ? ["AMBER",t('front.name.sym'),DX.symAmber(d.toFixed(0))] : ["GREEN",t('front.name.sym'),DX.symGreen(d.toFixed(0))]); }
   document.querySelector("#frontout").innerHTML=items.map(([g,b,s])=>
     `<div class="fmetric"><span class="dot ${g}"></span><div><b>${b}</b><span>${s}</span></div></div>`).join("");
   const anyFlag=items.some(([g])=>g==="AMBER"||g==="RED");
@@ -548,6 +548,15 @@ const SIDE = {
 const ZONES = {
   knee_flexion_bdc:[30,40,28,42], torso_from_horiz:[40,50,34,56],
   elbow_flexion:[15,30,8,45], shoulder_angle:[80,95,70,105],
+};
+// Frontal-plane flag thresholds (beta). Set at the top of the healthy range, not at the
+// mean — healthy riders on a correct saddle already show real frontal-plane movement, so
+// flagging near the mean just tells most people they have a problem. See
+// files/bikefit-research-ranges.md for the numbers these come from.
+const FRONTAL = {
+  fppa: 10,  // healthy knee valgus excursion 5.0±2.2° (mean+2SD≈9.4); 2D FPPA detectable diff ~7.5–8.9°
+  rock: 12,  // healthy pelvis coronal ROM 7.1±2.5° (mean+2SD≈12.1; observed max 11.7°)
+  sym:  9,   // below the smallest detectable difference of 2D FPPA (~7.5–8.9°) L/R is just noise
 };
 // [0] is an I18N key (shared with the sample table), [1] the target shown in the table.
 const LABEL = {
