@@ -258,7 +258,7 @@
     <section class="hero">
       <div class="hero-copy">
         <h1 data-i18n="hero.h1">Grade your bike fit — <span class="g">green</span>, <span class="a">amber</span>, <span class="r">red</span>.</h1>
-        <p class="sub" data-i18n="hero.sub">Film yourself pedaling for 20–30 seconds. AI tracks your joints frame-by-frame, measures the angles a professional fitter checks, and tells you the exact change to make. Your video never leaves your device.</p>
+        <p class="sub" data-i18n="hero.sub">Film yourself pedaling for about 20–30 seconds. The analyzer reads your body position in every frame, measures the angles used in bike fitting, and shows you which parts are already right and which ones still need adjusting. Everything runs in your browser. Your video is never uploaded to a server.</p>
         <div class="cta">
           <a class="btn primary" href="app.html">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
@@ -270,8 +270,8 @@
           </a>
         </div>
         <div class="trust">
-          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> <span data-i18n="chip.ondevice">100% on-device</span></span>
-          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> <span data-i18n="chip.noupload">No upload</span></span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> <span data-i18n="chip.ondevice">Runs in your browser</span></span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> <span data-i18n="chip.noupload">No video upload</span></span>
           <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> <span data-i18n="chip.opensource">Open source</span></span>
           <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> <span data-i18n="chip.anybike">Any bike</span></span>
         </div>
@@ -352,26 +352,26 @@
   <!-- ============ HOW IT WORKS ============ -->
   <section class="block">
     <p class="eyebrow" data-i18n="how.eyebrow">How it works</p>
-    <h2 class="sec" data-i18n="how.h2">Three steps, no account, no upload</h2>
-    <p class="sec-lead" data-i18n="how.lead">Everything runs locally in your browser using Google's MediaPipe Pose model. There's no server compute — the video is analyzed on your own hardware and never sent anywhere.</p>
+    <h2 class="sec" data-i18n="how.h2">It takes three steps</h2>
+    <p class="sec-lead" data-i18n="how.lead">The analyzer uses Google's MediaPipe Pose, which runs directly in your browser. All the processing happens on your own device, so your video is never sent to a server.</p>
     <div class="cols3">
       <div class="mini">
         <span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m16 10 4.4-2.6a1 1 0 0 1 1.6.9v7.4a1 1 0 0 1-1.6.9L16 14"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg></span>
         <div class="step" data-i18n="step1.label">Step 1</div>
         <h3 data-i18n="step1.h3">Film your ride</h3>
-        <p data-i18n="step1.p">Camera square-on at hip height, pedaling steadily for 20–30 seconds. A turbo trainer is ideal. Upload a clip or record with your webcam on the spot.</p>
+        <p data-i18n="step1.p">Put the camera square to your side, roughly at hip height. Pedal at a steady rhythm for about 20–30 seconds. If you have a turbo trainer, the result is usually more consistent.</p>
       </div>
       <div class="mini">
         <span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>
         <div class="step" data-i18n="step2.label">Step 2</div>
         <h3 data-i18n="step2.h3">AI tracks your joints</h3>
-        <p data-i18n="step2.p">The pose model finds your shoulder, elbow, wrist, hip, knee and ankle in every frame, locks onto your near side, and skips joints it can't clearly see.</p>
+        <p data-i18n="step2.p">The AI detects your shoulder, elbow, hip, knee, ankle and other body points in every frame. It automatically picks the side of your body that's most visible and ignores frames that aren't clear enough.</p>
       </div>
       <div class="mini">
         <span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
         <div class="step" data-i18n="step3.label">Step 3</div>
         <h3 data-i18n="step3.h3">Get graded advice</h3>
-        <p data-i18n="step3.p">Your angles at the bottom of the pedal stroke are graded against research ranges, with a plain-English fix for anything out of range — one change at a time.</p>
+        <p data-i18n="step3.p">The analyzer then measures the key angles, compares them against the ranges used in bike fitting, and gives you advice in plain language.</p>
       </div>
     </div>
     <div class="legend" style="margin-top:18px">
@@ -385,7 +385,7 @@
   <section class="block">
     <p class="eyebrow" data-i18n="bikes.eyebrow">Any bike</p>
     <h2 class="sec" data-i18n="bikes.h2">Road, MTB, gravel — any bike works</h2>
-    <p class="sec-lead" data-i18n="bikes.lead">The analyzer tracks your body, not your bike — and you pick your bike type in the app (road, MTB, gravel, TT, hybrid, e-bike) so the target torso angle matches how aggressive your position should be. Saddle height (the most reliable reading) stays the same on any bike.</p>
+    <p class="sec-lead" data-i18n="bikes.lead">What gets analyzed is your body position, not the bike. You pick the bike you ride (road, MTB, gravel, TT, hybrid, or e-bike) and the target angles adjust to how that bike is normally ridden. The saddle-height measurement uses the same reference on any bike.</p>
     <div class="biketags">
       <span class="bt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg> Road</span>
       <span class="bt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 5 6l3 3"/><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><path d="M6 17.5 12 8h5l-3 9.5"/></svg> MTB</span>
@@ -400,11 +400,11 @@
   <section class="block">
     <p class="eyebrow" data-i18n="ideal.eyebrow">What good looks like</p>
     <h2 class="sec" data-i18n="ideal.h2">What an ideal fit looks like</h2>
-    <p class="sec-lead" data-i18n="ideal.lead">A good fit balances power, comfort, and control. Here's the target for each key joint — and what it means when you're off.</p>
+    <p class="sec-lead" data-i18n="ideal.lead">A good bike fit isn't only about power. The right position also keeps you comfortable and in control.</p>
     <div class="idealgrid">
       <div class="ideal">
         <div class="top"><h3 data-i18n="ideal.knee.h">Knee at the bottom</h3><span class="goal">30–40°</span></div>
-        <p data-i18n="ideal.knee.p">Leg nearly — but not fully — extended at the bottom of the stroke. Too bent means the saddle's too low (knee strain, less power); nearly locked out means it's too high (rocking hips, sore Achilles).</p>
+        <p data-i18n="ideal.knee.p">At the bottom of the stroke your knee should still be slightly bent. Too much bend usually means the saddle is too low. Almost fully straight means it's probably too high, which is when the hips start rocking and the Achilles takes more load.</p>
       </div>
       <div class="ideal">
         <div class="top"><h3 data-i18n="ideal.torso.h">Back / torso angle</h3><span class="goal">40–50°</span></div>
@@ -412,11 +412,11 @@
       </div>
       <div class="ideal">
         <div class="top"><h3 data-i18n="ideal.elbow.h">Elbow bend</h3><span class="goal">15–30°</span></div>
-        <p data-i18n="ideal.elbow.p">Arms softly bent, never locked — they soak up road buzz, help you steer, and take load off your hands.</p>
+        <p data-i18n="ideal.elbow.p">Your elbows shouldn't be locked straight. A slight bend absorbs vibration, makes the bars easier to control, and takes pressure off your hands.</p>
       </div>
       <div class="ideal">
         <div class="top"><h3 data-i18n="ideal.reach.h">Reach to the bars</h3><span class="goal">80–95°</span></div>
-        <p data-i18n="ideal.reach.p">A reach that keeps your shoulders relaxed and open — not so long you're stretched thin, not so short you feel cramped.</p>
+        <p data-i18n="ideal.reach.p">A reach that fits keeps your shoulders relaxed, without feeling stretched out or cramped.</p>
       </div>
       <div class="ideal">
         <div class="top"><h3 data-i18n="ideal.hips.h">Stable hips</h3><span class="goal info" data-i18n="ideal.hips.g">from the rear</span></div>
@@ -433,10 +433,10 @@
   <section class="block">
     <p class="eyebrow" data-i18n="metrics.eyebrow">The measurements</p>
     <h2 class="sec" data-i18n="metrics.h2">Side view — the core fit read</h2>
-    <p class="sec-lead" data-i18n="metrics.lead">Angles are sampled at the bottom of every pedal stroke and reported as the median across the whole clip, so a single blurry frame can't skew the result. Each is graded green / amber / red against ranges from the Holmes method and dynamic-fit research.</p>
+    <p class="sec-lead" data-i18n="metrics.lead">Measurements are taken at the bottom of every pedal revolution, then summarised across all the strokes using the median, so one blurry frame can't affect the final result. Each angle is graded green / amber / red against ranges from the Holmes method and dynamic-fit research.</p>
     <div class="panel">
       <h3><span data-i18n="metrics.side.h">Side view</span> <span class="tag pri" data-i18n="tag.primary">Primary</span></h3>
-      <p class="subp" data-i18n="metrics.side.subp">The reliable read. Saddle height (knee angle) is the number to trust most; reach-related angles are softer on a 2D view.</p>
+      <p class="subp" data-i18n="metrics.side.subp">The side view is the most accurate, especially for setting saddle height. The reach-related angles are still useful, but they need more careful interpretation because they come from 2D video.</p>
       <div class="tscroll"><table>
         <thead><tr><th data-i18n="th.measures">What it measures</th><th data-i18n="th.target">Target</th><th data-i18n="th.relia">Reliability</th></tr></thead>
         <tbody>
@@ -451,7 +451,7 @@
 
     <div class="panel">
       <h3><span data-i18n="metrics.front.h">Front &amp; rear views</span> <span class="tag beta">Beta</span></h3>
-      <p class="subp" data-i18n="metrics.front.subp">Frontal-plane hints, filmed facing the camera or from directly behind. Directional cues, not verdicts — for real decisions the side-view saddle-height read is the trustworthy one.</p>
+      <p class="subp" data-i18n="metrics.front.subp">Treat the front and rear readings as extra hints. For adjustments that really matter, the side view is still the one to rely on.</p>
       <div class="tscroll"><table>
         <thead><tr><th data-i18n="th.measures2">What it measures</th><th data-i18n="th.tells">Tells you</th><th data-i18n="th.relia2">Reliability</th></tr></thead>
         <tbody>
@@ -466,7 +466,7 @@
   <!-- ============ FEATURES ============ -->
   <section class="block">
     <p class="eyebrow" data-i18n="feat.eyebrow">More features</p>
-    <h2 class="sec" data-i18n="feat.h2">Built to be easy and private</h2>
+    <h2 class="sec" data-i18n="feat.h2">What else the tool does</h2>
     <div class="cols2">
       <div class="feat">
         <span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8"/><path d="m8 17 4-4 4 4"/><path d="M20 16.5A4.5 4.5 0 0 0 17.5 8h-1.8A7 7 0 1 0 4 14.9"/></svg></span>
@@ -479,8 +479,8 @@
       </div>
       <div class="feat">
         <span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-        <h3 data-i18n="feat.priv.h">Nothing leaves your device</h3>
-        <p data-i18n="feat.priv.p">All pose detection and math run in your browser. There's no upload, no account, and no server compute — so your footage stays yours.</p>
+        <h3 data-i18n="feat.priv.h">Your video stays on your device</h3>
+        <p data-i18n="feat.priv.p">All the analysis happens directly in your browser, with no upload step.</p>
       </div>
       <div class="feat">
         <span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg></span>
@@ -498,8 +498,8 @@
   <!-- ============ TECHNOLOGY ============ -->
   <section class="block">
     <p class="eyebrow" data-i18n="tech.eyebrow">Technology</p>
-    <h2 class="sec" data-i18n="tech.h2">The tech under the hood — and why the numbers hold up</h2>
-    <p class="sec-lead" data-i18n="tech.lead">No black box. Here's exactly what runs, and the design choices that make the reliable readings trustworthy.</p>
+    <h2 class="sec" data-i18n="tech.h2">The technology used</h2>
+    <p class="sec-lead" data-i18n="tech.lead">This is what actually runs when you drop in a clip, and the reasoning behind a few of the design choices.</p>
     <div class="cols2">
       <div class="feat">
         <span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><circle cx="6" cy="14" r="2"/><circle cx="18" cy="14" r="2"/><path d="M12 11 7 13m5-2 5 2M6 16v3m12-3v3"/></svg></span>
@@ -536,7 +536,7 @@
       <span class="i">&#9432;</span>
       <div>
         <h3 data-i18n="tech.honest.h">How accurate is it, really?</h3>
-        <p data-i18n="tech.honest.p">The saddle-height (knee) reading is the one to trust — it's stable and well-validated. Torso and elbow are solid; reach/shoulder is the softest, because a flat 2D side view can't perfectly judge depth. It's a proof-of-concept, so it won't match a 3D pro fit — but for spotting an obviously-off saddle or position, it's genuinely useful. Always change one thing at a time and re-film.</p>
+        <p data-i18n="tech.honest.p">The knee angle is the most consistent measurement, because it's the easiest to read from a side-on video. Torso and elbow are fairly stable too, while the reach-related angles are less precise, because 2D video can't capture depth properly. This is still a proof of concept and it can't replace a 3D bike fitting system. But for finding the clearly visible problems, like a saddle that's too high or too low, it's genuinely useful. If you do adjust something, change one thing at a time and re-film.</p>
       </div>
     </div>
   </section>
@@ -546,13 +546,13 @@
     <p class="eyebrow" data-i18n="faq.eyebrow">FAQ</p>
     <h2 class="sec" data-i18n="faq.h2">Frequently asked questions</h2>
     <div class="faq">
-      <details><summary data-i18n="faq.q1">Is my video uploaded anywhere?</summary><p data-i18n="faq.a1">No. All detection and calculation happen in your browser on your device. Nothing is uploaded, there's no account, and there's no server compute.</p></details>
-      <details><summary data-i18n="faq.q2">Which bikes does it work with?</summary><p data-i18n="faq.a2">Any bike — road, mountain (MTB), gravel, TT/triathlon, hybrid, commuter, or e-bike. It tracks your body, so the bike doesn't matter. Ranges are tuned for a general road/endurance position, so very aggressive or very upright setups read a little differently.</p></details>
-      <details><summary data-i18n="faq.q3">How accurate is it?</summary><p data-i18n="faq.a3">Accurate enough to catch obvious issues. The knee/saddle-height reading is the most reliable; reach is the softest. It's a 2D proof-of-concept, not a replacement for a professional 3D fit.</p></details>
-      <details><summary data-i18n="faq.q4">What kind of clip should I film?</summary><p data-i18n="faq.a4">20–30 seconds, camera square-on at hip height, pedaling at an easy steady cadence. A turbo trainer and good lighting give the cleanest read.</p></details>
-      <details><summary data-i18n="faq.q5">Does it work on my phone?</summary><p data-i18n="faq.a5">Yes, in modern mobile browsers. Devices with WebGPU are faster; older ones fall back to a slower CPU mode but still work.</p></details>
-      <details><summary data-i18n="faq.q6">Is it free and open source?</summary><p data-i18n="faq.a6">Completely free and open source. Browse or contribute to the code at <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">github.com/doniwirawan/bike-fit-analyzer</a>.</p></details>
-      <details><summary data-i18n="faq.q7">Can it replace a professional bike fit?</summary><p data-i18n="faq.a7">No. It makes basic fitting accessible and helps you spot big problems, but a perfect fit still needs a qualified fitter's hands-on judgement.</p></details>
+      <details><summary data-i18n="faq.q1">Is my video uploaded anywhere?</summary><p data-i18n="faq.a1">No. All the pose detection and calculation happen directly in your browser, on your own device. Your video is never uploaded to a server, no account is needed, and no data is sent while the analysis runs.</p></details>
+      <details><summary data-i18n="faq.q2">Which bikes does it work with?</summary><p data-i18n="faq.a2">Almost any bike — road, mountain (MTB), gravel, TT/triathlon, hybrid, commuter, or e-bike. What gets analyzed is your body position, not the bike. The target angles follow the bike type you select, though very aggressive or very upright positions still have limits when they're only seen through 2D video.</p></details>
+      <details><summary data-i18n="faq.q3">How accurate is it?</summary><p data-i18n="faq.a3">Accurate enough to find the obvious problems, like a saddle that's too high or too low. The knee angle is the most consistent measurement, while reach is the least precise. This is still 2D analysis and it can't replace a professional 3D bike fitting.</p></details>
+      <details><summary data-i18n="faq.q4">What kind of clip should I film?</summary><p data-i18n="faq.a4">Film about 20–30 seconds with the camera square to your side and at hip height. Pedal as you normally would, at a steady rhythm. With a turbo trainer and enough light, the result is usually more consistent.</p></details>
+      <details><summary data-i18n="faq.q5">Does it work on my phone?</summary><p data-i18n="faq.a5">Yes. The analyzer runs in modern browsers on both phones and computers. Devices that support WebGPU will process the video faster, while older ones fall back to the CPU. That can be a little slower, but it still works.</p></details>
+      <details><summary data-i18n="faq.q6">Is it free and open source?</summary><p data-i18n="faq.a6">Yes. Bike Fit Analyzer is completely free and open source. If you're curious how it works, or you'd like to contribute, you can <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">read the code on GitHub</a>.</p></details>
+      <details><summary data-i18n="faq.q7">Can it replace a professional bike fit?</summary><p data-i18n="faq.a7">Not yet. This tool is built to help you run a basic check and find the clearly visible problems, before you adjust anything yourself or go to a bike fitter. For a genuinely precise result — especially if you have pain or specific fitting needs — a professional session is still the better option.</p></details>
     </div>
   </section>
 
@@ -562,7 +562,7 @@
       <span class="i">&#9888;</span>
       <div>
         <h3 data-i18n="callout.h">Basic fitting for everyone — not a replacement for a pro fitter</h3>
-        <p data-i18n="callout.p">A perfect fit still needs a professional and their hands-on judgement. What this tool does is make <b>basic fitting accessible</b>: a quick, free way to catch the obvious stuff — saddle far too high or low, wildly off angles — before you ever book a session. It's a 2D side-view estimate, not a 3D pro fit, and it's still a work in progress, <b>actively looking for input from qualified bike fitters</b> to sharpen its ranges and advice. If you're a fitter (or know one), feedback is very welcome — open an issue on GitHub. Treat the results as a starting point, change one thing at a time, and re-film. Not medical advice.</p>
+        <p data-i18n="callout.p">This tool exists to help more people run a <b>basic bike fit check</b> for free. The result is a starting point — something to work from before you adjust things yourself, or before you book a session with a professional fitter. Because it only uses 2D video analysis, it has real limits and it can't replace an in-person bike fitting. If you're a bike fitter, or you have feedback from actually fitting people, I'd be very glad to hear it on GitHub.</p>
       </div>
     </div>
   </section>
@@ -574,7 +574,7 @@
         <p class="kicker" data-i18n="promo.madeby">Made by</p>
         <span class="avatar"><svg viewBox="0 0 24 24" fill="currentColor" role="img" aria-label="Strava"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg></span>
         <h3>Doni Wirawan</h3>
-        <p data-i18n="promo.strava.p">A cyclist building tools for other cyclists. Follow the training and the projects — say hi on Strava.</p>
+        <p data-i18n="promo.strava.p">I ride, and I was curious whether basic bike fitting could be made easier to get to. This project came out of that curiosity and turned into something anyone can use for free.</p>
         <a class="btn" href="https://www.strava.com/athletes/124436743" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="currentColor" role="img" aria-label="Strava"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>
           <span data-i18n="promo.strava.btn">Follow on Strava</span>
