@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "xyz.doniwirawan.bikefit",
+    "sha256_cert_fingerprints": [
+      "FC:D3:8F:CC:9E:29:A3:B7:64:7E:FA:3F:95:58:9D:89:03:8C:C2:AB:A4:69:C6:5A:44:D2:14:7C:A2:CD:8A:34"
+    ]
+  }
+}]

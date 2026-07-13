@@ -22,3 +22,10 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+
+# Android signing key — keep private, never commit
+mobile/keystore.jks
+mobile/.gradle/
+mobile/app/build/
+mobile/build/
+mobile/local.properties

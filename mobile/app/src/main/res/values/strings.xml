@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bike Fit Analyzer</string>
+    <string name="launch_url">https://bikefit.doniwirawan.xyz/app</string>
+    <string name="asset_statements" translatable="false">
+        [{ \"relation\": [\"delegate_permission/common.handle_all_urls\"],
+           \"target\": { \"namespace\": \"web\", \"site\": \"https://bikefit.doniwirawan.xyz\" }}]
+    </string>
+</resources>

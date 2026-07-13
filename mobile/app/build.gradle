@@ -1,0 +1,39 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'xyz.doniwirawan.bikefit'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "xyz.doniwirawan.bikefit"
+        minSdk 21
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file(System.getenv("BIKEFIT_KEYSTORE") ?: "../keystore.jks")
+            storePassword System.getenv("BIKEFIT_STORE_PASS") ?: "bikefit"
+            keyAlias System.getenv("BIKEFIT_KEY_ALIAS") ?: "bikefit"
+            keyPassword System.getenv("BIKEFIT_KEY_PASS") ?: "bikefit"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.5.0'
+}
