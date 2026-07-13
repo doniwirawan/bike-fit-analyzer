@@ -29,3 +29,8 @@ mobile/.gradle/
 mobile/app/build/
 mobile/build/
 mobile/local.properties
+
+# Android build outputs (any module)
+**/build/
+**/.gradle/
+mobile/**/local.properties

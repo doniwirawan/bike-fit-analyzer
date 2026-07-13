@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Bike Fit</string>
-    <style name="Theme.BikeFit" parent="android:Theme.Material.NoActionBar">
-        <item name="android:statusBarColor">#0B0F16</item>
-        <item name="android:windowBackground">#0B0F16</item>
-    </style>
-</resources>
