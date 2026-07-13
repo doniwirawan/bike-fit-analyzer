@@ -1,6 +1,6 @@
 # 🚴 Bike Fit Analyzer
 
-### ▶️ Live demo (runs in your browser): **https://bikefit-analyzer.vercel.app**
+### ▶️ Live demo (runs in your browser): **https://bikefit.doniwirawan.xyz**
 
 No install, no upload — drop a side-on pedaling clip and it grades your fit
 on-device. (The in-browser app lives in [`web/`](web/); the more accurate
