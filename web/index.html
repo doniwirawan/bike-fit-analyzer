@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bike Fit Analyzer — grade your bike fit in your browser</title>
 <meta name="description" id="metaDesc" content="Drop a clip of yourself pedaling and get your bike-fit angles graded green / amber / red, right in your browser. Works with any bike. 100% on-device, free & open source.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b6df6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='18.5' cy='17.5' r='3.5'/%3E%3Ccircle cx='5.5' cy='17.5' r='3.5'/%3E%3Ccircle cx='15' cy='5' r='1'/%3E%3Cpath d='M12 17.5V14l-3-3 4-3 2 3h2'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
   :root{
     color-scheme: light dark;
@@ -35,7 +36,7 @@
   .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
   .brand{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-weight:700;
     font-size:.95rem;letter-spacing:.14em;text-transform:uppercase}
-  .brand svg{width:20px;height:20px;color:var(--accent);vertical-align:-4px}
+  .brand .blogo{width:28px;height:28px;object-fit:contain;display:block;flex:none}
   .headright{display:flex;align-items:center;gap:14px}
   .navlink{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;
     color:var(--mut);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
@@ -236,7 +237,7 @@
   <header>
     <div class="topbar">
       <div class="brand">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>
+        <img class="blogo" src="logo.png" alt="" width="28" height="28">
         Bike Fit Analyzer
       </div>
       <div class="headright">
@@ -609,7 +610,7 @@
     <div class="foot-grid">
       <div class="foot-brand">
         <div class="brand">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>
+          <img class="blogo" src="logo.png" alt="" width="28" height="28">
           Bike Fit Analyzer
         </div>
         <p data-i18n="foot.tagline">Grade your bike fit in your browser. Works with any bike. Free &amp; open source.</p>

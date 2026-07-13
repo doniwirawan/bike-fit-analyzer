@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bike Fit Analyzer — grade your fit in your browser</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b6df6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='18.5' cy='17.5' r='3.5'/%3E%3Ccircle cx='5.5' cy='17.5' r='3.5'/%3E%3Ccircle cx='15' cy='5' r='1'/%3E%3Cpath d='M12 17.5V14l-3-3 4-3 2 3h2'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
   :root{
     color-scheme: light dark;
@@ -156,7 +157,7 @@
   footer{border-top:1px solid var(--line);padding:22px 0 50px;color:var(--mut);font-size:.82rem}
   a{color:var(--accent)}
   /* ---- icons ---- */
-  .brand svg{width:20px;height:20px;color:var(--accent);vertical-align:-4px}
+  .brand .blogo{width:28px;height:28px;object-fit:contain;display:block;flex:none}
   .drop-ic{width:36px;height:36px;color:var(--accent);margin:0 auto 6px;display:block}
   .mini .mi{width:34px;height:34px;border-radius:8px;background:var(--soft);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;margin-bottom:11px}
   .mini .mi svg{width:19px;height:19px}
@@ -184,7 +185,7 @@
 <div class="wrap">
   <header>
     <div class="topbar">
-      <a class="brand" href="index.html" style="color:inherit;text-decoration:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg> Bike Fit Analyzer</a>
+      <a class="brand" href="index.html" style="color:inherit;text-decoration:none"><img class="blogo" src="logo.png" alt="" width="28" height="28"> Bike Fit Analyzer</a>
       <div class="langsw" role="group" aria-label="Language">
         <button data-lang="en" aria-label="English">EN</button>
         <button data-lang="id" aria-label="Bahasa Indonesia">ID</button>
@@ -254,6 +255,15 @@
       <video id="vid" playsinline muted></video>
       <div id="bar"><div id="fill"></div></div>
       <div class="statusrow"><span id="spin" class="spin" hidden></span><span id="status"></span></div>
+      <div id="unsup" class="errbox" hidden>
+        <span class="i">&#9888;</span>
+        <div><b data-i18n="err.unsupported">This browser can't run the analyzer.</b>
+          <div class="foot" id="unsupwhy" style="margin-top:4px"></div></div>
+      </div>
+      <div id="slownote" class="warn" hidden>
+        <span class="i">&#9432;</span>
+        <span data-i18n="err.cpumode">Your device doesn't support WebGPU, so the analysis runs on the CPU. It still works, but a 20–30s clip can take a minute or two — keep this tab open.</span>
+      </div>
       <div id="errbox" class="errbox" hidden>
         <span class="i">&#9888;</span>
         <div><b id="errmsg"></b><button class="btn ghost" id="retry" style="margin-top:10px" data-i18n="retry">Try another clip</button></div>
@@ -491,6 +501,9 @@ const I18N = {
   "hist.load":{en:"Open",id:"Buka"},
   "hist.del":{en:"Delete",id:"Hapus"},
   "hist.note":{en:"Saved in this browser only — never uploaded. Clearing your browser data removes them.",id:"Tersimpan di browser ini saja — tidak pernah diunggah. Kalau data browser dihapus, hasilnya ikut hilang."},
+  "err.unsupported":{en:"This browser can't run the analyzer.",id:"Browser ini tidak bisa menjalankan analyzer."},
+  "err.missing":{en:"Try a recent Chrome, Edge, Safari or Firefox. Missing here:",id:"Coba Chrome, Edge, Safari, atau Firefox versi baru. Yang tidak tersedia:"},
+  "err.cpumode":{en:"Your device doesn't support WebGPU, so the analysis runs on the CPU. It still works, but a 20–30s clip can take a minute or two — keep this tab open.",id:"Perangkatmu tidak mendukung WebGPU, jadi analisis berjalan di CPU. Tetap bisa, tapi klip 20–30 detik bisa makan satu sampai dua menit — biarkan tab ini terbuka."},
 };
 const ID_TZ=/Asia\/(Jakarta|Pontianak|Makassar|Jayapura)/;
 function detectLang(){
@@ -669,6 +682,31 @@ function applyBikeType(){
   if(bikeSel){ bikeSel.onchange=e=>{ bikeType=e.target.value; applyBikeType(); }; } }
 applyBikeType();
 
+// What the analyzer actually needs. If any of this is missing the clip can't be processed at
+// all, so say so up front instead of letting the user pick a video and hit a dead end.
+function missingFeatures(){
+  const miss=[];
+  if(typeof WebAssembly!=="object") miss.push("WebAssembly");
+  if(typeof fetch!=="function") miss.push("fetch");
+  const c=document.createElement("canvas");
+  if(!c.getContext || !c.getContext("2d")) miss.push("Canvas 2D");
+  if(!c.toBlob) miss.push("canvas.toBlob");
+  const v=document.createElement("video");
+  if(!v.canPlayType) miss.push("HTML5 video");
+  else if(!v.canPlayType("video/mp4") && !v.canPlayType("video/webm")) miss.push("MP4/WebM playback");
+  if(typeof URL==="undefined" || !URL.createObjectURL) miss.push("Object URLs");
+  return miss;
+}
+function gateUnsupported(){
+  const miss=missingFeatures();
+  if(!miss.length) return false;
+  $("#unsup").hidden=false;
+  $("#unsupwhy").textContent=t('err.missing')+" "+miss.join(", ");
+  drop.style.display="none"; $(".try").style.display="none";
+  return true;
+}
+const UNSUPPORTED = gateUnsupported();
+
 async function initModel(){
   status.textContent=t('st.loadModel');
   const files=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm");
@@ -679,7 +717,13 @@ async function initModel(){
   // Some GPUs/browsers hang or fail on GPU init; race it and fall back to CPU.
   const timeout=(p,ms)=>Promise.race([p,new Promise((_,r)=>setTimeout(()=>r(new Error("gpu-timeout")),ms))]);
   try{ landmarker=await timeout(make("GPU"),7000); }
-  catch(e){ status.textContent=t('st.loadCPU'); landmarker=await make("CPU"); }
+  catch(e){
+    // GPU path unavailable (no WebGPU, or it hung). CPU still works — just tell them it's slow
+    // rather than leaving them staring at a progress bar wondering if it's broken.
+    status.textContent=t('st.loadCPU');
+    $("#slownote").hidden=false;
+    landmarker=await make("CPU");
+  }
 }
 
 drop.onclick=()=>file.click();
@@ -773,6 +817,7 @@ function resolveDuration(v){
   });
 }
 async function start(f, knownDur){
+  if(UNSUPPORTED) return;
   drop.style.display="none"; $(".try").style.display="none"; $("#results").hidden=true;
   errbox.hidden=true; spin.hidden=false; stage.style.display="block"; bar.style.display="block"; fill.style.width="0";
   if(!landmarker){ try{ await initModel(); }
