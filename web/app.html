@@ -101,6 +101,18 @@
   .rbar{position:relative;height:6px;border-radius:99px;margin:10px 2px 5px}
   .rbar .mk{position:absolute;top:-4px;width:3px;height:14px;border-radius:2px;background:#fff;
     box-shadow:0 0 0 1.5px rgba(0,0,0,.45);transform:translateX(-1.5px)}
+  /* saved results */
+  #history{margin-top:22px;border-top:1px solid var(--line);padding-top:16px}
+  .hhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+  .hhead h4{margin:0}
+  .btn.small{padding:5px 10px;font-size:.72rem}
+  .hitem{display:flex;align-items:center;gap:11px;padding:9px;border:1px solid var(--line);
+    border-radius:10px;background:var(--soft);margin-bottom:8px}
+  .hitem img{width:64px;height:42px;object-fit:cover;border-radius:6px;flex:none;background:#000}
+  .hitem .hmeta{flex:1;min-width:0}
+  .hitem .hwhen{color:var(--mut);font-family:var(--mono);font-size:.64rem;letter-spacing:.05em;text-transform:uppercase}
+  .hitem .hsum{font-size:.86rem;font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hitem .hact{display:flex;gap:6px;flex:none}
   .fixes{margin:14px 0 0;padding-left:18px} .fixes li{margin:6px 0;font-size:.9rem}
   .demoimg{width:100%;border-radius:10px;border:1px solid var(--line);margin-bottom:14px;display:block}
   /* browser-frame mock for the sample figure */
@@ -349,7 +361,9 @@
         <div class="foot" data-i18n="res.foot">2D side-view estimate, not a 3D pro fit. Saddle height (knee) is the most reliable number here; reach/shoulder is the softest — don't change your stem on one clip. Change one thing at a time, then re-film.</div>
         <div class="try" style="margin-top:14px">
           <button class="btn primary" onclick="location.reload()" data-i18n="res.again">Analyze another clip</button>
-          <button class="btn ghost" id="dl" data-i18n="btn.download">Download image</button>
+          <button class="btn ghost" id="dlBoth" data-i18n="btn.dlBoth">Image + result</button>
+          <button class="btn ghost" id="dlImage" data-i18n="btn.dlImage">Image only</button>
+          <button class="btn ghost" id="dlResult" data-i18n="btn.dlResult">Result only</button>
           <button class="btn ghost" id="share" hidden data-i18n="btn.share">Share my result</button>
         </div>
       </div>
@@ -364,6 +378,15 @@
         <div id="frontout"></div>
         <div class="foot" data-i18n="front.foot">Knee tracking uses the frontal projection angle (FPPA); pelvic rock is peak-to-peak hip-line tilt across the stroke. For real decisions, the side-view saddle-height (knee) reading is the trustworthy one.</div>
         <button class="btn primary" style="margin-top:14px" onclick="location.reload()" data-i18n="res.again">Analyze another clip</button>
+      </div>
+
+      <div id="history" hidden>
+        <div class="hhead">
+          <h4 data-i18n="hist.h">Saved results</h4>
+          <button class="btn ghost small" id="histclear" data-i18n="hist.clear">Clear all</button>
+        </div>
+        <div id="histlist"></div>
+        <div class="foot" data-i18n="hist.note">Saved in this browser only — never uploaded. Clearing your browser data removes them.</div>
       </div>
     </section>
   </div>
@@ -457,9 +480,17 @@ const I18N = {
   "adv.allgood":{en:"Everything's in range — nice fit. Re-film if you change anything.",id:"Semua sudah pas — fit-nya bagus. Rekam ulang kalau kamu ubah sesuatu."},
   "legend.dialed":{en:"dialed",id:"pas"}, "legend.borderline":{en:"borderline",id:"batas"}, "legend.fixit":{en:"fix it",id:"perbaiki"},
   "retry":{en:"Try another clip",id:"Coba klip lain"},
-  "btn.download":{en:"Download image",id:"Unduh gambar"},
+  "btn.dlBoth":{en:"Image + result",id:"Gambar + hasil"},
+  "btn.dlImage":{en:"Image only",id:"Gambar saja"},
+  "btn.dlResult":{en:"Result only",id:"Hasil saja"},
   "btn.share":{en:"Share my result",id:"Bagikan hasilku"},
   "share.text":{en:"My bike fit, graded in the browser with Bike Fit Analyzer.",id:"Bike fit-ku, dinilai langsung di browser pakai Bike Fit Analyzer."},
+  "foot.export":{en:"2D side-view estimate — not a professional bike fit",id:"Perkiraan 2D dari samping — bukan bike fit profesional"},
+  "hist.h":{en:"Saved results",id:"Hasil tersimpan"},
+  "hist.clear":{en:"Clear all",id:"Hapus semua"},
+  "hist.load":{en:"Open",id:"Buka"},
+  "hist.del":{en:"Delete",id:"Hapus"},
+  "hist.note":{en:"Saved in this browser only — never uploaded. Clearing your browser data removes them.",id:"Tersimpan di browser ini saja — tidak pernah diunggah. Kalau data browser dihapus, hasilnya ikut hilang."},
 };
 const ID_TZ=/Asia\/(Jakarta|Pontianak|Makassar|Jayapura)/;
 function detectLang(){
@@ -576,6 +607,7 @@ function applyLang(l){
   document.title=t('doc.title');
   updateLeads();
   renderExample();
+  renderHistory();
   if(lastSide) renderSide();
   if(lastFront) renderFront();
   document.querySelectorAll('.langsw button').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
@@ -791,7 +823,14 @@ async function start(f, knownDur){
       // Live readouts: always show the numbers, but only colour them near the bottom of
       // the stroke. Everywhere else the targets simply don't apply — mid-stroke the knee
       // is bent way past 40°, and grading that would flash red for no reason.
-      const liveG={knee_flexion_bdc:"GRAY",torso_from_horiz:"GRAY",elbow_flexion:"GRAY",shoulder_angle:"GRAY"};
+      // Torso, elbow and shoulder are posture angles — they barely move through the stroke,
+      // so grading them on every frame is honest. The knee is not: it swings from ~8° to
+      // ~76° each revolution and its 30–40° target only applies at the bottom, so colouring
+      // it continuously would flash red mid-stroke on a perfectly good fit.
+      const liveG={knee_flexion_bdc:"GRAY",
+        torso_from_horiz:grade("torso_from_horiz",A.torso_from_horiz),
+        elbow_flexion:grade("elbow_flexion",A.elbow_flexion),
+        shoulder_angle:grade("shoulder_angle",A.shoulder_angle)};
       if(!isNaN(ankleY)){
         if(ankleY<ankleLo) ankleLo=ankleY;
         if(ankleY>ankleHi) ankleHi=ankleY;
@@ -799,7 +838,7 @@ async function start(f, knownDur){
         // Wait for a full stroke before trusting ankleHi as the real bottom — early on it
         // is only the lowest point seen *so far*, which lights up mid-stroke frames.
         if(frames.length>=STROKE_WARMUP && travel>2 && ankleY>=ankleHi-0.04*travel)
-          for(const m in ZONES) liveG[m]=grade(m,A[m]);
+          liveG.knee_flexion_bdc=grade("knee_flexion_bdc",A.knee_flexion_bdc);
       }
       drawSkeleton(P,liveG,A);
       }
@@ -884,6 +923,7 @@ function finish(){
   lastSide={R,G,strokes:bdc.length,hipTop,offAxis:(viewRatios.length>=5 && median(viewRatios)>0.55)};
   renderSide();
   $("#example").hidden=true; $("#results").hidden=false;
+  histSave();
   const deepest=bdc.reduce((a,b)=>frames[b].ankleY>frames[a].ankleY?b:a,bdc[0]);
   // seek to the EXACT captured time of that frame so the skeleton lines up
   vid.pause();
@@ -932,27 +972,144 @@ function finishFrontal(){
   lastFront={L,R,rock,frames:F.length,view:viewMode};
   renderFront();
   $("#example").hidden=true; $("#results").hidden=true; $("#frontresults").hidden=false;
+  histSave();
 }
 
-/* download / share the graded frame (the canvas already holds it) */
-const shotName=()=>`bikefit-${new Date().toISOString().slice(0,10)}.png`;
-const shot=()=>new Promise(r=>cv.toBlob(r,"image/png"));
-$("#dl").onclick=async()=>{
-  const b=await shot(); if(!b) return;
+/* ---- export: the frame, the numbers, or both ---- */
+const shotName=s=>`bikefit-${s}-${new Date().toISOString().slice(0,10)}.png`;
+
+// Compose a shareable PNG. withPhoto=false keeps the numbers but leaves the rider out —
+// plenty of people want to share the result without sharing a photo of their body.
+function composeCard(withPhoto){
+  if(!lastSide) return null;
+  const {R,G,strokes}=lastSide;
+  const W=760, pad=26, rowH=58;
+  const photoH = withPhoto && cv.width ? Math.round(W*cv.height/cv.width) : 0;
+  const rows=Object.keys(ZONES);
+  const c=document.createElement("canvas");
+  c.width=W; c.height=pad+34+photoH+16+rows.length*rowH+pad+26;
+  const x=c.getContext("2d");
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const bg=css("--card")||"#131a26", fg=css("--fg")||"#e9edf3", mut=css("--mut")||"#8a93a5";
+  x.fillStyle=bg; x.fillRect(0,0,c.width,c.height);
+  let y=pad;
+  x.fillStyle=fg; x.font="700 20px ui-monospace,Menlo,Consolas,monospace";
+  x.fillText("BIKE FIT ANALYZER",pad,y+14);
+  const overall=worse(...Object.values(G));
+  x.fillStyle=COL[overall]; x.font="700 15px system-ui,sans-serif";
+  const vd=`${t('vd.'+overall)} · ${strokes} ${t('word.strokes')}`;
+  x.textAlign="right"; x.fillText(vd,W-pad,y+14); x.textAlign="left";
+  y+=34;
+  if(photoH){ x.drawImage(cv,pad,y,W-pad*2,photoH-Math.round(pad*2*cv.height/cv.width)); y+=photoH-Math.round(pad*2*cv.height/cv.width)+14; }
+  for(const m of rows){
+    const v=R[m];
+    x.fillStyle=mut; x.font="600 12px ui-monospace,Menlo,Consolas,monospace";
+    x.fillText(t(LABEL[m][0]).toUpperCase(),pad,y+16);
+    x.fillStyle=COL[G[m]]; x.font="800 26px ui-monospace,Menlo,Consolas,monospace";
+    x.fillText(v==null||isNaN(v)?"—":Math.round(v)+"°",pad,y+44);
+    x.fillStyle=mut; x.font="500 13px ui-monospace,Menlo,Consolas,monospace";
+    x.textAlign="right"; x.fillText(LABEL[m][1],W-pad,y+44); x.textAlign="left";
+    x.strokeStyle=css("--grid")||"#222c3a"; x.beginPath();
+    x.moveTo(pad,y+rowH-6); x.lineTo(W-pad,y+rowH-6); x.stroke();
+    y+=rowH;
+  }
+  x.fillStyle=mut; x.font="400 12px system-ui,sans-serif";
+  x.fillText("bikefit-analyzer.vercel.app · "+t('foot.export'),pad,y+16);
+  return c;
+}
+const toBlob=c=>new Promise(r=>c.toBlob(r,"image/png"));
+async function download(canvas,tag){
+  if(!canvas) return;
+  const b=await toBlob(canvas); if(!b) return;
   const u=URL.createObjectURL(b), a=document.createElement("a");
-  a.href=u; a.download=shotName(); a.click(); URL.revokeObjectURL(u);
-};
+  a.href=u; a.download=shotName(tag); a.click(); URL.revokeObjectURL(u);
+}
+$("#dlBoth").onclick   = ()=>download(composeCard(true),"full");
+$("#dlResult").onclick = ()=>download(composeCard(false),"result");
+$("#dlImage").onclick  = ()=>download(cv,"frame");
 { const sb=$("#share");
   // only offer Share where the browser can actually share a file — otherwise Download is it
   if(navigator.canShare && navigator.canShare({files:[new File([""],"x.png",{type:"image/png"})]})){
     sb.hidden=false;
     sb.onclick=async()=>{
-      const b=await shot(); if(!b) return;
-      try{ await navigator.share({files:[new File([b],shotName(),{type:"image/png"})],
+      const c=composeCard(true)||cv, b=await toBlob(c); if(!b) return;
+      try{ await navigator.share({files:[new File([b],shotName("full"),{type:"image/png"})],
         title:"Bike Fit Analyzer", text:t('share.text')}); }catch(e){}
     };
   }
 }
+
+/* ---- saved results (localStorage, this device only) ---- */
+const HKEY="bfa-history", HMAX=20;
+const histLoad=()=>{ try{ return JSON.parse(localStorage.getItem(HKEY))||[]; }catch(e){ return []; } };
+const histWrite=h=>{ try{ localStorage.setItem(HKEY,JSON.stringify(h)); return true; }catch(e){ return false; } };
+function histThumb(){
+  try{
+    if(!cv.width) return null;
+    const c=document.createElement("canvas"), w=200;
+    c.width=w; c.height=Math.max(1,Math.round(cv.height*w/cv.width));
+    c.getContext("2d").drawImage(cv,0,0,c.width,c.height);
+    return c.toDataURL("image/jpeg",0.6);        // small: localStorage is a ~5MB budget
+  }catch(e){ return null; }
+}
+function histSave(){
+  const e={id:Date.now(), view:viewMode, bike:bikeType, thumb:histThumb(),
+    side: viewMode==="side"?lastSide:null, front: viewMode!=="side"?lastFront:null};
+  let h=[e,...histLoad()].slice(0,HMAX);
+  if(!histWrite(h)){                              // over quota — drop old thumbnails, then old entries
+    h=h.map((x,i)=>i?{...x,thumb:null}:x);
+    while(h.length>1 && !histWrite(h)) h.pop();
+    if(h.length<=1) histWrite([e]);
+  }
+  renderHistory();
+}
+function histSummary(e){
+  if(e.side){ const k=e.side.R.knee_flexion_bdc;
+    return `${t('vd.'+worse(...Object.values(e.side.G)))} · ${t(LABEL.knee_flexion_bdc[0])} ${k==null||isNaN(k)?"—":Math.round(k)+"°"}`; }
+  if(e.front) return `${t(e.view==="front"?'front.view.front':'front.view.rear')} · beta`;
+  return "";
+}
+function renderHistory(){
+  const h=histLoad(), box=$("#histlist"), wrap=$("#history");
+  wrap.hidden = h.length===0;
+  if(!h.length){ box.innerHTML=""; return; }
+  box.innerHTML=h.map(e=>{
+    const when=new Date(e.id).toLocaleString(LANG==="id"?"id-ID":"en-GB",
+      {day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+    const bike=(BIKE_TORSO[e.bike]&&e.bike)||"";
+    return `<div class="hitem">
+      ${e.thumb?`<img src="${e.thumb}" alt="">`:``}
+      <div class="hmeta"><div class="hwhen">${when}${bike?" · "+bike.replace("_"," "):""}</div>
+        <div class="hsum">${histSummary(e)}</div></div>
+      <div class="hact">
+        <button class="btn ghost small" data-load="${e.id}" data-i18n="hist.load">Open</button>
+        <button class="btn ghost small" data-del="${e.id}" data-i18n="hist.del">Delete</button>
+      </div></div>`;
+  }).join("");
+  box.querySelectorAll("[data-load]").forEach(b=>b.onclick=()=>histOpen(+b.dataset.load));
+  box.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{
+    histWrite(histLoad().filter(x=>x.id!==+b.dataset.del)); renderHistory(); });
+  box.querySelectorAll("[data-i18n]").forEach(el=>{
+    const e=I18N[el.getAttribute("data-i18n")]; if(e) el.textContent=e[LANG]||e.en; });
+}
+function histOpen(id){
+  const e=histLoad().find(x=>x.id===id); if(!e) return;
+  // restore the bike this was graded against — otherwise the targets and the range bars
+  // would be drawn against whatever bike happens to be selected right now.
+  if(e.bike && BIKE_TORSO[e.bike]){ bikeType=e.bike; const s=$("#biketype"); if(s) s.value=e.bike; applyBikeType(); }
+  viewMode=e.view;
+  document.querySelectorAll(".viewsel button").forEach(b=>b.classList.toggle("active",b.dataset.view===e.view));
+  updateLeads();
+  if(e.thumb){ const img=new Image();
+    img.onload=()=>{ cv.width=img.width; cv.height=img.height; ctx.drawImage(img,0,0); };
+    img.src=e.thumb; }
+  $("#example").hidden=true;
+  if(e.side){ lastSide=e.side; lastFront=null; renderSide(); $("#results").hidden=false; $("#frontresults").hidden=true; }
+  else if(e.front){ lastFront=e.front; lastSide=null; renderFront(); $("#results").hidden=true; $("#frontresults").hidden=false; }
+  $("#history").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+$("#histclear").onclick=()=>{ localStorage.removeItem(HKEY); renderHistory(); };
+renderHistory();
 
 /* language toggle + initial apply */
 document.querySelectorAll('.langsw button').forEach(b=>b.addEventListener('click',()=>{ localStorage.setItem('bfa-lang',b.dataset.lang); applyLang(b.dataset.lang); }));
