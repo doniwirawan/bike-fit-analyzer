@@ -1,0 +1,59 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'xyz.doniwirawan.bikefit'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "xyz.doniwirawan.bikefit.nativeapp"
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+
+        // MediaPipe 0.10.14 ships no x86_64 .so. If x86_64 is in the APK, Android picks it on
+        // an x86_64 device (emulators), finds no libmediapipe_tasks_vision_jni.so, and dies with
+        // UnsatisfiedLinkError. Ship the ABIs MediaPipe actually supports; real phones are arm64,
+        // and x86_64 emulators fall back to arm64 translation.
+        ndk { abiFilters 'arm64-v8a', 'armeabi-v7a' }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file(System.getenv("BIKEFIT_KEYSTORE") ?: "../../keystore.jks")
+            storePassword System.getenv("BIKEFIT_STORE_PASS") ?: "bikefit"
+            keyAlias System.getenv("BIKEFIT_KEY_ALIAS") ?: "bikefit"
+            keyPassword System.getenv("BIKEFIT_KEY_PASS") ?: "bikefit"
+        }
+    }
+    buildTypes {
+        release { minifyEnabled false; signingConfig signingConfigs.release }
+        debug   { signingConfig signingConfigs.release }
+    }
+
+    // the .task model must not be compressed, MediaPipe memory-maps it
+    androidResources { noCompress 'task' }
+
+    buildFeatures { compose true }
+    composeOptions { kotlinCompilerExtensionVersion '1.5.14' }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions { jvmTarget = '1.8' }
+    packaging { resources { excludes += '/META-INF/{AL2.0,LGPL2.1}' } }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.activity:activity-compose:1.9.2'
+    implementation platform('androidx.compose:compose-bom:2024.09.02')
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.8.6'
+    implementation 'androidx.work:work-runtime-ktx:2.9.1'
+    implementation 'com.google.mediapipe:tasks-vision:0.10.14'
+}

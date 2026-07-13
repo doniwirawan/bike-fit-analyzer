@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "xyz.doniwirawan.bikefit.app-release-50:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "xyz.doniwirawan.bikefit.app-main-51:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "xyz.doniwirawan.bikefit.app-release-50:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "xyz.doniwirawan.bikefit.app-main-51:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "xyz.doniwirawan.bikefit.app-release-50:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "xyz.doniwirawan.bikefit.app-main-51:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "xyz.doniwirawan.bikefit.app-release-50:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "xyz.doniwirawan.bikefit.app-main-51:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "xyz.doniwirawan.bikefit.app-release-50:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "xyz.doniwirawan.bikefit.app-main-51:/mipmap-xhdpi/ic_launcher.png"
+    }
+]
