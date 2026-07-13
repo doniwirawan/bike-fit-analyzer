@@ -688,6 +688,8 @@ function findPeaks(y,minDist,prom){const peaks=[];
   return peaks;}
 
 let frames=[], sideConf={left:0,right:0}, viewRatios=[], frontalFrames=[];
+let ankleLo=Infinity, ankleHi=-Infinity;   // running ankle travel, for the live BDC test
+const STROKE_WARMUP=30;                    // frames to see before the ankle range is trustworthy
 // Recorded webm blobs often report duration=Infinity until forced; seek to the end to resolve it.
 function resolveDuration(v){
   return new Promise(res=>{
@@ -708,7 +710,8 @@ async function start(f, knownDur){
   await new Promise(res=>{ vid.onloadeddata=res; vid.onerror=()=>{decodeErr=true;res();}; });
   if(decodeErr||!vid.videoWidth){ fail(t('err.decode')); return; }
   cv.width=vid.videoWidth||848; cv.height=vid.videoHeight||478;
-  frames=[]; sideConf={left:0,right:0}; viewRatios=[]; frontalFrames=[]; status.textContent=t('st.analyzing');
+  frames=[]; sideConf={left:0,right:0}; viewRatios=[]; frontalFrames=[];
+  ankleLo=Infinity; ankleHi=-Infinity; status.textContent=t('st.analyzing');
   vid.pause();
   // Step through the clip by seeking frame-by-frame (driven by 'seeked' events) so
   // every frame is sampled deterministically. Unlike rAF on a playing video, this
@@ -743,8 +746,22 @@ async function start(f, knownDur){
         elbow_flexion: okv("shoulder","elbow","wrist")?180-angleAt(P.shoulder,P.elbow,P.wrist):NaN,
         shoulder_angle: okv("hip","shoulder","elbow")?angleAt(P.hip,P.shoulder,P.elbow):NaN,
         hip_angle: okv("shoulder","hip","knee")?angleAt(P.shoulder,P.hip,P.knee):NaN };
-      frames.push({t:vid.currentTime,ankleY:okv("ankle")?P.ankle.y:NaN,A,P});
-      drawSkeleton(P,{knee_flexion_bdc:"GRAY",torso_from_horiz:"GRAY",elbow_flexion:"GRAY",shoulder_angle:"GRAY"});
+      const ankleY=okv("ankle")?P.ankle.y:NaN;
+      frames.push({t:vid.currentTime,ankleY,A,P});
+      // Live readouts: always show the numbers, but only colour them near the bottom of
+      // the stroke. Everywhere else the targets simply don't apply — mid-stroke the knee
+      // is bent way past 40°, and grading that would flash red for no reason.
+      const liveG={knee_flexion_bdc:"GRAY",torso_from_horiz:"GRAY",elbow_flexion:"GRAY",shoulder_angle:"GRAY"};
+      if(!isNaN(ankleY)){
+        if(ankleY<ankleLo) ankleLo=ankleY;
+        if(ankleY>ankleHi) ankleHi=ankleY;
+        const travel=ankleHi-ankleLo;                       // ankle sweep seen so far
+        // Wait for a full stroke before trusting ankleHi as the real bottom — early on it
+        // is only the lowest point seen *so far*, which lights up mid-stroke frames.
+        if(frames.length>=STROKE_WARMUP && travel>2 && ankleY>=ankleHi-0.04*travel)
+          for(const m in ZONES) liveG[m]=grade(m,A[m]);
+      }
+      drawSkeleton(P,liveG,A);
       }
     }
     fill.style.width=Math.min(100,vid.currentTime/dur*100).toFixed(0)+"%";
@@ -766,6 +783,28 @@ function drawSkeleton(P,g,A){
   for(const k in P){ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(P[k].x,P[k].y,Math.max(4,cv.width/280),0,7);ctx.fill();}
   // angle readouts on the joints (only on the final graded frame, when A is passed)
   if(A){
+    // the angle itself, drawn as a wedge at the joint — same colour as its grade
+    const R=Math.max(16,cv.width/20);
+    const arc=(V,a,b,col,val)=>{
+      if(!V||!a||!b||val==null||isNaN(val)) return;
+      const a1=Math.atan2(a.y-V.y,a.x-V.x);
+      let d=Math.atan2(b.y-V.y,b.x-V.x)-a1;
+      while(d<=-Math.PI)d+=2*Math.PI; while(d>Math.PI)d-=2*Math.PI;   // take the short way round
+      ctx.beginPath(); ctx.moveTo(V.x,V.y); ctx.arc(V.x,V.y,R,a1,a1+d,d<0); ctx.closePath();
+      ctx.fillStyle=col+"38"; ctx.fill();
+      ctx.beginPath(); ctx.arc(V.x,V.y,R,a1,a1+d,d<0);
+      ctx.strokeStyle=col; ctx.lineWidth=Math.max(2,cv.width/320); ctx.stroke();
+    };
+    // knee and elbow are reported as flexion (how far off straight), not the interior angle,
+    // so their wedge opens from the straight-limb line — otherwise it would draw ~160° while
+    // the badge next to it says 20°.
+    const straightOn=(joint,from)=>({x:2*joint.x-from.x, y:2*joint.y-from.y});
+    arc(P.knee,straightOn(P.knee,P.hip),P.ankle,c("knee_flexion_bdc"),A.knee_flexion_bdc);
+    arc(P.elbow,straightOn(P.elbow,P.shoulder),P.wrist,c("elbow_flexion"),A.elbow_flexion);
+    arc(P.shoulder,P.hip,P.elbow,c("shoulder_angle"),A.shoulder_angle);
+    // torso is measured off the horizontal, so its wedge opens from a level line at the hip
+    arc(P.hip,{x:P.hip.x+(P.shoulder.x>=P.hip.x?R:-R),y:P.hip.y},P.shoulder,
+        c("torso_from_horiz"),A.torso_from_horiz);
     const fs=Math.max(12,cv.width/40), h=fs+8, pad=Math.max(5,fs*0.45), off=Math.max(8,cv.width/70);
     ctx.font=`700 ${fs}px ui-monospace,Menlo,Consolas,monospace`; ctx.textBaseline="middle";
     const lbl=(x,y,val,col)=>{
