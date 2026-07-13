@@ -51,16 +51,9 @@
 
   /* hero */
   .hero-bg{position:relative;overflow:hidden}
-  .hero-bg::before{content:"";position:absolute;inset:-40% 0 auto -10%;height:640px;z-index:0;pointer-events:none;
-    background:radial-gradient(60% 60% at 18% 20%,color-mix(in srgb,var(--accent) 22%,transparent),transparent 70%);}
   .hero{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:44px;
     align-items:center;padding:38px 0 54px}
   @media(max-width:900px){ .hero{grid-template-columns:1fr;gap:30px;padding:22px 0 36px} }
-  .pretitle{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.68rem;
-    font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);
-    background:var(--soft);border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));
-    padding:5px 11px;border-radius:100px;margin:0 0 18px}
-  .pretitle i{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 22%,transparent)}
   .hero h1{font-size:2.85rem;line-height:1.08;margin:0 0 16px;letter-spacing:-.025em;font-weight:800}
   .hero h1 .g{color:var(--green)} .hero h1 .a{color:var(--amber)} .hero h1 .r{color:var(--red)}
   .hero p.sub{font-size:1.12rem;color:var(--mut);margin:0;max-width:520px}
@@ -262,7 +255,6 @@
   <div class="hero-bg">
     <section class="hero">
       <div class="hero-copy">
-        <span class="pretitle"><i></i> <span data-i18n="hero.badge">Free · runs in your browser</span></span>
         <h1 data-i18n="hero.h1">Grade your bike fit — <span class="g">green</span>, <span class="a">amber</span>, <span class="r">red</span>.</h1>
         <p class="sub" data-i18n="hero.sub">Film yourself pedaling for 20–30 seconds. AI tracks your joints frame-by-frame, measures the angles a professional fitter checks, and tells you the exact change to make. Your video never leaves your device.</p>
         <div class="cta">
@@ -578,11 +570,11 @@
     <div class="duo">
       <div class="promo strava">
         <p class="kicker" data-i18n="promo.madeby">Made by</p>
-        <span class="avatar"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.4 21 12.3 15h-2.3l3.4 6.5.3.5.3-.5 3.4-6.5h-2.3ZM10.5 3 4 15h3.6l2.9-5.6 2.9 5.6H17L10.5 3Z"/></svg></span>
+        <span class="avatar"><svg viewBox="0 0 24 24" fill="currentColor" role="img" aria-label="Strava"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg></span>
         <h3>Doni Wirawan</h3>
         <p data-i18n="promo.strava.p">A cyclist building tools for other cyclists. Follow the training and the projects — say hi on Strava.</p>
         <a class="btn" href="https://www.strava.com/athletes/124436743" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.4 21 12.3 15h-2.3l3.4 6.5.3.5.3-.5 3.4-6.5h-2.3ZM10.5 3 4 15h3.6l2.9-5.6 2.9 5.6H17L10.5 3Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor" role="img" aria-label="Strava"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>
           <span data-i18n="promo.strava.btn">Follow on Strava</span>
         </a>
       </div>
@@ -651,7 +643,6 @@
     "doc.title":{en:"Bike Fit Analyzer — grade your bike fit in your browser",id:"Bike Fit Analyzer — nilai bike fit-mu langsung di browser"},
     "doc.desc":{en:"Drop a clip of yourself pedaling and get your bike-fit angles graded green / amber / red, right in your browser. Works with any bike. 100% on-device, free & open source.",id:"Masukkan klip saat kamu mengayuh, dan sudut bike fit-mu langsung dinilai hijau / kuning / merah di browser. Cocok untuk sepeda apa pun. 100% di perangkatmu, gratis & open source."},
 
-    "hero.badge":{en:"Free · runs in your browser",id:"Gratis · jalan di browser"},
     "hero.h1":{en:'Grade your bike fit — <span class="g">green</span>, <span class="a">amber</span>, <span class="r">red</span>.',id:'Cek apakah bike fit-mu sudah pas.'},
     "hero.sub":{en:"Film yourself pedaling for 20–30 seconds. AI tracks your joints frame-by-frame, measures the angles a professional fitter checks, and tells you the exact change to make. Your video never leaves your device.",id:"Rekam dirimu mengayuh selama sekitar 20–30 detik. Analyzer akan membaca posisi tubuhmu di tiap frame, mengukur sudut yang biasa dipakai saat bike fitting, lalu menunjukkan bagian mana yang sudah pas dan mana yang masih bisa diperbaiki. Semua diproses langsung di browser. Videomu tidak diunggah ke server."},
     "hero.launch":{en:"Launch the analyzer",id:"Buka analyzer"},
