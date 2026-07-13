@@ -393,72 +393,72 @@ let lastSide=null, lastFront=null;
 const I18N = {
   "doc.title":{en:"Bike Fit Analyzer — grade your fit in your browser",id:"Bike Fit Analyzer — nilai fit-mu di browser"},
   "hero.h1":{en:'Grade your bike fit — <span class="g">green</span>, <span class="a">amber</span>, <span class="r">red</span> — right in your browser.',id:'Nilai bike fit kamu — <span class="g">hijau</span>, <span class="a">kuning</span>, <span class="r">merah</span> — langsung di browser.'},
-  "hero.p":{en:"Drop a side-on clip of yourself pedaling. AI tracks your joints, measures the angles a fitter checks, and tells you the exact change. Your video never leaves your device.",id:"Masukkan klip tampak samping saat kamu mengayuh. AI melacak sendimu, mengukur sudut yang dicek fitter, dan memberi tahu perubahan yang perlu. Videomu tidak pernah keluar dari perangkatmu."},
+  "hero.p":{en:"Drop a side-on clip of yourself pedaling. AI tracks your joints, measures the angles a fitter checks, and tells you the exact change. Your video never leaves your device.",id:"Rekam dirimu dari samping saat mengayuh. AI membaca posisi sendimu, mengukur sudut yang biasa dicek fitter, lalu kasih tahu apa yang perlu diubah. Videonya tidak ke mana-mana — semua diproses di perangkatmu."},
   "chip.ondevice":{en:"100% on-device",id:"100% di perangkat"},
   "chip.noupload":{en:"No upload to a server",id:"Tanpa upload ke server"},
   "chip.oss":{en:"Free & open source",id:"Gratis & open source"},
-  "chip.mp":{en:"Powered by MediaPipe Pose",id:"Ditenagai MediaPipe Pose"},
+  "chip.mp":{en:"Powered by MediaPipe Pose",id:"Pakai MediaPipe Pose"},
   "panel.h2":{en:"1 · Your clip",id:"1 · Klipmu"},
   "view.side":{en:"Side",id:"Samping"}, "view.front":{en:"Front",id:"Depan"}, "view.rear":{en:"Rear",id:"Belakang"},
   "bike.label":{en:"Bike type",id:"Jenis sepeda"},
-  "bike.hint":{en:"Tunes the target torso angle — more aggressive bikes sit lower. Saddle-height (knee) stays the same on any bike.",id:"Menyetel target sudut torso — sepeda yang lebih agresif duduk lebih rendah. Tinggi sadel (lutut) sama di sepeda apa pun."},
+  "bike.hint":{en:"Tunes the target torso angle — more aggressive bikes sit lower. Saddle-height (knee) stays the same on any bike.",id:"Ini mengatur target sudut torso. Sepeda yang lebih agresif posisinya lebih rendah. Angka tinggi sadel (lutut) tetap sama di semua sepeda."},
   "drop.title":{en:"Drop your video here",id:"Taruh videomu di sini"},
-  "drop.hint":{en:"or click to choose · .mp4 .mov .webm · stays on your device",id:"atau klik untuk memilih · .mp4 .mov .webm · tetap di perangkatmu"},
+  "drop.hint":{en:"or click to choose · .mp4 .mov .webm · stays on your device",id:"atau klik untuk pilih file · .mp4 .mov .webm · tetap di perangkatmu"},
   "btn.pick":{en:"Choose a video",id:"Pilih video"},
-  "btn.rec":{en:"Record with webcam",id:"Rekam dengan webcam"},
-  "foot.noupload":{en:"Nothing is uploaded — analysis runs on your hardware.",id:"Tidak ada yang diunggah — analisis berjalan di perangkatmu."},
+  "btn.rec":{en:"Record with webcam",id:"Rekam pakai webcam"},
+  "foot.noupload":{en:"Nothing is uploaded — analysis runs on your hardware.",id:"Tidak ada yang diupload. Semua diproses di perangkatmu."},
   "cam.cancel":{en:"Cancel",id:"Batal"},
-  "cam.hint":{en:"Point the camera square to your side, ~hip height. Auto-stops at 30s.",id:"Arahkan kamera tegak lurus ke sisimu, ~setinggi pinggul. Berhenti otomatis di 30 detik."},
+  "cam.hint":{en:"Point the camera square to your side, ~hip height. Auto-stops at 30s.",id:"Arahkan kamera lurus ke samping tubuh, kira-kira setinggi pinggul. Otomatis berhenti di 30 detik."},
   "result.h2":{en:"2 · Your result",id:"2 · Hasilmu"},
   "ex.badge":{en:"Sample — not your result",id:"Contoh — bukan hasilmu"},
-  "ex.lead":{en:"Here's what a finished analysis looks like. Your own numbers replace this once you add a clip on the left.",id:"Beginilah tampilan analisis yang selesai. Angkamu sendiri menggantikan ini setelah kamu menambahkan klip di kiri."},
+  "ex.lead":{en:"Here's what a finished analysis looks like. Your own numbers replace this once you add a clip on the left.",id:"Kira-kira begini hasil akhirnya. Angka aslimu muncul begitu kamu masukkan klip di sebelah kiri."},
   "ex.verdict":{en:"Minor tweaks · 5 pedal strokes",id:"Perlu sedikit tweak · 5 kayuhan"},
   "th.angle":{en:"Angle",id:"Sudut"}, "th.reading":{en:"Reading",id:"Bacaan"}, "th.target":{en:"Target",id:"Target"}, "th.grade":{en:"Grade",id:"Nilai"},
   "ex.knee":{en:"Knee at bottom",id:"Lutut di bawah"}, "ex.torso":{en:"Torso from horizontal",id:"Torso dari horizontal"},
   "ex.elbow":{en:"Elbow bend",id:"Tekukan siku"}, "ex.shoulder":{en:"Shoulder (reach)",id:"Bahu (jangkauan)"},
   "grade.GREEN":{en:"GREEN",id:"HIJAU"}, "grade.AMBER":{en:"AMBER",id:"KUNING"}, "grade.RED":{en:"RED",id:"MERAH"}, "grade.GRAY":{en:"GRAY",id:"ABU"},
-  "ex.hip":{en:"Hip at top of stroke: 96° (reference 85–110°, informational — depends on flexibility & reach).",id:"Pinggul di titik teratas kayuhan: 96° (referensi 85–110°, informatif — bergantung kelenturan & jangkauan)."},
-  "ex.fix":{en:"Elbow 13° → arms a touch straight; soften them slightly for comfort.",id:"Siku 13° → lengan agak lurus; tekuk sedikit untuk kenyamanan."},
-  "ex.sample":{en:"This is a sample. Drop your own clip on the left to get your real numbers.",id:"Ini contoh. Taruh klipmu sendiri di kiri untuk mendapatkan angka aslimu."},
+  "ex.hip":{en:"Hip at top of stroke: 96° (reference 85–110°, informational — depends on flexibility & reach).",id:"Pinggul di titik teratas kayuhan: 96° (acuan 85–110°, sekadar info — tergantung kelenturan dan jangkauan)."},
+  "ex.fix":{en:"Elbow 13° → arms a touch straight; soften them slightly for comfort.",id:"Siku 13° → lengan agak lurus. Tekuk sedikit biar lebih nyaman."},
+  "ex.sample":{en:"This is a sample. Drop your own clip on the left to get your real numbers.",id:"Ini cuma contoh. Masukkan klipmu di kiri untuk lihat angka aslimu."},
   "res.badge":{en:"Your result",id:"Hasilmu"},
-  "res.viewwarn":{en:'<b>This clip doesn\'t look square-on.</b> Off-axis footage stretches or squashes these angles — especially reach. Re-film with the camera directly beside you (90° to the bike, at hip height) for reliable numbers.',id:'<b>Klip ini tampak tidak tegak lurus.</b> Rekaman miring meregang atau menyusutkan sudut-sudut ini — terutama jangkauan. Rekam ulang dengan kamera tepat di sampingmu (90° ke sepeda, setinggi pinggul) untuk angka yang andal.'},
-  "res.dothis":{en:"Do this",id:"Lakukan ini"},
-  "res.foot":{en:"2D side-view estimate, not a 3D pro fit. Saddle height (knee) is the most reliable number here; reach/shoulder is the softest — don't change your stem on one clip. Change one thing at a time, then re-film.",id:"Estimasi 2D tampak samping, bukan fit pro 3D. Tinggi sadel (lutut) angka paling andal di sini; jangkauan/bahu paling lemah — jangan ganti stem hanya dari satu klip. Ubah satu hal setiap kali, lalu rekam ulang."},
+  "res.viewwarn":{en:'<b>This clip doesn\'t look square-on.</b> Off-axis footage stretches or squashes these angles — especially reach. Re-film with the camera directly beside you (90° to the bike, at hip height) for reliable numbers.',id:'<b>Klip ini kelihatannya tidak lurus dari samping.</b> Kalau kamera miring, sudutnya jadi ketarik atau kependekan — apalagi jangkauan. Rekam ulang dengan kamera pas di sampingmu (90° ke sepeda, setinggi pinggul) biar angkanya akurat.'},
+  "res.dothis":{en:"Do this",id:"Yang perlu dilakukan"},
+  "res.foot":{en:"2D side-view estimate, not a 3D pro fit. Saddle height (knee) is the most reliable number here; reach/shoulder is the softest — don't change your stem on one clip. Change one thing at a time, then re-film.",id:"Ini perkiraan 2D dari samping, bukan fit pro 3D. Tinggi sadel (lutut) paling bisa dipercaya; jangkauan/bahu paling lemah — jangan ganti stem cuma karena satu klip. Ubah satu hal dulu, lalu rekam lagi."},
   "res.again":{en:"Analyze another clip",id:"Analisis klip lain"},
-  "front.exp":{en:'Frontal-plane readings are <b style="color:var(--accent)">experimental</b> and less reliable than the side view. Treat them as directional hints, not verdicts.',id:'Pembacaan bidang frontal bersifat <b style="color:var(--accent)">eksperimental</b> dan kurang andal dibanding tampak samping. Anggap sebagai petunjuk arah, bukan vonis.'},
-  "front.foot":{en:"Knee tracking uses the frontal projection angle (FPPA); pelvic rock is peak-to-peak hip-line tilt across the stroke. For real decisions, the side-view saddle-height (knee) reading is the trustworthy one.",id:"Jalur lutut memakai frontal projection angle (FPPA); goyangan panggul adalah kemiringan garis pinggul puncak-ke-puncak. Untuk keputusan nyata, pembacaan tinggi sadel (lutut) tampak samping yang bisa dipercaya."},
+  "front.exp":{en:'Frontal-plane readings are <b style="color:var(--accent)">experimental</b> and less reliable than the side view. Treat them as directional hints, not verdicts.',id:'Angka dari tampak depan ini masih <b style="color:var(--accent)">eksperimen</b> dan kurang akurat dibanding tampak samping. Anggap sebagai petunjuk arah, bukan kesimpulan.'},
+  "front.foot":{en:"Knee tracking uses the frontal projection angle (FPPA); pelvic rock is peak-to-peak hip-line tilt across the stroke. For real decisions, the side-view saddle-height (knee) reading is the trustworthy one.",id:"Jalur lutut memakai frontal projection angle (FPPA); goyangan panggul dihitung dari kemiringan garis pinggul selama satu putaran. Untuk keputusan penting, andalkan tinggi sadel (lutut) dari tampak samping."},
   "film.h1":{en:"Square-on",id:"Tegak lurus"},
-  "film.p1":{en:"Point the camera square to the view you picked — dead side-on, front-on, or straight behind. Off-axis skews the angles.",id:"Arahkan kamera tegak lurus ke tampilan yang kamu pilih — samping, depan, atau tepat di belakang. Miring membuat sudut melenceng."},
+  "film.p1":{en:"Point the camera square to the view you picked — dead side-on, front-on, or straight behind. Off-axis skews the angles.",id:"Arahkan kamera lurus ke tampilan yang kamu pilih — samping, depan, atau tepat dari belakang. Kalau miring, sudutnya jadi meleset."},
   "film.h2":{en:"Hip height",id:"Setinggi pinggul"},
-  "film.p2":{en:"Phone at hip/crank height on something stable — nothing blocking your legs (or arms, side-on).",id:"HP setinggi pinggul/crank di tempat stabil — tidak ada yang menghalangi kaki (atau lengan, dari samping)."},
+  "film.p2":{en:"Phone at hip/crank height on something stable — nothing blocking your legs (or arms, side-on).",id:"Taruh HP setinggi pinggul/crank di tempat yang stabil. Pastikan kaki (atau lengan, kalau dari samping) tidak terhalang."},
   "film.h3":{en:"Pedal steady",id:"Kayuh stabil"},
-  "film.p3":{en:"20–30s at an easy, normal cadence — a trainer is ideal. Good light = less blur.",id:"20–30 detik dengan kadens santai dan normal — trainer paling ideal. Cahaya bagus = lebih sedikit buram."},
-  "foot.legal":{en:'Runs entirely in your browser with <a href="https://ai.google.dev/edge/mediapipe" target="_blank" rel="noopener">MediaPipe Pose</a>. Ranges from the Holmes method + dynamic-fit research. Not medical advice. Source on <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>.',id:'Berjalan sepenuhnya di browser dengan <a href="https://ai.google.dev/edge/mediapipe" target="_blank" rel="noopener">MediaPipe Pose</a>. Rentang dari metode Holmes + riset dynamic-fit. Bukan nasihat medis. Kode di <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>.'},
+  "film.p3":{en:"20–30s at an easy, normal cadence — a trainer is ideal. Good light = less blur.",id:"20–30 detik dengan kayuhan santai dan normal. Paling enak pakai trainer. Cahaya yang cukup bikin rekaman tidak buram."},
+  "foot.legal":{en:'Runs entirely in your browser with <a href="https://ai.google.dev/edge/mediapipe" target="_blank" rel="noopener">MediaPipe Pose</a>. Ranges from the Holmes method + dynamic-fit research. Not medical advice. Source on <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>.',id:'Semuanya diproses langsung di browser pakai <a href="https://ai.google.dev/edge/mediapipe" target="_blank" rel="noopener">MediaPipe Pose</a>. Target diambil dari metode Holmes + riset dynamic-fit. Bukan nasihat medis. Kode ada di <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>.'},
   // dynamic-string keys (used from JS, not markup)
-  "lead.side":{en:"Side-on, 20–30s, phone at hip height, pedaling steadily.",id:"Dari samping, 20–30 detik, HP setinggi pinggul, mengayuh stabil."},
-  "lead.front":{en:"Facing the camera, 20–30s, pedaling steadily. Beta — frontal-plane hints.",id:"Menghadap kamera, 20–30 detik, mengayuh stabil. Beta — petunjuk bidang frontal."},
-  "lead.rear":{en:"From directly behind, 20–30s, pedaling steadily. Beta — frontal-plane hints.",id:"Dari tepat di belakang, 20–30 detik, mengayuh stabil. Beta — petunjuk bidang frontal."},
-  "reslead.side":{en:"Angles at the bottom of your stroke, graded against research ranges.",id:"Sudut di titik terbawah kayuhanmu, dinilai terhadap rentang riset."},
-  "reslead.front":{en:"Frontal-plane tracking hints — knee alignment, pelvic rock, symmetry. Beta.",id:"Petunjuk pelacakan bidang frontal — kelurusan lutut, goyangan panggul, simetri. Beta."},
-  "st.loadModel":{en:"Loading pose model (first time only)…",id:"Memuat model pose (hanya pertama kali)…"},
-  "st.loadCPU":{en:"Loading pose model (CPU mode, slower)…",id:"Memuat model pose (mode CPU, lebih lambat)…"},
-  "st.analyzing":{en:"Analyzing — detecting your body each frame…",id:"Menganalisis — mendeteksi tubuhmu di tiap frame…"},
-  "err.norec":{en:"This browser can't record video — upload a clip instead.",id:"Browser ini tidak bisa merekam video — unggah klip saja."},
-  "err.camblocked":{en:"Camera access was blocked — allow it in your browser settings, or just upload a clip instead.",id:"Akses kamera diblokir — izinkan di pengaturan browser, atau unggah klip saja."},
-  "err.loadModel":{en:"Couldn't load the pose model — check your connection and try again.",id:"Tidak bisa memuat model pose — periksa koneksimu dan coba lagi."},
-  "err.decode":{en:"Couldn't read that video. Try a different clip or format (MP4, MOV, or WebM).",id:"Tidak bisa membaca video itu. Coba klip atau format lain (MP4, MOV, atau WebM)."},
-  "err.track":{en:"Couldn't track your body clearly. Re-film side-on, well-lit, with your whole body in frame.",id:"Tidak bisa melacak tubuhmu dengan jelas. Rekam ulang dari samping, terang, seluruh tubuh dalam frame."},
-  "err.nostrokes":{en:"No clear pedal strokes found. Make sure you're actually pedaling and filmed side-on, then try again.",id:"Tidak ditemukan kayuhan yang jelas. Pastikan kamu benar-benar mengayuh dan direkam dari samping, lalu coba lagi."},
-  "err.trackFront":{en:"Couldn't track your body clearly. Re-film square to the camera (front or rear), well-lit, whole body in frame.",id:"Tidak bisa melacak tubuhmu dengan jelas. Rekam ulang tegak lurus ke kamera (depan atau belakang), terang, seluruh tubuh dalam frame."},
+  "lead.side":{en:"Side-on, 20–30s, phone at hip height, pedaling steadily.",id:"Dari samping, 20–30 detik, HP setinggi pinggul, kayuhan stabil."},
+  "lead.front":{en:"Facing the camera, 20–30s, pedaling steadily. Beta — frontal-plane hints.",id:"Menghadap kamera, 20–30 detik, kayuhan stabil. Beta — petunjuk dari tampak depan."},
+  "lead.rear":{en:"From directly behind, 20–30s, pedaling steadily. Beta — frontal-plane hints.",id:"Tepat dari belakang, 20–30 detik, kayuhan stabil. Beta — petunjuk dari tampak depan."},
+  "reslead.side":{en:"Angles at the bottom of your stroke, graded against research ranges.",id:"Sudut di titik terbawah kayuhan, dinilai dari target penelitian."},
+  "reslead.front":{en:"Frontal-plane tracking hints — knee alignment, pelvic rock, symmetry. Beta.",id:"Petunjuk dari tampak depan — kelurusan lutut, goyangan panggul, simetri. Beta."},
+  "st.loadModel":{en:"Loading pose model (first time only)…",id:"Menyiapkan model pose (cuma sekali di awal)…"},
+  "st.loadCPU":{en:"Loading pose model (CPU mode, slower)…",id:"Menyiapkan model pose (mode CPU, agak lambat)…"},
+  "st.analyzing":{en:"Analyzing — detecting your body each frame…",id:"Menganalisis — membaca posisi tubuhmu di tiap frame…"},
+  "err.norec":{en:"This browser can't record video — upload a clip instead.",id:"Browser ini tidak bisa merekam video. Unggah klip saja."},
+  "err.camblocked":{en:"Camera access was blocked — allow it in your browser settings, or just upload a clip instead.",id:"Akses kamera ditolak. Izinkan lewat pengaturan browser, atau unggah klip saja."},
+  "err.loadModel":{en:"Couldn't load the pose model — check your connection and try again.",id:"Model pose gagal dimuat. Cek koneksimu, lalu coba lagi."},
+  "err.decode":{en:"Couldn't read that video. Try a different clip or format (MP4, MOV, or WebM).",id:"Videonya tidak bisa dibaca. Coba klip lain atau format lain (MP4, MOV, atau WebM)."},
+  "err.track":{en:"Couldn't track your body clearly. Re-film side-on, well-lit, with your whole body in frame.",id:"Tubuhmu susah dilacak. Rekam ulang dari samping, cahaya cukup, seluruh badan masuk frame."},
+  "err.nostrokes":{en:"No clear pedal strokes found. Make sure you're actually pedaling and filmed side-on, then try again.",id:"Tidak ada kayuhan yang jelas. Pastikan kamu benar-benar mengayuh dan direkam dari samping, lalu coba lagi."},
+  "err.trackFront":{en:"Couldn't track your body clearly. Re-film square to the camera (front or rear), well-lit, whole body in frame.",id:"Tubuhmu susah dilacak. Rekam ulang lurus ke kamera (depan atau belakang), cahaya cukup, seluruh badan masuk frame."},
   "rec.record":{en:"Record",id:"Rekam"}, "rec.stop":{en:"Stop",id:"Berhenti"},
   "word.strokes":{en:"pedal strokes",id:"kayuhan"}, "word.frames":{en:"frames",id:"frame"},
   "vd.GREEN":{en:"Dialed",id:"Pas"}, "vd.AMBER":{en:"Minor tweaks",id:"Perlu sedikit tweak"}, "vd.RED":{en:"Fix needed",id:"Perlu diperbaiki"}, "vd.GRAY":{en:"Incomplete",id:"Belum lengkap"},
-  "front.check":{en:"A couple of things to check",id:"Beberapa hal untuk dicek"}, "front.allgood":{en:"Nothing obvious to flag",id:"Tidak ada yang mencolok"},
+  "front.check":{en:"A couple of things to check",id:"Ada beberapa yang perlu dicek"}, "front.allgood":{en:"Nothing obvious to flag",id:"Tidak ada yang mencolok"},
   "front.view.front":{en:"Front view",id:"Tampak depan"}, "front.view.rear":{en:"Rear view",id:"Tampak belakang"},
   "front.name.left":{en:"Left knee tracking",id:"Jalur lutut kiri"}, "front.name.right":{en:"Right knee tracking",id:"Jalur lutut kanan"},
   "front.name.rock":{en:"Pelvic rock",id:"Goyangan panggul"}, "front.name.sym":{en:"Left / right symmetry",id:"Simetri kiri / kanan"},
-  "front.notTracked":{en:"not tracked — leg not clearly visible.",id:"tidak terlacak — kaki tidak terlihat jelas."},
-  "adv.allgood":{en:"Everything's in range — nice fit. Re-film if you change anything.",id:"Semua dalam rentang — fit yang bagus. Rekam ulang kalau kamu mengubah sesuatu."},
+  "front.notTracked":{en:"not tracked — leg not clearly visible.",id:"tidak terlacak — kaki kurang kelihatan."},
+  "adv.allgood":{en:"Everything's in range — nice fit. Re-film if you change anything.",id:"Semua sudah pas — fit-nya bagus. Rekam ulang kalau kamu ubah sesuatu."},
   "legend.dialed":{en:"dialed",id:"pas"}, "legend.borderline":{en:"borderline",id:"batas"}, "legend.fixit":{en:"fix it",id:"perbaiki"},
   "retry":{en:"Try another clip",id:"Coba klip lain"},
 };
@@ -474,20 +474,20 @@ let LANG=detectLang();
 const t=k=>{const e=I18N[k];return e?(e[LANG]||e.en):k;};
 // dynamic advice/metrics text (interpolated), branch on LANG
 const DX = {
-  hipInfo:x=>LANG==='id'?`Pinggul di titik teratas kayuhan: ${x}° (referensi 85–110°, informatif — bergantung kelenturan & jangkauan).`:`Hip at top of stroke: ${x}° (reference 85–110°, informational — depends on flexibility & reach).`,
-  saddle:(k,mm)=> k>40 ? (LANG==='id'?`Sadel tampak rendah — lutut masih menekuk ${k}° di bawah (target 30–40°). Naikkan sekitar ${mm}mm, bertahap 2–3mm, lalu rekam ulang. Ini pembacaan paling andal di sini.`:`Saddle looks low — knee still bent ${k}° at the bottom (aim 30–40°). Raise it about ${mm}mm, in 2–3mm steps, and re-film. This is the most reliable reading here.`) : (LANG==='id'?`Sadel tampak tinggi — kaki hampir lurus (${k}°) di bawah (target 30–40°). Turunkan sekitar ${mm}mm, bertahap 2–3mm, lalu rekam ulang. Ini pembacaan paling andal di sini.`:`Saddle looks high — leg nearly straight (${k}°) at the bottom (aim 30–40°). Lower it about ${mm}mm, in 2–3mm steps, and re-film. This is the most reliable reading here.`),
-  torso:(v,aim,upright)=> upright ? (LANG==='id'?`Torso lebih tegak (${v}°) dari biasanya untuk sepeda ini (target ${aim}). Nyaman — tapi kalau mau lebih bertenaga/aero dan kelenturanmu memungkinkan, bagian depan sedikit lebih rendah (spacer/stem) membantu.`:`Torso more upright (${v}°) than typical for this bike (aim ${aim}). Comfortable — but if you want more power/aero and your flexibility allows, a slightly lower front end (spacers/stem) helps.`) : (LANG==='id'?`Torso lebih rendah/agresif (${v}°) dari biasanya untuk sepeda ini (target ${aim}). Kalau punggung bawah atau lehermu protes, naikkan setang atau perpendek jangkauan sedikit.`:`Torso lower/more aggressive (${v}°) than typical for this bike (aim ${aim}). If your lower back or neck complains, raise the bars or shorten the reach a touch.`),
-  elbowLocked:v=>LANG==='id'?`Siku ${v}° → lengan tampak terkunci. Tekuk sikumu sedikit dulu — tekukan ringan meredam getaran jalan dan sering memperbaikinya tanpa mengutak-atik sepeda.`:`Elbow ${v}° → arms look locked. Soften your elbows first — a slight bend absorbs road buzz and often fixes this without touching the bike.`,
-  elbowBent:v=>LANG==='id'?`Siku ${v}° → lengan cukup menekuk. Biasanya aman; hanya kalau terasa sempit mungkin jangkauannya agak pendek.`:`Elbow ${v}° → arms quite bent. Usually fine; only if it feels cramped might the reach be a touch short.`,
-  shoulderCramped:v=>LANG==='id'?`Bahu ${v}° → kokpit tampak agak sempit. Jangkauan adalah sudut 2D paling tidak andal — periksa lagi posisi tanganmu dan pastikan kamera tegak lurus sebelum mengubah apa pun.`:`Shoulder ${v}° → cockpit looks a bit cramped. Reach is the least reliable 2D angle — re-check your hand position and that the camera is square before changing anything.`,
-  shoulderLong:v=>LANG==='id'?`Bahu ${v}° → jangkauan tampak agak jauh. Jangkauan adalah sudut 2D paling tidak andal — jangan perpendek stem hanya dari satu klip; rekam ulang tegak lurus, lalu ubah satu hal setiap kali.`:`Shoulder ${v}° → reach looks a bit long. Reach is the least reliable 2D angle — don't shorten the stem off one clip; re-film square-on, then change one thing at a time.`,
-  valgus:v=>LANG==='id'?`masuk ke dalam ~${v}° di fase tenaga (valgus). Penyebab umum: cleat terlalu ke dalam, penyangga lengkung kaki rendah, atau stabilitas pinggul — coba geser cleat ke luar / posisi kaki sedikit lebih lebar, dan pastikan tinggi sadel di tampak samping.`:`caves inward ~${v}° at the power phase (valgus). Common causes: cleat set too far inboard, low arch support, or hip stability — try nudging the cleat outward / a slightly wider stance, and confirm saddle height on the side view.`,
-  varus:v=>LANG==='id'?`keluar ~${v}°. Sering karena posisi terlalu lebar atau cleat terlalu ke luar — coba geser cleat ke dalam.`:`bows outward ~${v}°. Often a stance too wide or cleats too far outboard — try nudging the cleat inward.`,
-  straight:v=>LANG==='id'?`bergerak pada dasarnya lurus (~${v}° dari vertikal).`:`tracks essentially straight (~${v}° off vertical).`,
-  rockAmber:v=>LANG==='id'?`pinggul bergoyang ~${v}° sepanjang kayuhan. Sering disalahkan pada sadel tinggi, tapi ini tanda yang tidak andal — pastikan dulu sudut lutut dari tampak samping. Kalau tinggi sadel oke, ini biasanya stabilitas inti, bukan sepedanya.`:`hips rock ~${v}° across the stroke. Often blamed on a high saddle, but it's an unreliable sign — confirm the side-view knee angle first. If saddle height checks out, this is usually core stability, not the bike.`,
-  rockGreen:v=>LANG==='id'?`pinggul tetap cukup rata (~${v}° kemiringan).`:`hips stay fairly level (~${v}° of tilt).`,
-  symAmber:d=>LANG==='id'?`satu lutut bergerak ~${d}° berbeda dari yang lain. Periksa sisi yang lebih terpengaruh dulu (posisi cleat, offset sadel); asimetri yang menetap bisa menandakan perbedaan panjang kaki yang layak fit profesional.`:`one knee tracks ~${d}° differently to the other. Check the more-affected side first (cleat position, saddle offset); persistent asymmetry can point to a leg-length difference worth a pro fit.`,
-  symGreen:d=>LANG==='id'?`kedua kaki bergerak dalam ~${d}° satu sama lain.`:`legs track within ~${d}° of each other.`,
+  hipInfo:x=>LANG==='id'?`Pinggul di titik teratas kayuhan: ${x}° (acuan 85–110°, sekadar info — tergantung kelenturan dan jangkauan).`:`Hip at top of stroke: ${x}° (reference 85–110°, informational — depends on flexibility & reach).`,
+  saddle:(k,mm)=> k>40 ? (LANG==='id'?`Sadel kelihatannya kurang tinggi — lutut masih menekuk ${k}° di bawah (target 30–40°). Naikkan sekitar ${mm}mm, bertahap 2–3mm, lalu rekam lagi. Ini angka paling bisa dipercaya di sini.`:`Saddle looks low — knee still bent ${k}° at the bottom (aim 30–40°). Raise it about ${mm}mm, in 2–3mm steps, and re-film. This is the most reliable reading here.`) : (LANG==='id'?`Sadel kelihatannya kelewat tinggi — kaki hampir lurus (${k}°) di bawah (target 30–40°). Turunkan sekitar ${mm}mm, bertahap 2–3mm, lalu rekam lagi. Ini angka paling bisa dipercaya di sini.`:`Saddle looks high — leg nearly straight (${k}°) at the bottom (aim 30–40°). Lower it about ${mm}mm, in 2–3mm steps, and re-film. This is the most reliable reading here.`),
+  torso:(v,aim,upright)=> upright ? (LANG==='id'?`Torso lebih tegak (${v}°) dari biasanya untuk sepeda ini (target ${aim}). Nyaman kok — tapi kalau mau lebih bertenaga/aero dan badanmu lentur, turunkan sedikit bagian depan (spacer/stem).`:`Torso more upright (${v}°) than typical for this bike (aim ${aim}). Comfortable — but if you want more power/aero and your flexibility allows, a slightly lower front end (spacers/stem) helps.`) : (LANG==='id'?`Torso lebih rendah/agresif (${v}°) dari biasanya untuk sepeda ini (target ${aim}). Kalau punggung bawah atau leher mulai sakit, naikkan setang atau perpendek jangkauan sedikit.`:`Torso lower/more aggressive (${v}°) than typical for this bike (aim ${aim}). If your lower back or neck complains, raise the bars or shorten the reach a touch.`),
+  elbowLocked:v=>LANG==='id'?`Siku ${v}° → lengan kelihatan terkunci. Tekuk sikumu sedikit dulu — tekukan ringan meredam getaran jalan dan sering langsung menyelesaikannya tanpa utak-atik sepeda.`:`Elbow ${v}° → arms look locked. Soften your elbows first — a slight bend absorbs road buzz and often fixes this without touching the bike.`,
+  elbowBent:v=>LANG==='id'?`Siku ${v}° → lengan cukup menekuk. Biasanya aman; kalau terasa sempit, mungkin jangkauannya agak pendek.`:`Elbow ${v}° → arms quite bent. Usually fine; only if it feels cramped might the reach be a touch short.`,
+  shoulderCramped:v=>LANG==='id'?`Bahu ${v}° → kokpit terasa agak sempit. Jangkauan itu sudut 2D yang paling tidak akurat — cek lagi posisi tangan dan pastikan kamera lurus sebelum ubah apa pun.`:`Shoulder ${v}° → cockpit looks a bit cramped. Reach is the least reliable 2D angle — re-check your hand position and that the camera is square before changing anything.`,
+  shoulderLong:v=>LANG==='id'?`Bahu ${v}° → jangkauan terasa agak jauh. Jangkauan itu sudut 2D yang paling tidak akurat — jangan potong stem cuma karena satu klip; rekam ulang lurus dari samping, lalu ubah satu hal dulu.`:`Shoulder ${v}° → reach looks a bit long. Reach is the least reliable 2D angle — don't shorten the stem off one clip; re-film square-on, then change one thing at a time.`,
+  valgus:v=>LANG==='id'?`masuk ke dalam ~${v}° saat fase tenaga (valgus). Biasanya karena cleat kelewat ke dalam, penyangga lengkung kaki kurang, atau pinggul kurang stabil — coba geser cleat ke luar / posisi kaki agak lebih lebar, dan cek tinggi sadel dari samping.`:`caves inward ~${v}° at the power phase (valgus). Common causes: cleat set too far inboard, low arch support, or hip stability — try nudging the cleat outward / a slightly wider stance, and confirm saddle height on the side view.`,
+  varus:v=>LANG==='id'?`keluar ~${v}°. Sering karena posisi kaki kelewat lebar atau cleat kelewat ke luar — coba geser cleat ke dalam.`:`bows outward ~${v}°. Often a stance too wide or cleats too far outboard — try nudging the cleat inward.`,
+  straight:v=>LANG==='id'?`bergerak lurus (~${v}° dari garis vertikal).`:`tracks essentially straight (~${v}° off vertical).`,
+  rockAmber:v=>LANG==='id'?`pinggul goyang ~${v}° selama satu putaran. Sering dikira gara-gara sadel tinggi, tapi tanda ini kurang bisa dipegang — cek dulu sudut lutut dari samping. Kalau tinggi sadel sudah pas, biasanya ini soal kekuatan inti, bukan sepedanya.`:`hips rock ~${v}° across the stroke. Often blamed on a high saddle, but it's an unreliable sign — confirm the side-view knee angle first. If saddle height checks out, this is usually core stability, not the bike.`,
+  rockGreen:v=>LANG==='id'?`pinggul cukup stabil (~${v}° kemiringan).`:`hips stay fairly level (~${v}° of tilt).`,
+  symAmber:d=>LANG==='id'?`satu lutut bergerak ~${d}° beda dari yang lain. Cek dulu sisi yang lebih parah (posisi cleat, offset sadel); kalau bedanya menetap, bisa jadi panjang kaki tidak sama dan sebaiknya fit langsung ke ahlinya.`:`one knee tracks ~${d}° differently to the other. Check the more-affected side first (cleat position, saddle offset); persistent asymmetry can point to a leg-length difference worth a pro fit.`,
+  symGreen:d=>LANG==='id'?`kedua kaki bergerak dalam selisih ~${d}°.`:`legs track within ~${d}° of each other.`,
 };
 function updateLeads(){
   const lead=document.querySelector(".panel .lead");
@@ -500,7 +500,7 @@ function renderSide(){
   const overall=worse(...Object.values(G));
   const tb=document.querySelector("#tbody"); tb.innerHTML="";
   for(const m in ZONES){ const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${LABEL[m][0]}</td><td class="val">${R[m]==null?"—":R[m].toFixed(0)+"°"}</td>`+
+    tr.innerHTML=`<td>${t(LABEL[m][0])}</td><td class="val">${R[m]==null?"—":R[m].toFixed(0)+"°"}</td>`+
       `<td>${LABEL[m][1]}</td><td><span class="pill ${G[m]}">${t('grade.'+G[m])}</span></td>`; tb.appendChild(tr); }
   document.querySelector("#verdict").innerHTML=`<span class="vdot" style="background:${COL[overall]}"></span>${t('vd.'+overall)} &middot; ${strokes} ${t('word.strokes')}`;
   document.querySelector("#hipinfo").textContent=hipTop==null?"":DX.hipInfo(hipTop.toFixed(0));
@@ -549,9 +549,10 @@ const ZONES = {
   knee_flexion_bdc:[30,40,28,42], torso_from_horiz:[40,50,34,56],
   elbow_flexion:[15,30,8,45], shoulder_angle:[80,95,70,105],
 };
+// [0] is an I18N key (shared with the sample table), [1] the target shown in the table.
 const LABEL = {
-  knee_flexion_bdc:["Knee at bottom","30–40°"], torso_from_horiz:["Torso from horizontal","40–50°"],
-  elbow_flexion:["Elbow bend","15–30°"], shoulder_angle:["Shoulder (reach)","80–95°"],
+  knee_flexion_bdc:["ex.knee","30–40°"], torso_from_horiz:["ex.torso","40–50°"],
+  elbow_flexion:["ex.elbow","15–30°"], shoulder_angle:["ex.shoulder","80–95°"],
 };
 // Torso "aggressiveness" varies by bike; saddle-height (knee), elbow, reach stay constant.
 // Each entry: green range + red bounds [glo,ghi,rlo,rhi], and the target label shown in the table.
@@ -581,7 +582,7 @@ let bikeType="road_endurance";
 function applyBikeType(){
   const b=BIKE_TORSO[bikeType]; if(!b) return;
   ZONES.torso_from_horiz=b.z.slice();
-  LABEL.torso_from_horiz=["Torso from horizontal", b.t];
+  LABEL.torso_from_horiz=["ex.torso", b.t];
 }
 { const bikeSel=$("#biketype");
   if(bikeSel){ bikeSel.onchange=e=>{ bikeType=e.target.value; applyBikeType(); }; } }
