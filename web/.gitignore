@@ -1,1 +1,4 @@
 .vercel
+
+# scratch/test harnesses — must never ship
+_*.html
