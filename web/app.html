@@ -100,6 +100,9 @@
   .mcard .cval{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:800;
     font-size:1.7rem;line-height:1.15;margin:3px 0 1px}
   .mcard .ctgt{color:var(--mut);font-family:var(--mono);font-size:.72rem}
+  .mcard .csrc{margin-top:5px;font-family:var(--mono);font-size:.6rem;line-height:1.3}
+  .mcard .csrc a{color:var(--mut);text-decoration:none;border-bottom:1px dotted var(--line)}
+  .mcard .csrc a:hover{color:var(--accent)}
   .rbar{position:relative;height:6px;border-radius:99px;margin:10px 2px 5px}
   .rbar .mk{position:absolute;top:-4px;width:3px;height:14px;border-radius:2px;background:#fff;
     box-shadow:0 0 0 1.5px rgba(0,0,0,.45);transform:translateX(-1.5px)}
@@ -425,7 +428,10 @@
 
   <footer data-i18n="foot.legal">
     Runs entirely in your browser with <a href="https://ai.google.dev/edge/mediapipe" target="_blank" rel="noopener">MediaPipe Pose</a>.
-    Ranges from the Holmes method + dynamic-fit research. Not medical advice.
+    Knee and elbow targets come from the <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9219349/" target="_blank" rel="noopener">Holmes method</a>
+    and a <a href="https://pubmed.ncbi.nlm.nih.gov/24499342/" target="_blank" rel="noopener">dynamic-vs-static study</a>; torso and shoulder targets are a
+    fitter's rule of thumb, not research — <a href="https://github.com/doniwirawan/bike-fit-analyzer/blob/main/files/bikefit-research-ranges.md" target="_blank" rel="noopener">every source is listed here</a>.
+    Not medical advice.
     Source on <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>.
   </footer>
   <div class="foot" style="margin-top:8px"><a href="privacy.html" data-i18n="foot.privacy">Privacy</a> &middot; <a href="terms.html" data-i18n="foot.terms">Terms</a></div>
@@ -480,12 +486,14 @@ const I18N = {
   "film.p2":{en:"Phone at hip/crank height on something stable — nothing blocking your legs (or arms, side-on).",id:"Taruh HP setinggi pinggul/crank di tempat yang stabil. Pastikan kaki (atau lengan, kalau dari samping) tidak terhalang."},
   "film.h3":{en:"Pedal steady",id:"Kayuh stabil"},
   "film.p3":{en:"20–30s at an easy, normal cadence — a trainer is ideal. Good light = less blur.",id:"20–30 detik dengan kayuhan santai dan normal. Paling enak pakai trainer. Pastikan pencahayaannya cukup supaya posisi tubuh lebih mudah terbaca."},
-  "foot.legal":{en:'Runs entirely in your browser with <a href="https://ai.google.dev/edge/mediapipe" target="_blank" rel="noopener">MediaPipe Pose</a>. Ranges from the Holmes method + dynamic-fit research. Not medical advice. Source on <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>.',id:'Semua analisis dilakukan langsung di browser menggunakan <a href="https://ai.google.dev/edge/mediapipe" target="_blank" rel="noopener">MediaPipe Pose</a>. Target sudut mengacu pada metode Holmes dan beberapa penelitian dynamic bike fit. Video tidak pernah diunggah ke server. Ini bukan nasihat medis. Kodenya tersedia di <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>.'},
+  "foot.legal":{en:'Runs entirely in your browser with <a href="https://ai.google.dev/edge/mediapipe" target="_blank" rel="noopener">MediaPipe Pose</a>. Knee and elbow targets come from the <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9219349/" target="_blank" rel="noopener">Holmes method</a> and a <a href="https://pubmed.ncbi.nlm.nih.gov/24499342/" target="_blank" rel="noopener">dynamic-vs-static study</a>; torso and shoulder targets are a fitter\'s rule of thumb, not research — <a href="https://github.com/doniwirawan/bike-fit-analyzer/blob/main/files/bikefit-research-ranges.md" target="_blank" rel="noopener">every source is listed here</a>. Not medical advice. Source on <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>.',id:'Semua analisis dilakukan langsung di browser memakai <a href="https://ai.google.dev/edge/mediapipe" target="_blank" rel="noopener">MediaPipe Pose</a>. Target lutut dan siku diambil dari <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9219349/" target="_blank" rel="noopener">metode Holmes</a> dan <a href="https://pubmed.ncbi.nlm.nih.gov/24499342/" target="_blank" rel="noopener">studi sudut dinamis vs statis</a>; target torso dan bahu cuma patokan bike fitter, bukan hasil penelitian — <a href="https://github.com/doniwirawan/bike-fit-analyzer/blob/main/files/bikefit-research-ranges.md" target="_blank" rel="noopener">semua sumbernya ada di sini</a>. Video tidak pernah diunggah ke server. Ini bukan nasihat medis. Kodenya ada di <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>.'},
   // dynamic-string keys (used from JS, not markup)
   "lead.side":{en:"Side-on, 20–30s, phone at hip height, pedaling steadily.",id:"Dari samping, 20–30 detik, HP setinggi pinggul, kayuhan stabil."},
   "lead.front":{en:"Facing the camera, 20–30s, pedaling steadily. Beta — frontal-plane hints.",id:"Menghadap kamera, 20–30 detik, kayuhan stabil. Beta — petunjuk dari tampak depan."},
   "lead.rear":{en:"From directly behind, 20–30s, pedaling steadily. Beta — frontal-plane hints.",id:"Tepat dari belakang, 20–30 detik, kayuhan stabil. Beta — petunjuk dari tampak depan."},
-  "reslead.side":{en:"Angles at the bottom of your stroke, graded against research ranges.",id:"Sudut diukur di titik terbawah setiap kayuhan, lalu dibandingkan dengan rentang yang digunakan dalam penelitian bike fitting."},
+  "reslead.side":{en:"Angles at the bottom of your stroke. Every target links to where it came from — some are from papers, some are only a fitter's rule of thumb.",id:"Sudut diukur di titik terbawah setiap kayuhan. Tiap target ada link sumbernya — sebagian dari paper, sebagian cuma patokan bike fitter."},
+  "src.holmes":{en:"Holmes method · paper",id:"metode Holmes · paper"},
+  "src.practitioner":{en:"fitter's rule of thumb · no paper",id:"patokan bike fitter · bukan paper"},
   "reslead.front":{en:"Frontal-plane tracking hints — knee alignment, pelvic rock, symmetry. Beta.",id:"Petunjuk dari tampak depan — kelurusan lutut, goyangan panggul, simetri. Beta."},
   "st.loadModel":{en:"Loading pose model (first time only)…",id:"Menyiapkan model pose (cuma sekali di awal)…"},
   "st.loadCPU":{en:"Loading pose model (CPU mode, slower)…",id:"Menyiapkan model pose (mode CPU, agak lambat)…"},
@@ -584,11 +592,26 @@ function rangeMarker(m,v,zones){
   if(v==null||isNaN(v)) return "";
   return `<span class="mk" style="left:${barScale(m,zones).pos(v).toFixed(1)}%"></span>`;
 }
+// Where each target actually comes from. Knee and elbow trace to a paper; torso and
+// shoulder only to a practitioner reference, so their cards say that outright rather
+// than letting "research ranges" imply a study that doesn't exist.
+const HOLMES = "https://pmc.ncbi.nlm.nih.gov/articles/PMC9219349/";
+const ADVISER = "https://www.bikefitadviser.com/blog/not-basic-bike-fit-part-3-bike-fit-joint-angles";
+const SOURCE = {
+  knee_flexion_bdc:{k:"src.holmes",       u:HOLMES},
+  elbow_flexion:   {k:"src.holmes",       u:HOLMES},
+  torso_from_horiz:{k:"src.practitioner", u:ADVISER},
+  shoulder_angle:  {k:"src.practitioner", u:ADVISER},
+};
+function sourceLink(m){
+  const s=SOURCE[m]; if(!s) return "";
+  return `<div class="csrc"><a href="${s.u}" target="_blank" rel="noopener">${t(s.k)}</a></div>`;
+}
 function angleCard(m,v,g,target,zones){
   return `<div class="mcard"><div class="cname">${t(LABEL[m][0])}</div>`+
     `<div class="cval" style="color:${COL[g]}">${v==null||isNaN(v)?"—":Math.round(v)+"°"}</div>`+
     `<div class="rbar" style="background:${zoneGradient(m,zones)}">${rangeMarker(m,v,zones)}</div>`+
-    `<div class="ctgt">${target}</div></div>`;
+    `<div class="ctgt">${target}</div>${sourceLink(m)}</div>`;
 }
 // The sample card set is pinned to the road-endurance zones so it stays a stable illustration
 // and doesn't turn red when someone picks a TT bike before uploading anything.
