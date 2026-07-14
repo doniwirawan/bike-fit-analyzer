@@ -592,6 +592,23 @@ const DX = {
   rockGreen:v=>LANG==='id'?`pinggul cukup stabil (~${v}° kemiringan).`:`hips stay fairly level (~${v}° of tilt).`,
   symAmber:d=>LANG==='id'?`satu lutut bergerak ~${d}° beda dari yang lain. Cek dulu sisi yang lebih parah (posisi cleat, offset sadel); kalau bedanya menetap, bisa jadi panjang kaki tidak sama dan sebaiknya fit langsung ke ahlinya.`:`one knee tracks ~${d}° differently to the other. Check the more-affected side first (cleat position, saddle offset); persistent asymmetry can point to a leg-length difference worth a pro fit.`,
   symGreen:d=>LANG==='id'?`kedua kaki bergerak dalam selisih ~${d}°.`:`legs track within ~${d}° of each other.`,
+  // Amber = just outside the target, and a phone clip only resolves a few degrees anyway.
+  // These deliberately do NOT tell anyone to move hardware: at this distance the reading
+  // could be camera angle, and a rider who swaps a stem over 2° has been failed by the tool.
+  // `bentToo` = the knee reads MORE bent than target (saddle would be low). Naming it after the
+  // reading, not the saddle, keeps the two from being swapped by a later edit.
+  nudgeKnee:(v,aim,bentToo)=>LANG==='id'
+    ? `Lutut ${v}° — sedikit di luar target ${aim}, tapi masih wajar. Jangan ubah sadel dulu: pastikan kamera benar-benar lurus dari samping (90°, setinggi pinggul), lalu rekam ulang. Kalau angkanya tetap ${bentToo?'tinggi':'rendah'}, baru geser 2–3mm.`
+    : `Knee ${v}° — a little outside the ${aim} target, but still reasonable. Don't move the saddle yet: check the camera is square-on (90°, hip height) and re-film. If it still reads ${bentToo?'high':'low'}, then try 2–3mm.`,
+  nudgeTorso:(v,aim)=>LANG==='id'
+    ? `Torso ${v}° — sedikit di luar target ${aim} untuk sepeda ini. Target torso itu cuma patokan bike fitter, bukan hasil penelitian — kalau punggung dan lehermu nggak ada keluhan, biarkan saja.`
+    : `Torso ${v}° — a little outside the ${aim} target for this bike. That target is a fitter's rule of thumb, not research — if your back and neck feel fine, leave it alone.`,
+  nudgeElbow:v=>LANG==='id'
+    ? `Siku ${v}° — sedikit di luar target 15–30°. Ini soal postur, bukan sepeda: coba tekuk sikumu sedikit saat mengayuh, jangan ubah apa pun di sepedanya.`
+    : `Elbow ${v}° — a little outside the 15–30° target. This is posture, not the bike: soften your elbows as you ride rather than changing anything.`,
+  nudgeShoulder:v=>LANG==='id'
+    ? `Bahu ${v}° — sedikit di luar target 80–95°. Jangkauan adalah sudut 2D yang paling tidak akurat, jadi jangan sentuh stem. Cek dulu posisi tangan dan sudut kamera, lalu rekam ulang.`
+    : `Shoulder ${v}° — a little outside the 80–95° target. Reach is the least reliable 2D angle, so don't touch the stem. Re-check your hand position and camera angle, then re-film.`,
 };
 function updateLeads(){
   const lead=document.querySelector(".panel .lead");
@@ -663,11 +680,29 @@ function renderSide(){
     Object.keys(ZONES).map(m=>angleCard(m,R[m],G[m],LABEL[m][1])).join("");
   document.querySelector("#verdict").innerHTML=`<span class="vdot" style="background:${COL[overall]}"></span>${t('vd.'+overall)} &middot; ${strokes} ${t('word.strokes')}`;
   document.querySelector("#hipinfo").textContent=hipTop==null?"":DX.hipInfo(hipTop.toFixed(0));
+  // Amber and red used to produce the identical sentence, so a knee 2° off target was told to
+  // move the saddle just like one 15° off. Amber now says "check the clip, don't touch the bike";
+  // only red — genuinely outside the range, past the few degrees a phone clip can resolve —
+  // hands out a concrete adjustment.
   const fixes=[];
-  if(G.knee_flexion_bdc!=="GREEN"&&R.knee_flexion_bdc!=null){ const k=R.knee_flexion_bdc, mm=Math.min(20,Math.round(Math.abs(k-35)*1.5)); fixes.push(DX.saddle(k.toFixed(0),mm)); }
-  if(G.torso_from_horiz!=="GREEN"&&R.torso_from_horiz!=null) fixes.push(DX.torso(R.torso_from_horiz.toFixed(0),LABEL.torso_from_horiz[1], R.torso_from_horiz>ZONES.torso_from_horiz[1]));
-  if(G.elbow_flexion!=="GREEN"&&R.elbow_flexion!=null){ if(R.elbow_flexion<15) fixes.push(DX.elbowLocked(R.elbow_flexion.toFixed(0))); else if(R.elbow_flexion>30) fixes.push(DX.elbowBent(R.elbow_flexion.toFixed(0))); }
-  if(G.shoulder_angle!=="GREEN"&&R.shoulder_angle!=null) fixes.push(R.shoulder_angle<80?DX.shoulderCramped(R.shoulder_angle.toFixed(0)):DX.shoulderLong(R.shoulder_angle.toFixed(0)));
+  const amber=m=>G[m]==="AMBER", red=m=>G[m]==="RED", got=m=>R[m]!=null&&!isNaN(R[m]), d=m=>R[m].toFixed(0);
+  if(got("knee_flexion_bdc")){
+    const k=R.knee_flexion_bdc, bentToo=k>ZONES.knee_flexion_bdc[1];
+    if(red("knee_flexion_bdc")) fixes.push(DX.saddle(d("knee_flexion_bdc"),Math.min(20,Math.round(Math.abs(k-35)*1.5))));
+    else if(amber("knee_flexion_bdc")) fixes.push(DX.nudgeKnee(d("knee_flexion_bdc"),LABEL.knee_flexion_bdc[1],bentToo));
+  }
+  if(got("torso_from_horiz")){
+    if(red("torso_from_horiz")) fixes.push(DX.torso(d("torso_from_horiz"),LABEL.torso_from_horiz[1], R.torso_from_horiz>ZONES.torso_from_horiz[1]));
+    else if(amber("torso_from_horiz")) fixes.push(DX.nudgeTorso(d("torso_from_horiz"),LABEL.torso_from_horiz[1]));
+  }
+  if(got("elbow_flexion")){
+    if(red("elbow_flexion")) fixes.push(R.elbow_flexion<15?DX.elbowLocked(d("elbow_flexion")):DX.elbowBent(d("elbow_flexion")));
+    else if(amber("elbow_flexion")) fixes.push(DX.nudgeElbow(d("elbow_flexion")));
+  }
+  if(got("shoulder_angle")){
+    if(red("shoulder_angle")) fixes.push(R.shoulder_angle<80?DX.shoulderCramped(d("shoulder_angle")):DX.shoulderLong(d("shoulder_angle")));
+    else if(amber("shoulder_angle")) fixes.push(DX.nudgeShoulder(d("shoulder_angle")));
+  }
   const ul=document.querySelector("#fixes"); ul.innerHTML="";
   (fixes.length?fixes:[t('adv.allgood')]).forEach(x=>{const li=document.createElement("li");li.textContent=x;ul.appendChild(li);});
   document.querySelector("#viewwarn").hidden = !offAxis;
