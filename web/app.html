@@ -189,7 +189,15 @@
   .legend{display:flex;gap:16px;flex-wrap:wrap;margin:6px 0 22px;color:var(--mut);font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase}
   .legend span{display:inline-flex;align-items:center;gap:7px}
   .sw{width:11px;height:11px;border-radius:3px;display:inline-block}
-  footer{border-top:1px solid var(--line);padding:22px 0 50px;color:var(--mut);font-size:.82rem}
+  footer{border-top:1px solid var(--line);padding:26px 0 50px;color:var(--mut);font-size:.82rem}
+  .fgrid{display:grid;grid-template-columns:1.3fr 1fr .5fr;gap:26px}
+  @media(max-width:700px){ .fgrid{grid-template-columns:1fr} }
+  .fcol h4{margin:0 0 8px;font-family:var(--mono);font-size:.66rem;font-weight:600;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+  .fcol p{margin:0;line-height:1.6}
+  .fcol>a{display:block;color:var(--mut);text-decoration:none;line-height:1.9}
+  .fcol>a:hover{color:var(--accent)}
+  .fnote{border-top:1px solid var(--line);margin-top:22px;padding-top:14px;font-size:.78rem}
   a{color:var(--accent)}
   /* ---- icons ---- */
   .brand .blogo{width:28px;height:28px;object-fit:contain;display:block;flex:none}
@@ -466,13 +474,25 @@
     <div class="mini"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></span><h3 data-i18n="film.h3">Pedal steady</h3><p data-i18n="film.p3">20–30s at an easy, normal cadence — a trainer is ideal. Good light = less blur.</p></div>
   </div>
 
-  <footer data-i18n="foot.legal">
-    Runs entirely in your browser with <a href="https://ai.google.dev/edge/mediapipe" target="_blank" rel="noopener">MediaPipe Pose</a>.
-    Knee and elbow targets come from the <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9219349/" target="_blank" rel="noopener">Holmes method</a>
-    and a <a href="https://pubmed.ncbi.nlm.nih.gov/24499342/" target="_blank" rel="noopener">dynamic-vs-static study</a>; torso and shoulder targets are a
-    fitter's rule of thumb, not research — <a href="https://github.com/doniwirawan/bike-fit-analyzer/blob/main/files/bikefit-research-ranges.md" target="_blank" rel="noopener">every source is listed here</a>.
-    Not medical advice.
-    Source on <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>.
+  <footer>
+    <div class="fgrid">
+      <div class="fcol">
+        <h4 data-i18n="foot.h.method">Where the targets come from</h4>
+        <p data-i18n="foot.method">Knee and elbow: the <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9219349/" target="_blank" rel="noopener">Holmes method</a> and a <a href="https://pubmed.ncbi.nlm.nih.gov/24499342/" target="_blank" rel="noopener">dynamic-vs-static study</a>. Torso, shoulder and the per-bike targets: a fitter's rule of thumb, no paper behind them. <a href="https://github.com/doniwirawan/bike-fit-analyzer/blob/main/files/bikefit-research-ranges.md" target="_blank" rel="noopener">All sources</a>.</p>
+      </div>
+      <div class="fcol">
+        <h4 data-i18n="foot.h.privacy">Privacy</h4>
+        <p data-i18n="foot.ondevice">Everything runs in your browser with <a href="https://ai.google.dev/edge/mediapipe" target="_blank" rel="noopener">MediaPipe Pose</a>. Your video never leaves your device.</p>
+      </div>
+      <div class="fcol">
+        <h4 data-i18n="foot.h.links">Links</h4>
+        <a href="index.html" data-i18n="foot.link.home">Home</a>
+        <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>
+        <a href="privacy.html" data-i18n="foot.link.privacy">Privacy</a>
+        <a href="terms.html" data-i18n="foot.link.terms">Terms</a>
+      </div>
+    </div>
+    <div class="fnote" data-i18n="foot.disclaimer">Not medical advice, and not a substitute for a professional bike fit.</div>
   </footer>
   <div class="foot" style="margin-top:8px"><a href="privacy.html" data-i18n="foot.privacy">Privacy</a> &middot; <a href="terms.html" data-i18n="foot.terms">Terms</a></div>
 
@@ -526,7 +546,15 @@ const I18N = {
   "film.p2":{en:"Phone at hip/crank height on something stable — nothing blocking your legs (or arms, side-on).",id:"Taruh HP setinggi pinggul/crank di tempat yang stabil. Pastikan kaki (atau lengan, kalau dari samping) tidak terhalang."},
   "film.h3":{en:"Pedal steady",id:"Kayuh stabil"},
   "film.p3":{en:"20–30s at an easy, normal cadence — a trainer is ideal. Good light = less blur.",id:"20–30 detik dengan kayuhan santai dan normal. Paling enak pakai trainer. Pastikan pencahayaannya cukup supaya posisi tubuh lebih mudah terbaca."},
-  "foot.legal":{en:'Runs entirely in your browser with <a href="https://ai.google.dev/edge/mediapipe" target="_blank" rel="noopener">MediaPipe Pose</a>. Knee and elbow targets come from the <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9219349/" target="_blank" rel="noopener">Holmes method</a> and a <a href="https://pubmed.ncbi.nlm.nih.gov/24499342/" target="_blank" rel="noopener">dynamic-vs-static study</a>; torso and shoulder targets are a fitter\'s rule of thumb, not research — <a href="https://github.com/doniwirawan/bike-fit-analyzer/blob/main/files/bikefit-research-ranges.md" target="_blank" rel="noopener">every source is listed here</a>. Not medical advice. Source on <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>.',id:'Semua analisis dilakukan langsung di browser memakai <a href="https://ai.google.dev/edge/mediapipe" target="_blank" rel="noopener">MediaPipe Pose</a>. Target lutut dan siku diambil dari <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9219349/" target="_blank" rel="noopener">metode Holmes</a> dan <a href="https://pubmed.ncbi.nlm.nih.gov/24499342/" target="_blank" rel="noopener">studi sudut dinamis vs statis</a>; target torso dan bahu cuma patokan bike fitter, bukan hasil penelitian — <a href="https://github.com/doniwirawan/bike-fit-analyzer/blob/main/files/bikefit-research-ranges.md" target="_blank" rel="noopener">semua sumbernya ada di sini</a>. Video tidak pernah diunggah ke server. Ini bukan nasihat medis. Kodenya ada di <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>.'},
+  "foot.h.method":{en:"Where the targets come from",id:"Dari mana targetnya"},
+  "foot.method":{en:'Knee and elbow: the <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9219349/" target="_blank" rel="noopener">Holmes method</a> and a <a href="https://pubmed.ncbi.nlm.nih.gov/24499342/" target="_blank" rel="noopener">dynamic-vs-static study</a>. Torso, shoulder and the per-bike targets: a fitter\'s rule of thumb, no paper behind them. <a href="https://github.com/doniwirawan/bike-fit-analyzer/blob/main/files/bikefit-research-ranges.md" target="_blank" rel="noopener">All sources</a>.',id:'Lutut & siku: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9219349/" target="_blank" rel="noopener">metode Holmes</a> dan <a href="https://pubmed.ncbi.nlm.nih.gov/24499342/" target="_blank" rel="noopener">studi sudut dinamis vs statis</a>. Torso, bahu, dan target per jenis sepeda: patokan bike fitter, nggak ada paper-nya. <a href="https://github.com/doniwirawan/bike-fit-analyzer/blob/main/files/bikefit-research-ranges.md" target="_blank" rel="noopener">Semua sumbernya di sini</a>.'},
+  "foot.h.privacy":{en:"Privacy",id:"Privasi"},
+  "foot.ondevice":{en:'Everything runs in your browser with <a href="https://ai.google.dev/edge/mediapipe" target="_blank" rel="noopener">MediaPipe Pose</a>. Your video never leaves your device.',id:'Semua analisis jalan di browser-mu pakai <a href="https://ai.google.dev/edge/mediapipe" target="_blank" rel="noopener">MediaPipe Pose</a>. Videomu nggak pernah keluar dari perangkatmu.'},
+  "foot.h.links":{en:"Links",id:"Tautan"},
+  "foot.link.home":{en:"Home",id:"Beranda"},
+  "foot.link.privacy":{en:"Privacy",id:"Privasi"},
+  "foot.link.terms":{en:"Terms",id:"Ketentuan"},
+  "foot.disclaimer":{en:"Not medical advice, and not a substitute for a professional bike fit.",id:"Bukan nasihat medis, dan bukan pengganti bike fit profesional."},
   // dynamic-string keys (used from JS, not markup)
   "lead.side":{en:"Side-on, 20–30s, phone at hip height, pedaling steadily.",id:"Dari samping, 20–30 detik, HP setinggi pinggul, kayuhan stabil."},
   "lead.front":{en:"Facing the camera, 20–30s, pedaling steadily. Beta — frontal-plane hints.",id:"Menghadap kamera, 20–30 detik, kayuhan stabil. Beta — petunjuk dari tampak depan."},
@@ -802,6 +830,10 @@ const bar=$("#bar"), fill=$("#fill"), status=$("#status"), stage=$("#stage");
 const spin=$("#spin"), errbox=$("#errbox"), errmsg=$("#errmsg");
 
 let landmarker=null, viewMode="side";
+// The view the CURRENT analysis runs under. viewMode is live UI state and the user can tap
+// another view mid-run — without this snapshot, half the frames went down the side pipeline
+// and half down the frontal one, and finish() routed by whatever was selected at the end.
+let runView="side";
 document.querySelectorAll(".viewsel button").forEach(b=>b.onclick=()=>{
   viewMode=b.dataset.view;
   document.querySelectorAll(".viewsel button").forEach(x=>x.classList.toggle("active",x===b));
@@ -994,6 +1026,7 @@ document.addEventListener("visibilitychange",()=>{
 
 async function start(f, knownDur){
   if(UNSUPPORTED) return;
+  runView=viewMode;
   holdScreen();
   drop.style.display="none"; $(".try").style.display="none"; $("#results").hidden=true;
   errbox.hidden=true; spin.hidden=false; stage.style.display="block"; bar.style.display="block"; fill.style.width="0";
@@ -1019,7 +1052,7 @@ async function start(f, knownDur){
     ctx.drawImage(vid,0,0,cv.width,cv.height);
     if(res.landmarks&&res.landmarks[0]){
       const lm=res.landmarks[0];
-      if(viewMode!=="side"){ const fm=frontalMetrics(lm); frontalFrames.push(fm); drawFrontal(fm); }
+      if(runView!=="side"){ const fm=frontalMetrics(lm); frontalFrames.push(fm); drawFrontal(fm); }
       else{
       // Lock onto the near (camera) side by confidence accumulated over the whole
       // clip, so a noisy frame can't flip us to the far leg mid-stroke.
@@ -1126,14 +1159,17 @@ function drawSkeleton(P,g,A){
 
 function finish(){
   releaseScreen();
-  if(viewMode!=="side"){ finishFrontal(); return; }
+  if(runView!=="side"){ finishFrontal(); return; }
   spin.hidden=true; status.textContent=""; bar.style.display="none";
   if(frames.length<5){ fail(t('err.track')); return; }
   const ankle=frames.map(f=>f.ankleY);
   const sorted=ankle.filter(v=>!isNaN(v)).sort((a,b)=>a-b);
   if(sorted.length<5){ fail(t('err.track')); return; }
   const amp=sorted[Math.floor(sorted.length*0.95)]-sorted[Math.floor(sorted.length*0.05)];
-  const fps=frames.length/vid.duration;
+  // A recorded webm can still report duration=Infinity here, which would zero the fps and
+  // let noise peaks 0.1s apart count as pedal strokes. The frames carry their own timestamps.
+  const span=frames[frames.length-1].t-frames[0].t;
+  const fps=span>0?frames.length/span:30;
   const minDist=Math.max(3,Math.round(fps*0.35)), prom=Math.max(2,0.25*amp);
   const bdc=findPeaks(ankle,minDist,prom);                 // bottom of stroke (ankle lowest)
   const tdc=findPeaks(ankle.map(v=>-v),minDist,prom);      // top of stroke (ankle highest)
@@ -1189,10 +1225,12 @@ function finishFrontal(){
     if(v.length<3) return null; const q=[...v].sort((a,b)=>a-b);
     return { peak:q[Math.floor(q.length*0.9)], med:median(v) }; };
   const L=legStat("L"), R=legStat("R");
-  const t=F.map(f=>f.hipTilt).filter(x=>!isNaN(x)); let rock=null;
-  if(t.length>=5){ const q=[...t].sort((a,b)=>a-b); rock=q[Math.floor(q.length*0.95)]-q[Math.floor(q.length*0.05)]; }
+  // NB: this local was once named `t`, which shadowed the i18n t() for the whole function
+  // (TDZ) — so the fail(t('err.trackFront')) path above threw instead of showing the error.
+  const tilts=F.map(f=>f.hipTilt).filter(x=>!isNaN(x)); let rock=null;
+  if(tilts.length>=5){ const q=[...tilts].sort((a,b)=>a-b); rock=q[Math.floor(q.length*0.95)]-q[Math.floor(q.length*0.05)]; }
 
-  lastFront={L,R,rock,frames:F.length,view:viewMode};
+  lastFront={L,R,rock,frames:F.length,view:runView};
   renderFront();
   $("#example").hidden=true; $("#results").hidden=true; $("#frontresults").hidden=false;
   histSave();
@@ -1276,8 +1314,8 @@ function histThumb(){
   }catch(e){ return null; }
 }
 function histSave(){
-  const e={id:Date.now(), view:viewMode, bike:bikeType, thumb:histThumb(),
-    side: viewMode==="side"?lastSide:null, front: viewMode!=="side"?lastFront:null};
+  const e={id:Date.now(), view:runView, bike:bikeType, thumb:histThumb(),
+    side: runView==="side"?lastSide:null, front: runView!=="side"?lastFront:null};
   let h=[e,...histLoad()].slice(0,HMAX);
   if(!histWrite(h)){                              // over quota — drop old thumbnails, then old entries
     h=h.map((x,i)=>i?{...x,thumb:null}:x);
@@ -1287,8 +1325,8 @@ function histSave(){
   renderHistory();
 }
 function histSummary(e){
-  if(e.side){ const k=e.side.R.knee_flexion_bdc;
-    return `${t('vd.'+worse(...Object.values(e.side.G)))} · ${t(LABEL.knee_flexion_bdc[0])} ${k==null||isNaN(k)?"—":Math.round(k)+"°"}`; }
+  if(e.side){ const k=e.side.R?.knee_flexion_bdc;
+    return `${t('vd.'+worse(...Object.values(e.side.G||{})))} · ${t(LABEL.knee_flexion_bdc[0])} ${k==null||isNaN(k)?"—":Math.round(k)+"°"}`; }
   if(e.front) return `${t(e.view==="front"?'front.view.front':'front.view.rear')} · beta`;
   return "";
 }
