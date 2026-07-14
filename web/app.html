@@ -4,8 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Bike Fit Analyzer — grade your fit in your browser</title>
+<meta name="description" content="Drop a clip of yourself pedaling and get your bike-fit angles graded green / amber / red, right in your browser. 100% on-device, free to use.">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="canonical" href="https://bikefit.doniwirawan.xyz/app">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://bikefit.doniwirawan.xyz/app">
+<meta property="og:site_name" content="Bike Fit Analyzer">
+<meta property="og:title" content="Bike Fit Analyzer — grade your fit in your browser">
+<meta property="og:description" content="Drop a clip of yourself pedaling and get your bike-fit angles graded green / amber / red. 100% on-device, free, source published.">
+<meta property="og:image" content="https://bikefit.doniwirawan.xyz/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Bike Fit Analyzer: a fit report grading knee, hip, back and elbow angles green, amber and red.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bike Fit Analyzer — grade your fit in your browser">
+<meta name="twitter:description" content="Drop a clip of yourself pedaling and get your bike-fit angles graded green / amber / red. 100% on-device, free, source published.">
+<meta name="twitter:image" content="https://bikefit.doniwirawan.xyz/og.png">
 <style>
   :root{
     color-scheme: light dark;
@@ -295,7 +310,7 @@
     <!-- RIGHT: results (shows an EXAMPLE until a real clip is analyzed) -->
     <section class="panel">
       <h2 data-i18n="result.h2">2 · Your result</h2>
-      <p class="lead" id="resultlead">Angles at the bottom of your stroke, graded against research ranges.</p>
+      <p class="lead" id="resultlead">Angles at the bottom of your stroke. Every target links to where it came from — some are from papers, some are only a fitter's rule of thumb.</p>
 
       <div id="example">
         <div class="badge" style="color:var(--amber);border-color:color-mix(in srgb,var(--amber) 45%,var(--line))" data-i18n="ex.badge">Sample — not your result</div>
@@ -677,7 +692,13 @@ function renderExample(){
   }).join("");
 }
 function renderSide(){
-  const {R,G,strokes,hipTop,offAxis}=lastSide;
+  // Grades are recomputed against the CURRENT zones, not the ones baked in at analysis
+  // time — otherwise switching bike type after (or while restoring) an analysis leaves the
+  // torso card graded against the previous bike. histOpen applies the saved bike before
+  // calling this, so restored results still grade against the bike they were filmed on.
+  const {R,strokes,hipTop,offAxis}=lastSide;
+  const G={}; for(const m in ZONES) G[m]=grade(m,R[m]);
+  lastSide.G=G;   // keep the stored copy in step for the history verdict label
   const overall=worse(...Object.values(G));
   document.querySelector("#cards").innerHTML =
     Object.keys(ZONES).map(m=>angleCard(m,R[m],G[m],LABEL[m][1])).join("");
@@ -793,7 +814,7 @@ function applyBikeType(){
   LABEL.torso_from_horiz=["ex.torso", b.t];
 }
 { const bikeSel=$("#biketype");
-  if(bikeSel){ bikeSel.onchange=e=>{ bikeType=e.target.value; applyBikeType(); }; } }
+  if(bikeSel){ bikeSel.onchange=e=>{ bikeType=e.target.value; applyBikeType(); if(lastSide) renderSide(); }; } }
 applyBikeType();
 
 // What the analyzer actually needs. If any of this is missing the clip can't be processed at
