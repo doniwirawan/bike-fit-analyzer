@@ -1,5 +1,7 @@
 # 🚴 Bike Fit Analyzer
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/L7T7234BJ2)
+
 ### ▶️ Live demo (runs in your browser): **https://bikefit.doniwirawan.xyz**
 
 No install, no upload — drop a side-on pedaling clip and it grades your fit
