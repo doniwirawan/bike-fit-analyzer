@@ -18,8 +18,14 @@ from pathlib import Path
 from mcp.server.fastmcp import FastMCP
 
 ROOT = Path(__file__).resolve().parent.parent
-PY = ROOT / ".venv" / "Scripts" / "python.exe"
-if not PY.exists():
+# Cross-platform venv python path: Windows .venv\Scripts\python.exe, Unix .venv/bin/python
+PY_WIN = ROOT / ".venv" / "Scripts" / "python.exe"
+PY_UNIX = ROOT / ".venv" / "bin" / "python"
+if PY_WIN.exists():
+    PY = PY_WIN
+elif PY_UNIX.exists():
+    PY = PY_UNIX
+else:
     PY = Path(sys.executable)
 SCRIPT = ROOT / "files" / "analyze_bikefit.py"
 MODEL = ROOT / "yolo11x-pose.pt"
@@ -91,7 +97,8 @@ def analyze_bike_fit(video_path: str,
         return {"error": f"Unknown bike_type {bike_type!r}. Options: {', '.join(BIKE_TORSO)}"}
 
     with tempfile.TemporaryDirectory() as tmp:
-        cmd = [str(PY), str(SCRIPT), "--input", str(src), "--out", tmp, "--model", str(MODEL)]
+        cmd = [str(PY), str(SCRIPT), "--input", str(src), "--out", tmp, "--model", str(MODEL),
+               "--bike-type", bike_type]
         if start_sec is not None:
             cmd += ["--start", str(start_sec)]
         if end_sec is not None:
