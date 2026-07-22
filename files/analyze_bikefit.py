@@ -32,9 +32,19 @@ SIDE = {
 # Grounded in the dynamic road-fit ranges in bikefit-research-ranges.md.
 ZONES = {
     "knee_flexion_bdc":  (30, 40, 28, 42),   # Holmes; over 42 saddle low, under 28 saddle high
-    "torso_from_horiz":  (40, 50, 34, 56),
+    "torso_from_horiz":  (40, 50, 34, 56),   # default: road_endurance — overridden by --bike-type
     "elbow_flexion":     (15, 30,  8, 45),   # near 0 = locked out
     "shoulder_angle":    (80, 95, 70, 105),  # much lower = closed/scrunched cockpit
+}
+
+# Torso target by bike type — matches MCP/server.py and web/app.html
+BIKE_TORSO = {
+    "road_endurance": (40, 50, 34, 56),
+    "road_race":      (32, 42, 28, 48),
+    "tt_tri":         (12, 28,  8, 34),
+    "gravel":         (42, 52, 36, 58),
+    "mtb":            (46, 58, 40, 64),
+    "city":           (55, 70, 48, 78),
 }
 
 # BGR colors for OpenCV drawing.
@@ -118,6 +128,12 @@ def analyze(args):
     os.makedirs(args.out, exist_ok=True)
     stills_dir = os.path.join(args.out, "stills")
     os.makedirs(stills_dir, exist_ok=True)
+
+    # Apply bike-type-specific torso zones *before* grading
+    if args.bike_type in BIKE_TORSO:
+        ZONES["torso_from_horiz"] = BIKE_TORSO[args.bike_type]
+    else:
+        print(f"Unknown bike_type {args.bike_type!r}, using road_endurance torso target.")
 
     device = 0 if _cuda_available() else "cpu"
     print(f"Loading {args.model} on device={device} ...")
@@ -349,15 +365,19 @@ def _fix_text(metric, value, g):
     if g == "GREEN" or value is None:
         return None
     if metric == "knee_flexion_bdc":
-        if value > 40:
-            return f"Knee {value:.0f}deg at bottom (target 30-40) -> saddle TOO LOW. Raise saddle ~{(value-35)*2:.0f}mm."
-        return f"Knee {value:.0f}deg at bottom (target 30-40) -> saddle TOO HIGH. Lower saddle ~{(35-value)*2:.0f}mm."
+        lo, hi = ZONES["knee_flexion_bdc"][0], ZONES["knee_flexion_bdc"][1]
+        if value > hi:
+            return f"Knee {value:.0f}deg at bottom (target {lo}-{hi}) -> saddle TOO LOW. Raise saddle ~{(value-35)*2:.0f}mm."
+        return f"Knee {value:.0f}deg at bottom (target {lo}-{hi}) -> saddle TOO HIGH. Lower saddle ~{(35-value)*2:.0f}mm."
     if metric == "torso_from_horiz":
-        return f"Torso {value:.0f}deg (target 40-50) -> {'too upright' if value > 50 else 'very aggressive'}; adjust reach/stem."
+        lo, hi = ZONES["torso_from_horiz"][0], ZONES["torso_from_horiz"][1]
+        return f"Torso {value:.0f}deg (target {lo}-{hi}) -> {'too upright' if value > hi else 'very aggressive'}; adjust reach/stem."
     if metric == "elbow_flexion":
-        return f"Elbow {value:.0f}deg (target 15-30) -> {'locked out, soften/shorten reach' if value < 15 else 'very bent, reach may be short'}."
+        lo, hi = ZONES["elbow_flexion"][0], ZONES["elbow_flexion"][1]
+        return f"Elbow {value:.0f}deg (target {lo}-{hi}) -> {'locked out, soften/shorten reach' if value < lo else 'very bent, reach may be short'}."
     if metric == "shoulder_angle":
-        return f"Shoulder {value:.0f}deg (target 80-95) -> {'closed/scrunched cockpit, weight on hands' if value < 80 else 'very open reach'}."
+        lo, hi = ZONES["shoulder_angle"][0], ZONES["shoulder_angle"][1]
+        return f"Shoulder {value:.0f}deg (target {lo}-{hi}) -> {'closed/scrunched cockpit, weight on hands' if value < lo else 'very open reach'}."
     return None
 
 
@@ -368,10 +388,10 @@ def _write_reports(out_dir, results, grades):
 
     lines = ["# Bike fit report", f"- Overall: {verdict}", "", "## Angles (deg) vs target"]
     labels = {
-        "knee_flexion_bdc": "knee_flexion_bdc (target 30-40)",
-        "torso_from_horiz": "torso_from_horiz (target 40-50)",
-        "elbow_flexion":    "elbow_flexion (target 15-30)",
-        "shoulder_angle":   "shoulder_angle (target 80-95)",
+        "knee_flexion_bdc": f"knee_flexion_bdc (target {ZONES['knee_flexion_bdc'][0]}-{ZONES['knee_flexion_bdc'][1]})",
+        "torso_from_horiz": f"torso_from_horiz (target {ZONES['torso_from_horiz'][0]}-{ZONES['torso_from_horiz'][1]})",
+        "elbow_flexion":    f"elbow_flexion (target {ZONES['elbow_flexion'][0]}-{ZONES['elbow_flexion'][1]})",
+        "shoulder_angle":   f"shoulder_angle (target {ZONES['shoulder_angle'][0]}-{ZONES['shoulder_angle'][1]})",
     }
     for m in ZONES:
         v = results[m]
@@ -399,6 +419,8 @@ def main():
     ap.add_argument("--start", type=float, default=None, help="start second (trim)")
     ap.add_argument("--end", type=float, default=None, help="end second (trim)")
     ap.add_argument("--model", default="yolo11x-pose.pt", help="pose model")
+    ap.add_argument("--bike-type", default="road_endurance", choices=list(BIKE_TORSO.keys()),
+                    help="bike type for torso-angle target (default: road_endurance)")
     analyze(ap.parse_args())
 
 

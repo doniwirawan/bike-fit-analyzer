@@ -1,7 +1,7 @@
 """
 Local results viewer for the bike-fit analyzer.
 Run:  python results_server.py
-Then open http://localhost:8080  to see every out_fit_* result:
+Then open http://localhost:8090  to see every out_fit_* result:
 the graded report, the bottom-of-stroke screenshot, and the overlay video.
 """
 import http.server

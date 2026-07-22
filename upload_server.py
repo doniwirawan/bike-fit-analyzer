@@ -12,6 +12,7 @@ import re
 PORT = 8000
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+MAX_UPLOAD_BYTES = 500 * 1024 * 1024  # 500 MB limit
 
 PAGE = """<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
@@ -111,6 +112,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return
         boundary = ("--" + m.group(1).strip('"')).encode()
         length = int(self.headers.get("Content-Length", 0))
+        if length > MAX_UPLOAD_BYTES:
+            self._reply(413, f"File too large (max {MAX_UPLOAD_BYTES // (1024*1024)} MB)")
+            return
         body = self._read_exact(length)
         # split the one file part out of the multipart body
         parts = body.split(boundary)
@@ -118,6 +122,14 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if b'filename="' in part:
                 fn = re.search(rb'filename="([^"]*)"', part).group(1).decode("utf-8", "replace")
                 fn = os.path.basename(fn) or "upload.bin"
+                # Avoid silent filename collision: append counter suffix if file exists
+                base, ext = os.path.splitext(fn)
+                counter = 1
+                dest = os.path.join(UPLOAD_DIR, fn)
+                while os.path.exists(dest):
+                    fn = f"{base}_{counter}{ext}"
+                    dest = os.path.join(UPLOAD_DIR, fn)
+                    counter += 1
                 data = part.split(b"\r\n\r\n", 1)[1]
                 if data.endswith(b"\r\n"):
                     data = data[:-2]
