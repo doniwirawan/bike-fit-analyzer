@@ -180,6 +180,13 @@ Full sources are in [`files/bikefit-research-ranges.md`](files/bikefit-research-
 - **Not medical advice.** Change one thing at a time and stop if it hurts.
 - Change one thing per session (saddle **or** reach), then re-film.
 
+## Contributors
+
+- **Doni Wirawan** ([@doniwirawan](https://github.com/doniwirawan)) — creator & maintainer
+- **Willih Angga** ([@willihangga](https://github.com/willihangga)) — security & cross-platform fixes ([#2](https://github.com/doniwirawan/bike-fit-analyzer/pull/2))
+
+_Automated bots (e.g. ImgBot) also contribute commits._
+
 ## 📄 License
 
 The analysis code in this repo is provided as-is for personal use. **Ultralytics
