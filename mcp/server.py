@@ -103,7 +103,16 @@ def analyze_bike_fit(video_path: str,
             cmd += ["--start", str(start_sec)]
         if end_sec is not None:
             cmd += ["--end", str(end_sec)]
-        run = subprocess.run(cmd, capture_output=True, text=True, cwd=str(ROOT))
+        # Bounded, and stdin closed: a stalled child here used to hang the tool call
+        # forever with no output at all, which is indistinguishable from "still working".
+        try:
+            run = subprocess.run(cmd, capture_output=True, text=True, cwd=str(ROOT),
+                                 stdin=subprocess.DEVNULL, timeout=900)
+        except subprocess.TimeoutExpired:
+            return {"error": "Analysis timed out after 15 minutes.",
+                    "detail": "A 30s clip on CPU takes a few minutes; longer than this means "
+                              "it stalled. Run the same command in a shell to see where:\n"
+                              + " ".join(f'"{c}"' if " " in c else c for c in cmd)}
         results_file = Path(tmp) / "report.json"
         if not results_file.exists():
             tail = (run.stderr or run.stdout or "").strip().splitlines()[-6:]

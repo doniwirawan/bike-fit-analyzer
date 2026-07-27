@@ -35,14 +35,36 @@ Add to `claude_desktop_config.json`:
 {
   "mcpServers": {
     "bike-fit": {
-      "command": "C:\Users\doniw\Downloads\bike-fitting-v2\.venv\Scripts\python.exe",
-      "args": ["C:\Users\doniw\Downloads\bike-fitting-v2\mcp\server.py"]
+      "command": "C:\\Users\\doniw\\Downloads\\bike-fitting-v2\\.venv\\Scripts\\python.exe",
+      "args": ["C:\\Users\\doniw\\Downloads\\bike-fitting-v2\\mcp\\server.py"]
     }
   }
 }
 ```
 
-Use absolute paths there — Claude Desktop does not run from the repo directory.
+Use absolute paths there — Claude Desktop does not run from the repo directory —
+and **double** the backslashes, or the JSON won't parse.
+
+## Using it
+
+Ask in plain language and give the client a path to the clip:
+
+> Analyze `C:\Users\me\Videos\ride.mp4` as a gravel bike, using seconds 5 to 35.
+>
+> What torso angle should a TT bike be graded against?
+
+`analyze_bike_fit` shells out to the YOLO pipeline, so it is **slow**: budget a few
+minutes per clip on CPU, most of it pose inference. Trim with `start_sec`/`end_sec`
+to the steadiest few seconds of pedalling — that is both faster and more accurate
+than handing it the whole clip. It needs at least one full pedal stroke, so windows
+under ~2 seconds fail with "No clear pedal strokes found".
+
+If the call runs past 15 minutes it gives up and returns the exact shell command it
+tried, so you can run that yourself and see the real error.
+
+**After editing `server.py`, restart the MCP connection** — the client keeps one
+long-lived server process, so a running server is still executing the code that was
+on disk when it started, and edits do nothing until it is restarted.
 
 ## It does NOT agree exactly with the website
 

@@ -123,6 +123,7 @@ python files/analyze_bikefit.py --input my-ride.mp4 --out out_fit --start 5 --en
 | `--out` | output folder | `out_fit` |
 | `--start` / `--end` | trim window in seconds | whole clip |
 | `--model` | pose model | `yolo11x-pose.pt` |
+| `--bike-type` | torso target: `road_endurance`, `road_race`, `tt_tri`, `gravel`, `mtb`, `city` | `road_endurance` |
 
 On a slow CPU, `--model yolo11n-pose.pt` trades accuracy for speed.
 
@@ -136,6 +137,51 @@ python upload_server.py
 
 Open **http://localhost:8000**, drop your clip in, and it's saved to `uploads/`.
 Then run Option A on that file.
+
+### Option C — browse past results
+
+```bash
+python results_server.py
+```
+
+Open **http://localhost:8090** for every `out_fit_*` folder at once: the graded
+report, the bottom-of-stroke still, and the overlay video.
+
+### Option D — from a chat client (MCP)
+
+`.mcp.json` registers a `bike-fit` MCP server, so Claude Code picks it up when
+started from this directory. Then just ask:
+
+> Analyze `uploads/ride.mp4` as a gravel bike, seconds 5 to 35.
+
+Two tools: `analyze_bike_fit(video_path, bike_type, start_sec, end_sec)` and
+`list_bike_types()`. It runs this same YOLO pipeline, so it takes minutes per clip
+— trim to the steady pedalling. See [`mcp/README.md`](mcp/README.md) for setup on
+Claude Desktop, and for why it disagrees with the website by a few degrees.
+
+---
+
+## Running the pieces
+
+Six things live in this repo. Only the website is deployed; the rest run locally.
+
+| Piece | Where | Run it | Notes |
+|---|---|---|---|
+| **Website** | `web/` | `pwsh -File deploy.ps1` to publish; `cd web && python -m http.server 5173` to run locally | MediaPipe in the browser, no server compute. **This is the reference implementation.** [`web/README.md`](web/README.md) |
+| **CLI analyzer** | `files/analyze_bikefit.py` | `python files/analyze_bikefit.py --input clip.mp4 --out out_fit` | YOLO11x-pose. Needs the venv and ffmpeg. Minutes per clip on CPU |
+| **Upload page** | `upload_server.py` | `python upload_server.py` → :8000 | Drag-and-drop into `uploads/`. Stdlib only |
+| **Results viewer** | `results_server.py` | `python results_server.py` → :8090 | Reads `out_fit_*/`. Stdlib only |
+| **MCP server** | `mcp/server.py` | auto-started by the client from `.mcp.json` | Wraps the CLI analyzer. [`mcp/README.md`](mcp/README.md) |
+| **Android app** | `mobile/native/` | `gradle --no-daemon assembleDebug` | Needs JDK + Android SDK, no gradle wrapper is checked in. [`mobile/native/README.md`](mobile/native/README.md) |
+
+The two Python servers bind `127.0.0.1` and speak plain HTTP — they're local
+dev tools, not something to expose.
+
+Deploying the website is `deploy.ps1` from the repo root, **never `vercel` by
+hand**: it deploys `web/` and then checks the live URLs return 200. Running
+`vercel` from the repo root instead of `web/` nests the whole site under `/web/`
+and leaves `/` returning 404, which is exactly what happened once and went
+unnoticed for five days.
 
 ---
 
