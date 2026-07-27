@@ -126,8 +126,12 @@ fun RecorderScreen(
         }
     }
 
+    // Full-height column: the preview takes whatever is left after the controls. It used to be a
+    // fixed 320dp box inside the main scrolling page, so the viewfinder scrolled away while you
+    // were trying to frame the shot.
+    Column(Modifier.fillMaxSize()) {
     AndroidView(
-        modifier = Modifier.fillMaxWidth().height(320.dp),
+        modifier = Modifier.fillMaxWidth().weight(1f),
         factory = { previewView }
     )
 
@@ -178,4 +182,5 @@ fun RecorderScreen(
             "Pedal steadily. Stops automatically at ${MAX_SECONDS}s.",
         color = Color(0xFF8B97A8), fontSize = 11.sp
     )
+    }
 }

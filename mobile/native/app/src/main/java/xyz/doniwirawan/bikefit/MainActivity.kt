@@ -27,16 +27,16 @@ import androidx.work.*
 import org.json.JSONObject
 import kotlin.math.roundToInt
 
-private val GREEN = Color(0xFF16A34A)
-private val AMBER = Color(0xFFD97706)
-private val RED = Color(0xFFDC2626)
-private val GRAY = Color(0xFF9AA3B2)
-private val BG = Color(0xFF0B0F16)
-private val CARD = Color(0xFF111825)
-private val LINE = Color(0xFF1E2734)
-private val FG = Color(0xFFDFE6F0)
-private val MUT = Color(0xFF8B97A8)
-private val ACCENT = Color(0xFF4D8BFF)
+internal val GREEN = Color(0xFF16A34A)
+internal val AMBER = Color(0xFFD97706)
+internal val RED = Color(0xFFDC2626)
+internal val GRAY = Color(0xFF9AA3B2)
+internal val BG = Color(0xFF0B0F16)
+internal val CARD = Color(0xFF111825)
+internal val LINE = Color(0xFF1E2734)
+internal val FG = Color(0xFFDFE6F0)
+internal val MUT = Color(0xFF8B97A8)
+internal val ACCENT = Color(0xFF4D8BFF)
 
 private fun colorOf(g: String) = when (g) {
     "GREEN" -> GREEN; "AMBER" -> AMBER; "RED" -> RED; else -> GRAY
@@ -70,6 +70,7 @@ private fun App(handed: Uri? = null) {
     var bike by remember { mutableStateOf("road_endurance") }
     var video by remember { mutableStateOf<Uri?>(handed) }
     var recording by remember { mutableStateOf(false) }
+    var about by remember { mutableStateOf(false) }
     var result by remember { mutableStateOf(ResultStore.latest(ctx)) }
     var error by remember { mutableStateOf<String?>(null) }
 
@@ -98,22 +99,46 @@ private fun App(handed: Uri? = null) {
             notifPerm.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
 
+    // No takePersistableUriPermission here: ACTION_GET_CONTENT never grants a persistable one, so
+    // asking for it throws SecurityException in this callback. Staging.stage() copies the clip into
+    // app storage anyway, which is what actually makes the background worker independent of the grant.
     val pick = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        if (uri != null) {
-            video = uri
-            ctx.contentResolver.takePersistableUriPermission(
-                uri, android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
-            ).let { }
+        if (uri != null) video = uri
+    }
+
+    // The recorder owns the whole screen while it is up — a viewfinder you have to scroll to keep
+    // in view is useless when you are lining up the shot from across the room.
+    if (recording) {
+        Box(Modifier.fillMaxSize().background(BG).padding(12.dp)) {
+            RecorderScreen(
+                onRecorded = { uri -> video = uri; recording = false },
+                onCancel = { recording = false }
+            )
         }
+        return
+    }
+
+    if (about) {
+        AboutScreen(onBack = { about = false })
+        return
     }
 
     Column(
         Modifier.fillMaxSize().background(BG).padding(18.dp).verticalScroll(rememberScrollState())
     ) {
-        Text("BIKE FIT ANALYZER", color = FG, fontFamily = FontFamily.Monospace,
-            fontWeight = FontWeight.Bold, letterSpacing = 2.sp, fontSize = 14.sp)
-        Spacer(Modifier.height(4.dp))
-        Text("Runs on your phone. Nothing is uploaded.", color = MUT, fontSize = 13.sp)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            androidx.compose.foundation.Image(
+                androidx.compose.ui.res.painterResource(R.mipmap.ic_launcher), null,
+                Modifier.size(34.dp)
+            )
+            Spacer(Modifier.width(10.dp))
+            Column(Modifier.weight(1f)) {
+                Text("BIKE FIT ANALYZER", color = FG, fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold, letterSpacing = 2.sp, fontSize = 14.sp)
+                Text("Runs on your phone. Nothing is uploaded.", color = MUT, fontSize = 13.sp)
+            }
+            TextButton(onClick = { about = true }) { Text("About", fontSize = 13.sp) }
+        }
         Spacer(Modifier.height(20.dp))
 
         Text("BIKE TYPE", color = MUT, fontFamily = FontFamily.Monospace, fontSize = 11.sp, letterSpacing = 1.sp)
@@ -135,26 +160,19 @@ private fun App(handed: Uri? = null) {
 
         Spacer(Modifier.height(16.dp))
 
-        if (recording) {
-            RecorderScreen(
-                onRecorded = { uri -> video = uri; recording = false },
-                onCancel = { recording = false }
-            )
-        } else {
-            Button(
-                onClick = { pick.launch("video/*") },
-                enabled = !running,
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = ACCENT)
-            ) { Text(if (video == null) "Choose a video" else "Choose a different video") }
+        Button(
+            onClick = { pick.launch("video/*") },
+            enabled = !running,
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = ACCENT)
+        ) { Text(if (video == null) "Choose a video" else "Choose a different video") }
 
-            Spacer(Modifier.height(8.dp))
-            OutlinedButton(
-                onClick = { recording = true },
-                enabled = !running,
-                modifier = Modifier.fillMaxWidth()
-            ) { Text("Record with camera", color = FG) }
-        }
+        Spacer(Modifier.height(8.dp))
+        OutlinedButton(
+            onClick = { recording = true },
+            enabled = !running,
+            modifier = Modifier.fillMaxWidth()
+        ) { Text("Record with camera", color = FG) }
 
         video?.let {
             Spacer(Modifier.height(10.dp))

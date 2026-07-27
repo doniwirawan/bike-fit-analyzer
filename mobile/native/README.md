@@ -40,8 +40,20 @@ and the website will give the same rider different verdicts.
 ```sh
 export JAVA_HOME="/c/Program Files/Android/Android Studio/jbr"
 export ANDROID_SDK_ROOT="$LOCALAPPDATA/Android/Sdk"
-gradle --no-daemon assembleRelease
+gradle --no-daemon assembleDebug          # no credentials needed, stock debug key
 ```
+
+A release build needs the signing credentials in the environment — there are no fallbacks in
+`build.gradle` on purpose, so the key's password is not sitting in a tracked file:
+
+```sh
+export BIKEFIT_KEYSTORE=../../keystore.jks   # optional, this is the default
+export BIKEFIT_STORE_PASS=... BIKEFIT_KEY_ALIAS=... BIKEFIT_KEY_PASS=...
+gradle --no-daemon bundleRelease          # -> app/build/outputs/bundle/release/app-release.aab
+```
+
+`bundleRelease` produces the AAB that Google Play requires; `assembleRelease` still produces an
+APK for sideloading. See `PLAY.md` for the store submission.
 
 ## Gotchas found the hard way
 
@@ -58,4 +70,4 @@ gradle --no-daemon assembleRelease
 
 ## Not done yet
 
-In-app camera recording (front/back). Right now you pick a clip, or share one into the app.
+Nothing blocking. In-app recording (front/back camera, 30s cap) landed in `Recorder.kt`.

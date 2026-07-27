@@ -23,12 +23,17 @@ via `file://` won't work.)
 
 ```bash
 npm i -g vercel
-cd web
-vercel        # follow prompts; it's a static deploy, no build step
+pwsh -File deploy.ps1   # from the repo root
 ```
 
-Or drag the `web/` folder into the Vercel dashboard. No config needed — it's
-plain HTML/JS. MediaPipe's model + WASM load from public CDNs at runtime.
+`deploy.ps1` is the only supported way to deploy. It deploys `web/` (resolved
+relative to the script, so the repo root can't be deployed by mistake) and then
+checks that `/`, `/app`, `/privacy`, `/terms` and `/og.png` all return 200.
+Deploying the repo root instead of `web/` silently nests the whole site under
+`/web/` and leaves `/` returning 404 — it went unnoticed for five days once.
+
+It's a static deploy, no build step. MediaPipe's model + WASM load from public
+CDNs at runtime.
 
 ## Notes / trade-offs
 
