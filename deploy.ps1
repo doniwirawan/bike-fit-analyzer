@@ -1,9 +1,10 @@
 # Deploys the site to Vercel production, then checks the live URLs.
 #
-# Always run this instead of calling `vercel` by hand. It resolves web/ relative
-# to its own location, so it cannot deploy the repo root by mistake — that is
-# what happened on 2026-07-22, and it left https://bikefit.doniwirawan.xyz/
-# serving a 404 for five days (everything ended up nested under /web/).
+# Pushing to main also deploys, because the GitHub repo is connected to the
+# Vercel project. Both paths rely on the project's **Root Directory = web**
+# setting to pick the site out of this repo, so deploys run from the repo root,
+# not from web/. That setting was unset until 2026-07-27, which meant every push
+# published the repo root and served a 404 at / — it went unnoticed for five days.
 #
 #   pwsh -File deploy.ps1              # deploy, then verify
 #   pwsh -File deploy.ps1 -VerifyOnly  # just check the live site is up
@@ -17,12 +18,12 @@ $site = 'https://bikefit.doniwirawan.xyz'
 
 foreach ($f in 'index.html', 'app.html', 'vercel.json') {
     if (-not (Test-Path (Join-Path $web $f))) {
-        throw "$f is missing from $web — refusing to deploy the wrong directory."
+        throw "$f is missing from $web — is this the right repo?"
     }
 }
 
 if (-not $VerifyOnly) {
-    Push-Location $web
+    Push-Location $PSScriptRoot
     try { vercel deploy --prod --yes } finally { Pop-Location }
     if ($LASTEXITCODE -ne 0) { throw "vercel deploy failed (exit $LASTEXITCODE)" }
 }

@@ -1,0 +1,6 @@
+# The Vercel project's Root Directory is `web`, so deploys run from the repo
+# root. Without this, the CLI tries to upload the whole repo — the 118MB pose
+# model, .venv, uploads/, the out_fit_* runs — and the upload aborts.
+# Everything the site needs is in web/.
+/*
+!/web

@@ -26,11 +26,14 @@ npm i -g vercel
 pwsh -File deploy.ps1   # from the repo root
 ```
 
-`deploy.ps1` is the only supported way to deploy. It deploys `web/` (resolved
-relative to the script, so the repo root can't be deployed by mistake) and then
-checks that `/`, `/app`, `/privacy`, `/terms` and `/og.png` all return 200.
-Deploying the repo root instead of `web/` silently nests the whole site under
-`/web/` and leaves `/` returning 404 — it went unnoticed for five days once.
+Pushing to `main` also deploys — the GitHub repo is connected to the Vercel
+project. `deploy.ps1` runs from the repo root, publishes, and then checks that
+`/`, `/app`, `/privacy`, `/terms` and `/og.png` all return 200.
+
+Both paths depend on the project's **Root Directory = `web`** setting to find
+the site inside this repo. With it unset, a deploy publishes the repo root, `/`
+returns 404, and the site ends up under `/web/` — that happened, and it went
+unnoticed for five days. Deploy from the repo root, not from here.
 
 It's a static deploy, no build step. MediaPipe's model + WASM load from public
 CDNs at runtime.

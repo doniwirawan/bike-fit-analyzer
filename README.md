@@ -177,11 +177,22 @@ Six things live in this repo. Only the website is deployed; the rest run locally
 The two Python servers bind `127.0.0.1` and speak plain HTTP — they're local
 dev tools, not something to expose.
 
-Deploying the website is `deploy.ps1` from the repo root, **never `vercel` by
-hand**: it deploys `web/` and then checks the live URLs return 200. Running
-`vercel` from the repo root instead of `web/` nests the whole site under `/web/`
-and leaves `/` returning 404, which is exactly what happened once and went
-unnoticed for five days.
+### Deploying
+
+The GitHub repo is connected to the Vercel project, so **pushing to `main`
+deploys**. `pwsh -File deploy.ps1` does the same thing from the repo root and
+then checks the live URLs return 200 — use it to publish work that isn't
+committed yet, or to confirm the site after a push.
+
+Both paths depend on the Vercel project's **Root Directory = `web`**. That
+setting was unset until 2026-07-27, so every push published the *repo root* —
+which has no `index.html` — and the site served a 404 at `/` while the whole
+thing sat under `/web/`. Nothing in git or in the Vercel dashboard looks wrong
+when this happens; deployments still report "Ready". It went unnoticed for five
+days. If `/` ever 404s again, check that setting first.
+
+`.vercelignore` keeps the CLI from uploading the 118 MB pose model and `.venv`
+along with the site.
 
 ---
 

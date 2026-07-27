@@ -35,3 +35,6 @@ mobile/local.properties
 **/build/
 **/.gradle/
 mobile/**/local.properties
+
+# Vercel CLI project link
+.vercel
