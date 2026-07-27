@@ -182,7 +182,16 @@ dev tools, not something to expose.
 The GitHub repo is connected to the Vercel project, so **pushing to `main`
 deploys**. `pwsh -File deploy.ps1` does the same thing from the repo root and
 then checks the live URLs return 200 — use it to publish work that isn't
-committed yet, or to confirm the site after a push.
+committed yet.
+
+| You did | Then | Why |
+|---|---|---|
+| `git push` | `pwsh -File deploy.ps1 -VerifyOnly` | the push already deployed; this only checks it |
+| nothing committed yet | `pwsh -File deploy.ps1` | deploys and verifies in one go |
+
+Don't do both for the same change. Both publish straight to production, so a
+push and a CLI deploy started close together race for the production alias:
+whichever finishes last is what visitors get, with no warning either way.
 
 Both paths depend on the Vercel project's **Root Directory = `web`**. That
 setting was unset until 2026-07-27, so every push published the *repo root* —

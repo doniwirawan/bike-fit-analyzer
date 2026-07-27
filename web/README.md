@@ -28,7 +28,10 @@ pwsh -File deploy.ps1   # from the repo root
 
 Pushing to `main` also deploys — the GitHub repo is connected to the Vercel
 project. `deploy.ps1` runs from the repo root, publishes, and then checks that
-`/`, `/app`, `/privacy`, `/terms` and `/og.png` all return 200.
+`/`, `/app`, `/privacy`, `/terms` and `/og.png` all return 200. Use one or the
+other for a given change, not both: they both publish to production and will
+race for the alias. After a push, `deploy.ps1 -VerifyOnly` checks the result
+without deploying again.
 
 Both paths depend on the project's **Root Directory = `web`** setting to find
 the site inside this repo. With it unset, a deploy publishes the repo root, `/`
