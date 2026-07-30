@@ -68,6 +68,20 @@
   /* two-column app */
   .app{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:14px 0 34px;align-items:start}
   @media(max-width:880px){ .app{grid-template-columns:1fr} }
+  /* Analysis / Report tabs. One panel at a time at every width — the two-column layout
+     made the report share a screen with the upload box it had already finished with. */
+  .tabs{display:flex;gap:6px;border:1px solid var(--line);border-radius:10px;padding:4px;
+    background:var(--card);margin:0 0 14px}
+  .tabs button{flex:1;border:0;background:transparent;color:var(--mut);cursor:pointer;
+    font-family:var(--mono);font-size:.74rem;font-weight:700;letter-spacing:.06em;
+    text-transform:uppercase;padding:9px 12px;border-radius:7px;
+    display:inline-flex;align-items:center;justify-content:center;gap:7px}
+  .tabs button.active{background:var(--accent);color:var(--accent-ink)}
+  .tabs button .tdot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex:none}
+  .tabs button.active .tdot{background:var(--accent-ink)}
+  .app{grid-template-columns:1fr}
+  .app[data-tab="analysis"] #panelReport{display:none}
+  .app[data-tab="report"] #panelAnalysis{display:none}
   .panel{background:var(--card);border-radius:12px;box-shadow:var(--shadow);padding:20px;border:1px solid var(--line)}
   .panel h2{margin:0 0 5px;font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
   .panel .lead{color:var(--mut);font-size:.9rem;margin:0 0 16px}
@@ -261,10 +275,18 @@
     <span><i class="sw" style="background:var(--red)"></i> <span data-i18n="legend.fixit">fix it</span></span>
   </div>
 
-  <!-- side-by-side app -->
-  <div class="app">
+  <!-- Analysis / Report as tabs rather than two columns: on a phone the two panels were
+       fighting for width, and after a run the numbers are the only thing you want. -->
+  <div class="tabs" role="tablist">
+    <button id="tabAnalysis" role="tab" aria-selected="true" aria-controls="panelAnalysis"
+            class="active" data-tab="analysis" data-i18n="tab.analysis">Analysis</button>
+    <button id="tabReport" role="tab" aria-selected="false" aria-controls="panelReport"
+            data-tab="report"><span data-i18n="tab.report">Report</span><i class="tdot" id="tabdot" hidden></i></button>
+  </div>
+
+  <div class="app" id="app" data-tab="analysis">
     <!-- LEFT: upload / live analysis -->
-    <section class="panel">
+    <section class="panel" id="panelAnalysis" role="tabpanel" aria-labelledby="tabAnalysis">
       <h2 data-i18n="panel.h2">1 · Your clip</h2>
       <div class="viewsel">
         <button class="active" data-view="side" data-i18n="view.side">Side</button>
@@ -305,6 +327,11 @@
         </div>
         <div class="hint" style="margin-top:8px;color:var(--mut);font-size:.8rem" data-i18n="cam.hint">Point the camera square to your side, ~hip height. Auto-stops at 30s.</div>
       </div>
+      <!-- Skeleton-only is the shareable version: same numbers, no picture of your body. -->
+      <div class="viewsel" id="shotsel" hidden>
+        <button class="active" data-shot="photo" data-i18n="shot.photo">Photo + skeleton</button>
+        <button data-shot="skeleton" data-i18n="shot.skeleton">Skeleton only</button>
+      </div>
       <div id="stage"><canvas id="cv"></canvas></div>
       <video id="vid" playsinline muted></video>
       <div id="bar"><div id="fill"></div></div>
@@ -325,7 +352,7 @@
     </section>
 
     <!-- RIGHT: results (shows an EXAMPLE until a real clip is analyzed) -->
-    <section class="panel">
+    <section class="panel" id="panelReport" role="tabpanel" aria-labelledby="tabReport">
       <h2 data-i18n="result.h2">2 · Your result</h2>
       <p class="lead" id="resultlead">Angles at the bottom of your stroke. Every target links to its source — some papers, some just a fitter's rule of thumb.</p>
 
@@ -612,6 +639,10 @@ const I18N = {
   "cmp.hint":{en:"Tick two saved results to compare them.",id:"Centang dua hasil tersimpan untuk membandingkannya."},
   "cmp.note":{en:"Green means the reading moved into a better band, red means it moved out of one. Only the side view is compared.",id:"Hijau berarti angkanya pindah ke pita yang lebih baik, merah berarti keluar dari pita yang baik. Yang dibandingkan hanya tampak samping."},
   "hist.note":{en:"Saved in this browser only — never uploaded. Clearing your browser data removes them.",id:"Tersimpan di browser ini saja — tidak pernah diunggah. Kalau data browser dihapus, hasilnya ikut hilang."},
+  "tab.analysis":{en:"Analysis",id:"Analisis"},
+  "tab.report":{en:"Report",id:"Hasil"},
+  "shot.photo":{en:"Photo + skeleton",id:"Foto + skeleton"},
+  "shot.skeleton":{en:"Skeleton only",id:"Skeleton saja"},
   "hist.nothumb":{en:"No preview",id:"Tanpa preview"},
   "err.unsupported":{en:"This browser can't run the analyzer.",id:"Browser ini tidak bisa menjalankan analyzer."},
   "err.missing":{en:"Try a recent Chrome, Edge, Safari or Firefox. Missing here:",id:"Coba Chrome, Edge, Safari, atau Firefox versi baru. Yang tidak tersedia:"},
@@ -1166,6 +1197,40 @@ function drawSkeleton(P,g,A){
   }
 }
 
+/* ---- the two versions of the figure: with the rider, and skeleton-only ---- */
+let shotPhoto=null, shotSkel=null;                 // offscreen canvases, so swapping is instant
+const snapCanvas=()=>{ const c=document.createElement("canvas");
+  c.width=cv.width; c.height=cv.height; c.getContext("2d").drawImage(cv,0,0); return c; };
+// Always a dark plate, never the theme card colour: the skeleton's joint dots are white,
+// so on a light background the figure would be drawing white on white.
+function drawSkeletonPlate(P,G,R){
+  ctx.fillStyle="#0f1520"; ctx.fillRect(0,0,cv.width,cv.height);
+  drawSkeleton(P,G,R);
+}
+function showShot(which){
+  const src = which==="skeleton" ? shotSkel : shotPhoto;
+  if(!src) return;
+  cv.width=src.width; cv.height=src.height;        // setting width also clears the canvas
+  ctx.drawImage(src,0,0);
+  document.querySelectorAll("#shotsel button")
+    .forEach(b=>b.classList.toggle("active", b.dataset.shot===which));
+}
+document.querySelectorAll("#shotsel button")
+  .forEach(b=>b.addEventListener("click",()=>showShot(b.dataset.shot)));
+
+/* ---- Analysis / Report tabs ---- */
+function showTab(which){
+  $("#app").dataset.tab=which;
+  document.querySelectorAll(".tabs button").forEach(b=>{
+    const on=b.dataset.tab===which;
+    b.classList.toggle("active",on);
+    b.setAttribute("aria-selected",on?"true":"false");
+  });
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll(".tabs button")
+  .forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
+
 function finish(){
   releaseScreen();
   if(runView!=="side"){ finishFrontal(); return; }
@@ -1191,12 +1256,24 @@ function finish(){
   lastSide={R,G,strokes:bdc.length,hipTop,offAxis:(viewRatios.length>=5 && median(viewRatios)>0.55)};
   renderSide();
   $("#example").hidden=true; $("#results").hidden=false;
-  const runId=histSave();
+  $("#tabdot").hidden=false; showTab("report");
   const deepest=bdc.reduce((a,b)=>frames[b].ankleY>frames[a].ankleY?b:a,bdc[0]);
+  // Store the graded pose BEFORE saving — histSave() serialises lastSide, and without P in
+  // it a reopened result could never redraw the skeleton-only figure.
+  lastSide.P=frames[deepest].P;
+  const runId=histSave();
   // seek to the EXACT captured time of that frame so the skeleton lines up
   vid.pause();
-  vid.onseeked=()=>{ ctx.drawImage(vid,0,0,cv.width,cv.height); drawSkeleton(frames[deepest].P,G,R);
-    histRethumb(runId); vid.onseeked=null; };
+  vid.onseeked=()=>{
+    ctx.drawImage(vid,0,0,cv.width,cv.height); drawSkeleton(frames[deepest].P,G,R);
+    shotPhoto=snapCanvas();          // photo + skeleton, and the history thumbnail
+    histRethumb(runId);
+    drawSkeletonPlate(frames[deepest].P,G,R);
+    shotSkel=snapCanvas();           // same numbers, no rider
+    showShot("photo");               // put the photo back on screen
+    $("#shotsel").hidden=false;
+    vid.onseeked=null;
+  };
   vid.currentTime=Math.min(vid.duration-0.001, frames[deepest].t);
 }
 
@@ -1243,6 +1320,7 @@ function finishFrontal(){
   lastFront={L,R,rock,frames:F.length,view:runView};
   renderFront();
   $("#example").hidden=true; $("#results").hidden=true; $("#frontresults").hidden=false;
+  $("#tabdot").hidden=false; showTab("report");
   histSave();
 }
 
@@ -1467,12 +1545,20 @@ function histOpen(id){
   viewMode=e.view;
   document.querySelectorAll(".viewsel button").forEach(b=>b.classList.toggle("active",b.dataset.view===e.view));
   updateLeads();
+  shotPhoto=shotSkel=null; $("#shotsel").hidden=true;
+  const rebuildShots=()=>{
+    shotPhoto=snapCanvas();
+    // entries saved before the pose was stored have no P, so there is nothing to redraw
+    if(e.side&&e.side.P){ drawSkeletonPlate(e.side.P,e.side.G,e.side.R); shotSkel=snapCanvas();
+      showShot("photo"); $("#shotsel").hidden=false; }
+  };
   if(e.thumb){ const img=new Image();
-    img.onload=()=>{ cv.width=img.width; cv.height=img.height; ctx.drawImage(img,0,0); };
+    img.onload=()=>{ cv.width=img.width; cv.height=img.height; ctx.drawImage(img,0,0); rebuildShots(); };
     img.src=e.thumb; }
   $("#example").hidden=true;
   if(e.side){ lastSide=e.side; lastFront=null; renderSide(); $("#results").hidden=false; $("#frontresults").hidden=true; }
   else if(e.front){ lastFront=e.front; lastSide=null; renderFront(); $("#results").hidden=true; $("#frontresults").hidden=false; }
+  $("#tabdot").hidden=false; showTab("report");
   $("#history").scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 $("#histclear").onclick=()=>{ localStorage.removeItem(HKEY); renderHistory(); };
