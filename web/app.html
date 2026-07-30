@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Bike Fit Analyzer — grade your fit in your browser</title>
 <meta name="description" content="Drop a clip of yourself pedaling and get your bike-fit angles graded green / amber / red, right in your browser. 100% on-device, free to use.">
-<link rel="icon" type="image/png" href="logo.png">
+<link rel="icon" type="image/png" href="logo-64.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="canonical" href="https://bikefit.doniwirawan.xyz/app">
 <meta property="og:type" content="website">
@@ -17,6 +17,9 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Bike Fit Analyzer: a fit report grading knee, hip, back and elbow angles green, amber and red.">
+<link rel="alternate" hreflang="en" href="https://bikefit.doniwirawan.xyz/app?lang=en">
+<link rel="alternate" hreflang="id" href="https://bikefit.doniwirawan.xyz/app?lang=id">
+<link rel="alternate" hreflang="x-default" href="https://bikefit.doniwirawan.xyz/app">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Bike Fit Analyzer — grade your fit in your browser">
 <meta name="twitter:description" content="Drop a clip of yourself pedaling and get your bike-fit angles graded green / amber / red. 100% on-device, free, source published.">
@@ -133,12 +136,15 @@
   .hhead h4{margin:0}
   .btn.small{padding:5px 10px;font-size:.72rem}
   .hitem{display:flex;align-items:center;gap:11px;padding:9px;border:1px solid var(--line);
-    border-radius:10px;background:var(--soft);margin-bottom:8px}
-  .hitem img{width:64px;height:42px;object-fit:cover;border-radius:6px;flex:none;background:#000}
-  .hitem .hmeta{flex:1;min-width:0}
+    border-radius:10px;background:var(--soft);margin-bottom:8px;flex-wrap:wrap}
+  /* big enough to recognise the rider and read the angle badges; contain, not cover, so the
+     frame isn't cropped into an unreadable strip */
+  .hitem img{width:104px;height:70px;object-fit:contain;border-radius:6px;flex:none;background:#000}
+  /* floor the text column so the buttons wrap under the row on a phone instead of squashing it */
+  .hitem .hmeta{flex:1;min-width:120px}
   .hitem .hwhen{color:var(--mut);font-family:var(--mono);font-size:.64rem;letter-spacing:.05em;text-transform:uppercase}
   .hitem .hsum{font-size:.86rem;font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .hitem .hact{display:flex;gap:6px;flex:none}
+  .hitem .hact{display:flex;gap:6px;flex:none;margin-left:auto}
   .hcmp{width:17px;height:17px;accent-color:var(--accent);flex:none;cursor:pointer}
   #compare{border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:12px 13px;margin-bottom:12px}
   .cmphead{color:var(--mut);font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;
@@ -229,7 +235,7 @@
 <div class="wrap">
   <header>
     <div class="topbar">
-      <a class="brand" href="index.html" style="color:inherit;text-decoration:none"><img class="blogo" src="logo.png" alt="" width="28" height="28"> Bike Fit Analyzer</a>
+      <a class="brand" href="index.html" style="color:inherit;text-decoration:none"><img class="blogo" src="logo-64.png" alt="" width="28" height="28"> Bike Fit Analyzer</a>
       <div class="langsw" role="group" aria-label="Language">
         <button data-lang="en" aria-label="English">EN</button>
         <button data-lang="id" aria-label="Bahasa Indonesia">ID</button>
@@ -318,7 +324,7 @@
     <!-- RIGHT: results (shows an EXAMPLE until a real clip is analyzed) -->
     <section class="panel">
       <h2 data-i18n="result.h2">2 · Your result</h2>
-      <p class="lead" id="resultlead">Angles at the bottom of your stroke. Every target links to where it came from — some are from papers, some are only a fitter's rule of thumb.</p>
+      <p class="lead" id="resultlead">Angles at the bottom of your stroke. Every target links to its source — some papers, some just a fitter's rule of thumb.</p>
 
       <div id="example">
         <div class="badge" style="color:var(--amber);border-color:color-mix(in srgb,var(--amber) 45%,var(--line))" data-i18n="ex.badge">Sample — not your result</div>
@@ -413,7 +419,7 @@
         <div class="foot" id="hipinfo" style="margin-top:10px"></div>
         <h4 style="margin:16px 0 4px" data-i18n="res.dothis">Do this</h4>
         <ul class="fixes" id="fixes"></ul>
-        <div class="foot" data-i18n="res.foot">2D side-view estimate, not a 3D pro fit. Saddle height (knee) is the most reliable number here; reach/shoulder is the softest — don't change your stem on one clip. Change one thing at a time, then re-film.</div>
+        <div class="foot" data-i18n="res.foot">A 2D side-view estimate, not a pro fit. Knee is the number to trust; reach/shoulder is the softest — don't change your stem on one clip. Change one thing, then re-film.</div>
         <details class="srcbox">
           <summary data-i18n="src.summary">Where these targets come from — check them yourself</summary>
           <div data-i18n="src.body">
@@ -450,7 +456,7 @@
         </div>
         <div class="verdict" id="frontverdict"></div>
         <div id="frontout"></div>
-        <div class="foot" data-i18n="front.foot">Knee tracking uses the frontal projection angle (FPPA); pelvic rock is peak-to-peak hip-line tilt across the stroke. For real decisions, the side-view saddle-height (knee) reading is the trustworthy one.</div>
+        <div class="foot" data-i18n="front.foot">Knee tracking is the frontal projection angle (FPPA); pelvic rock is peak-to-peak hip-line tilt. For real decisions, trust the side-view knee reading.</div>
         <button class="btn primary" style="margin-top:14px" onclick="location.reload()" data-i18n="res.again">Analyze another clip</button>
       </div>
 
@@ -490,7 +496,7 @@
         <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>
         <a href="privacy.html" data-i18n="foot.link.privacy">Privacy</a>
         <a href="terms.html" data-i18n="foot.link.terms">Terms</a>
-        <a href="https://ko-fi.com/L7T7234BJ2" target="_blank" rel="noopener"><img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Support me on Ko-fi" style="height:28px;margin-top:4px"></a>
+        <a href="https://ko-fi.com/L7T7234BJ2" target="_blank" rel="noopener"><img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Support me on Ko-fi" width="223" height="30" loading="lazy" style="height:28px;width:auto;margin-top:4px"></a>
       </div>
     </div>
     <div class="fnote" data-i18n="foot.disclaimer">Not medical advice, and not a substitute for a professional bike fit.</div>
@@ -508,7 +514,7 @@ let lastSide=null, lastFront=null;
 const I18N = {
   "doc.title":{en:"Bike Fit Analyzer — grade your fit in your browser",id:"Bike Fit Analyzer — nilai fit-mu di browser"},
   "hero.h1":{en:'Grade your bike fit — <span class="g">green</span>, <span class="a">amber</span>, <span class="r">red</span> — right in your browser.',id:'Cek bike fit-mu. <span class="g">Hijau</span>, <span class="a">kuning</span>, atau <span class="r">merah</span>.'},
-  "hero.p":{en:"Drop a side-on clip of yourself pedaling. AI tracks your joints, measures the angles a fitter checks, and tells you the exact change. Your video never leaves your device.",id:"Rekam dirimu dari samping saat mengayuh. AI mendeteksi posisi tubuhmu, mengukur sudut yang biasa dipakai saat bike fitting, lalu menunjukkan bagian mana yang sudah pas dan mana yang masih perlu disesuaikan. Videomu tidak diunggah ke server."},
+  "hero.p":{en:"Drop a side-on clip of yourself pedaling. AI tracks your joints, measures the angles a fitter checks, and tells you the exact change. Your video never leaves your device.",id:"Rekam kamu mengayuh dari samping. AI mengukur sudut yang sama seperti bike fitter, lalu bilang apa yang perlu diubah. Videomu tidak keluar dari perangkatmu."},
   "chip.ondevice":{en:"100% on-device",id:"Diproses di browser"},
   "chip.noupload":{en:"No upload to a server",id:"Video tetap di perangkatmu"},
   "chip.oss":{en:"Free to use",id:"Gratis dipakai"},
@@ -537,10 +543,10 @@ const I18N = {
   "res.badge":{en:"Your result",id:"Hasilmu"},
   "res.viewwarn":{en:'<b>This clip doesn\'t look square-on.</b> Off-axis footage stretches or squashes these angles — especially reach. Re-film with the camera directly beside you (90° to the bike, at hip height) for reliable numbers.',id:'<b>Klip ini kelihatannya tidak lurus dari samping.</b> Kalau kamera miring, sudutnya jadi ketarik atau kependekan — apalagi jangkauan. Rekam ulang dengan kamera pas di sampingmu (90° ke sepeda, setinggi pinggul) biar angkanya akurat.'},
   "res.dothis":{en:"Do this",id:"Yang perlu dilakukan"},
-  "res.foot":{en:"2D side-view estimate, not a 3D pro fit. Saddle height (knee) is the most reliable number here; reach/shoulder is the softest — don't change your stem on one clip. Change one thing at a time, then re-film.",id:"Ini perkiraan 2D dari samping, bukan fit pro 3D. Tinggi sadel (lutut) paling bisa dipercaya; jangkauan/bahu paling lemah — jangan ganti stem cuma karena satu klip. Ubah satu hal dulu, lalu rekam lagi."},
+  "res.foot":{en:"A 2D side-view estimate, not a pro fit. Knee is the number to trust; reach/shoulder is the softest — don't change your stem on one clip. Change one thing, then re-film.",id:"Perkiraan 2D dari samping, bukan fit pro. Lutut paling bisa dipercaya; jangkauan/bahu paling lemah — jangan ganti stem cuma karena satu klip. Ubah satu hal dulu, lalu rekam lagi."},
   "res.again":{en:"Analyze another clip",id:"Analisis klip lain"},
   "front.exp":{en:'Frontal-plane readings are <b style="color:var(--accent)">experimental</b> and less reliable than the side view. Treat them as directional hints, not verdicts.',id:'Angka dari tampak depan ini masih <b style="color:var(--accent)">eksperimen</b> dan kurang akurat dibanding tampak samping. Anggap sebagai petunjuk arah, bukan kesimpulan.'},
-  "front.foot":{en:"Knee tracking uses the frontal projection angle (FPPA); pelvic rock is peak-to-peak hip-line tilt across the stroke. For real decisions, the side-view saddle-height (knee) reading is the trustworthy one.",id:"Jalur lutut memakai frontal projection angle (FPPA); goyangan panggul dihitung dari kemiringan garis pinggul selama satu putaran. Untuk keputusan penting, andalkan tinggi sadel (lutut) dari tampak samping."},
+  "front.foot":{en:"Knee tracking is the frontal projection angle (FPPA); pelvic rock is peak-to-peak hip-line tilt. For real decisions, trust the side-view knee reading.",id:"Jalur lutut pakai frontal projection angle (FPPA); goyangan panggul dari kemiringan garis pinggul. Untuk keputusan penting, andalkan angka lutut dari tampak samping."},
   "film.h1":{en:"Square-on",id:"Tegak lurus"},
   "film.p1":{en:"Point the camera square to the view you picked — dead side-on, front-on, or straight behind. Off-axis skews the angles.",id:"Arahkan kamera lurus ke tampilan yang kamu pilih — samping, depan, atau tepat dari belakang. Kalau miring, sudutnya jadi meleset."},
   "film.h2":{en:"Hip height",id:"Setinggi pinggul"},
@@ -560,7 +566,7 @@ const I18N = {
   "lead.side":{en:"Side-on, 20–30s, phone at hip height, pedaling steadily.",id:"Dari samping, 20–30 detik, HP setinggi pinggul, kayuhan stabil."},
   "lead.front":{en:"Facing the camera, 20–30s, pedaling steadily. Beta — frontal-plane hints.",id:"Menghadap kamera, 20–30 detik, kayuhan stabil. Beta — petunjuk dari tampak depan."},
   "lead.rear":{en:"From directly behind, 20–30s, pedaling steadily. Beta — frontal-plane hints.",id:"Tepat dari belakang, 20–30 detik, kayuhan stabil. Beta — petunjuk dari tampak depan."},
-  "reslead.side":{en:"Angles at the bottom of your stroke. Every target links to where it came from — some are from papers, some are only a fitter's rule of thumb.",id:"Sudut diukur di titik terbawah setiap kayuhan. Tiap target ada link sumbernya — sebagian dari paper, sebagian cuma patokan bike fitter."},
+  "reslead.side":{en:"Angles at the bottom of your stroke. Every target links to its source — some papers, some just a fitter's rule of thumb.",id:"Sudut diukur di titik terbawah kayuhan. Tiap target ada link sumbernya — sebagian dari paper, sebagian cuma patokan bike fitter."},
   "src.holmes":{en:"Holmes method · paper",id:"metode Holmes · paper"},
   "src.practitioner":{en:"fitter's rule of thumb · no paper",id:"patokan bike fitter · bukan paper"},
   "src.summary":{en:"Where these targets come from — check them yourself",id:"Dari mana angka-angka ini — silakan dicek sendiri"},
@@ -612,6 +618,7 @@ const I18N = {
 };
 const ID_TZ=/Asia\/(Jakarta|Pontianak|Makassar|Jayapura)/;
 function detectLang(){
+  const q=new URLSearchParams(location.search).get('lang'); if(q==='en'||q==='id')return q;
   const s=localStorage.getItem('bfa-lang'); if(s==='en'||s==='id')return s;
   const n=((navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'en']).join(',')).toLowerCase();
   if(/\bid\b|id[-_]|in[-_]/.test(n))return 'id';
@@ -1183,11 +1190,12 @@ function finish(){
   lastSide={R,G,strokes:bdc.length,hipTop,offAxis:(viewRatios.length>=5 && median(viewRatios)>0.55)};
   renderSide();
   $("#example").hidden=true; $("#results").hidden=false;
-  histSave();
+  const runId=histSave();
   const deepest=bdc.reduce((a,b)=>frames[b].ankleY>frames[a].ankleY?b:a,bdc[0]);
   // seek to the EXACT captured time of that frame so the skeleton lines up
   vid.pause();
-  vid.onseeked=()=>{ ctx.drawImage(vid,0,0,cv.width,cv.height); drawSkeleton(frames[deepest].P,G,R); vid.onseeked=null; };
+  vid.onseeked=()=>{ ctx.drawImage(vid,0,0,cv.width,cv.height); drawSkeleton(frames[deepest].P,G,R);
+    histRethumb(runId); vid.onseeked=null; };
   vid.currentTime=Math.min(vid.duration-0.001, frames[deepest].t);
 }
 
@@ -1308,10 +1316,10 @@ const histWrite=h=>{ try{ localStorage.setItem(HKEY,JSON.stringify(h)); return t
 function histThumb(){
   try{
     if(!cv.width) return null;
-    const c=document.createElement("canvas"), w=200;
+    const c=document.createElement("canvas"), w=320;
     c.width=w; c.height=Math.max(1,Math.round(cv.height*w/cv.width));
     c.getContext("2d").drawImage(cv,0,0,c.width,c.height);
-    return c.toDataURL("image/jpeg",0.6);        // small: localStorage is a ~5MB budget
+    return c.toDataURL("image/jpeg",0.7);        // small: localStorage is a ~5MB budget
   }catch(e){ return null; }
 }
 function histSave(){
@@ -1324,6 +1332,17 @@ function histSave(){
     if(h.length<=1) histWrite([e]);
   }
   renderHistory();
+  return e.id;
+}
+// The side run saves before the graded frame is on the canvas — that seek is async — so the
+// stored picture was the clip's LAST frame, which is often the rider coasting out of shot or
+// a dark tail end. Re-shoot the thumbnail once the deepest-stroke frame is drawn. Kept as an
+// update rather than moving histSave() so a seek that never fires can't lose the entry.
+function histRethumb(id){
+  const th=histThumb(); if(!th) return;
+  const h=histLoad(), e=h.find(x=>x.id===id); if(!e) return;
+  e.thumb=th;
+  if(histWrite(h)) renderHistory();               // over quota: keep the frame we already had
 }
 function histSummary(e){
   if(e.side){ const k=e.side.R?.knee_flexion_bdc;

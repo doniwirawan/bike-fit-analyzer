@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <url>
+    <loc>https://bikefit.doniwirawan.xyz/</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bikefit.doniwirawan.xyz/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://bikefit.doniwirawan.xyz/?lang=id"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bikefit.doniwirawan.xyz/"/>
+  </url>
+
+  <url>
+    <loc>https://bikefit.doniwirawan.xyz/app</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bikefit.doniwirawan.xyz/app?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://bikefit.doniwirawan.xyz/app?lang=id"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bikefit.doniwirawan.xyz/app"/>
+  </url>
+
+  <url>
+    <loc>https://bikefit.doniwirawan.xyz/blog</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://bikefit.doniwirawan.xyz/blog/how-to-film-a-bike-fit-video</loc>
+    <lastmod>2026-07-30</lastmod>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://bikefit.doniwirawan.xyz/blog/bike-fit-joint-angles-explained</loc>
+    <lastmod>2026-07-30</lastmod>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://bikefit.doniwirawan.xyz/blog/what-to-adjust-first</loc>
+    <lastmod>2026-07-30</lastmod>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://bikefit.doniwirawan.xyz/blog/limits-of-2d-bike-fit-analysis</loc>
+    <lastmod>2026-07-30</lastmod>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://bikefit.doniwirawan.xyz/privacy</loc>
+    <lastmod>2026-07-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://bikefit.doniwirawan.xyz/terms</loc>
+    <lastmod>2026-07-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+</urlset>

@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# The Android builds are downloads, not pages — no reason to spend crawl budget on 42 MB.
+Disallow: /bikefit-native.apk
+Disallow: /bikefit-analyzer.apk
+
+Sitemap: https://bikefit.doniwirawan.xyz/sitemap.xml

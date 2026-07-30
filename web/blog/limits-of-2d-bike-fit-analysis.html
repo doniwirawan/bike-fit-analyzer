@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Limits of 2D Video Bike Fit Analysis</title>
+<meta name="description" content="The honest limits of measuring bike fit from a phone video: a few degrees of noise, no cleat or pressure read, and why frontal views stay beta.">
+<link rel="icon" type="image/png" href="/logo-64.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="canonical" href="https://bikefit.doniwirawan.xyz/blog/limits-of-2d-bike-fit-analysis">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://bikefit.doniwirawan.xyz/blog/limits-of-2d-bike-fit-analysis">
+<meta property="og:site_name" content="Bike Fit Analyzer">
+<meta property="og:title" content="What 2D video bike fit analysis can and cannot tell you">
+<meta property="og:description" content="A few degrees of measurement noise, no cleat read, no pressure data — and why the frontal-plane readings stay in beta.">
+<meta property="og:image" content="https://bikefit.doniwirawan.xyz/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/legal.css">
+<link rel="stylesheet" href="/blog.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "What 2D video bike fit analysis can and cannot tell you",
+  "description": "The honest limits of measuring bike fit from a phone video: measurement noise, what is not visible from the side, and why frontal-plane readings stay in beta.",
+  "datePublished": "2026-07-30",
+  "dateModified": "2026-07-30",
+  "author": { "@type": "Person", "name": "Doni Wirawan", "url": "https://doniwirawan.xyz/" },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://bikefit.doniwirawan.xyz/blog/limits-of-2d-bike-fit-analysis" },
+  "image": "https://bikefit.doniwirawan.xyz/og.png",
+  "inLanguage": "en"
+}
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<div class="wrap post">
+  <header>
+    <a class="brand" href="/"><img src="/logo-64.png" alt="" width="26" height="26"> Bike Fit Analyzer</a>
+    <a class="brand" href="/app" style="letter-spacing:.06em">Open the analyzer →</a>
+  </header>
+
+  <p class="crumb"><a href="/">Home</a> / <a href="/blog">Guides</a> / Limits</p>
+
+  <h1>What 2D video analysis can and cannot tell you</h1>
+  <p class="meta"><span>30 July 2026</span><span class="dot">·</span><span>6 min read</span></p>
+
+  <p class="intro">Any tool that measures your body from a phone video has a ceiling, and it is
+  better to know where it is than to find out by trusting a number too far. This is the honest
+  version: what a side-on video read is genuinely good at, what it is mediocre at, and what it
+  simply cannot see.</p>
+
+  <h2>What it does well</h2>
+  <p><strong>Finding a saddle that is clearly wrong.</strong> This is the strong case. Knee flexion
+  at the bottom of the stroke is a large, well-defined angle formed by three joints that are all
+  clearly visible from the side, measured at a repeatable moment in the pedal stroke, and averaged
+  across dozens of revolutions. A saddle 15 mm too low is unmissable.</p>
+  <p><strong>Telling you whether a change helped.</strong> Even where absolute accuracy is limited,
+  <em>relative</em> accuracy is better. If you film two clips with the same camera setup and only
+  change the saddle, the difference between the two readings is more trustworthy than either
+  reading on its own, because the systematic errors are the same in both.</p>
+  <p><strong>Catching locked-out arms.</strong> A near-0° elbow is a big, obvious signal.</p>
+
+  <h2>What it is mediocre at</h2>
+  <p><strong>Reach.</strong> The shoulder angle is the weakest of the four readings. Shoulder
+  landmarks are hard to place from a single view, and the number depends on exactly where your hands
+  were during that clip. Useful as a hint, not as a basis for buying components.</p>
+  <p><strong>Anything near a band edge.</strong> A phone video resolves joints to a few pixels,
+  which is a few degrees of angle. A reading of 41° against a 40° limit is not meaningfully
+  different from 39°. The analyzer allows about 2.5° of tolerance at each edge for this reason, and
+  a difference of one or two degrees between two clips is noise, not progress.</p>
+  <p><strong>Very aggressive or very upright positions.</strong> The target ranges come from research
+  on fairly conventional road positions. A deep TT tuck or a very upright city bike sits at the edge
+  of what those numbers were derived from.</p>
+
+  <h2>What it cannot see at all</h2>
+  <ul>
+    <li><strong>Cleat position and rotation.</strong> Invisible from the side, and it changes the
+    effective hip-to-pedal distance — so it interacts with the one measurement the tool is best at.</li>
+    <li><strong>Q-factor and stance width.</strong> Not measurable from a side view.</li>
+    <li><strong>Saddle pressure and soft-tissue comfort.</strong> The single most common reason
+    people are unhappy on a bike, and completely invisible to a pose model. Green angles and a
+    saddle you hate is an entirely possible combination.</li>
+    <li><strong>Leg-length differences.</strong> A real asymmetry needs measuring in person.</li>
+    <li><strong>Foot and ankle mechanics.</strong> Arch support, varus/valgus wedging, how your
+    ankle actually behaves under load.</li>
+    <li><strong>Anything about the frame.</strong> The tool measures your body, not your bike's
+    geometry. It cannot tell you your bike is the wrong size — only that your position on it is
+    outside a range.</li>
+  </ul>
+
+  <h2>Why the front and rear views are still beta</h2>
+  <p>Knee tracking and pelvic rock are reported as hints, not graded green/amber/red, and that is
+  deliberate rather than unfinished. Two findings in the literature set the ceiling.</p>
+  <p>First, <strong>2D frontal-plane measurement has a noise floor</strong>. Reported standard error
+  of measurement is around 2.7–3.0°, and the smallest difference that can be reliably detected is
+  roughly 7.5–8.9°. Any threshold tighter than about 9° is inside the method's own uncertainty, no
+  matter how good the pose model gets.</p>
+  <p>Second, <strong>correctly-fitted riders move</strong>. Healthy adults with the saddle at 85.5%
+  of inseam show about 7.1° of pelvic coronal range of motion, and knee coronal motion around 6.6°.
+  An early version of this tool flagged pelvic rock above 6° — below the healthy mean — which would
+  have told the majority of perfectly well-fitted riders their saddle might be too high. The
+  threshold now sits at 12°, above the healthy range rather than in the middle of it.</p>
+  <p>The honest caveat on top of that: those frontal thresholds come from the literature, not from
+  clips run through this tool. They need checking against real front and rear footage before the
+  beta label comes off.</p>
+
+  <h2>Where a professional fit is genuinely different</h2>
+  <p>A good fitter is not just holding a more expensive protractor. They can watch you ride and see
+  compensations a still frame cannot show. They can put you on an adjustable rig and change three
+  things in ten minutes. They can measure pressure, check your cleats, assess your flexibility
+  directly, and ask what actually hurts and when. And they carry the thing no tool has: a few
+  hundred previous riders' worth of pattern recognition.</p>
+  <p>What this tool is for is the step before that. It finds the obvious, free-to-fix problems, and
+  it gives you numbers to describe your position with. If you do end up booking a fit, arriving with
+  "my knee reads 47° at the bottom and my back hurts after an hour" is a much better start than
+  "something feels off".</p>
+
+  <h2>How to use it well</h2>
+  <ul>
+    <li>Trust the knee angle most, the shoulder angle least.</li>
+    <li>Keep your camera setup identical between clips so comparisons stay meaningful.</li>
+    <li>Act on 10° outside a band; ignore 2°.</li>
+    <li>Treat a grey reading as "not measured", not "fine" — re-film it.</li>
+    <li>Let how you feel on the bike outrank the screen. If the numbers are green and you are
+    miserable, the numbers are not measuring what is wrong.</li>
+  </ul>
+
+  <div class="cta">
+    <p>Free, runs entirely on your own device, and it tells you when it is not confident.</p>
+    <p><a class="btn" href="/app">Analyze your clip</a></p>
+  </div>
+
+  <h2>Sources</h2>
+  <ul>
+    <li><a href="https://pubmed.ncbi.nlm.nih.gov/22104115/" target="_blank" rel="noopener">Reliability of 2D video assessment of frontal-plane knee valgus</a> — SEM 2.72–3.01°, smallest detectable difference 7.54–8.93°.</li>
+    <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8675512/" target="_blank" rel="noopener">Cycling kinematics in healthy adults</a> — pelvis coronal ROM 7.1 ± 2.5°, knee coronal ROM 6.6 ± 2.7°.</li>
+    <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5950749/" target="_blank" rel="noopener">Knee alignment and frontal-plane knee biomechanics in cycling</a> — how much normal variation exists between riders.</li>
+    <li><a href="https://pubmed.ncbi.nlm.nih.gov/24499342/" target="_blank" rel="noopener">Dynamic vs static measurement validity</a> — the ~8° offset that makes video ranges differ from goniometer ranges.</li>
+  </ul>
+
+  <div class="morelinks">
+    <h2>Read next</h2>
+    <ul>
+      <li><a href="/blog/how-to-film-a-bike-fit-video">How to film a bike fit video that actually measures accurately</a></li>
+      <li><a href="/blog/bike-fit-joint-angles-explained">The four bike fit angles, and where the target ranges come from</a></li>
+      <li><a href="/blog/what-to-adjust-first">Your report says red — what to adjust first</a></li>
+    </ul>
+  </div>
+
+  <footer>
+    <a href="/">Home</a><a href="/blog">Guides</a><a href="/app">Analyzer</a><a href="/privacy">Privacy</a>
+  </footer>
+</div>
+</body>
+</html>
