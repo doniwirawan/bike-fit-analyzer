@@ -176,6 +176,9 @@
   .feat p{margin:0;color:var(--mut);font-size:.9rem}
   .feat ul{margin:8px 0 0;padding-left:18px;color:var(--mut);font-size:.89rem}
   .feat li{margin:5px 0}
+  a.feat{display:block;color:inherit;text-decoration:none;transition:border-color .15s ease,transform .15s ease}
+  a.feat:hover,a.feat:focus-visible{border-color:var(--accent);transform:translateY(-2px)}
+  a.feat h3{color:var(--accent)}
 
   /* callout */
   .callout{display:flex;gap:14px;align-items:flex-start;padding:20px 22px;border-radius:14px;margin:0;
@@ -576,6 +579,34 @@
     </div>
   </section>
 
+  <!-- ============ GUIDES ============ -->
+  <!-- These live on doniwirawan.xyz rather than being copied here: one post,
+       one URL. Duplicating them would split the search signals between two
+       domains and leave two copies to keep in sync. -->
+  <section class="block">
+    <p class="eyebrow" data-i18n="guides.eyebrow">Guides</p>
+    <h2 class="sec" data-i18n="guides.h2">Read this before you move anything</h2>
+    <p class="sec-lead" data-i18n="guides.lead">Longer write-ups on what the numbers mean, what to change, and the research the target ranges come from. In Indonesian. The English background on why this tool exists is <a href="https://doniwirawan.xyz/blog/why-i-built-bike-fit-analyzer" target="_blank" rel="noopener">here</a>.</p>
+    <div class="cols2">
+      <a class="feat" href="https://doniwirawan.xyz/blog/bike-fitting-cek-sendiri-dari-video" hreflang="id" target="_blank" rel="noopener">
+        <h3 data-i18n="guides.g1.h">Bike Fitting Itu Apa, dan Cara Mengeceknya Sendiri dari Video</h3>
+        <p data-i18n="guides.g1.p">What bike fitting is, the four side-on angles this tool grades, how to film a clip worth measuring, and what a 2D read cannot see.</p>
+      </a>
+      <a class="feat" href="https://doniwirawan.xyz/blog/tinggi-sadel-sepeda-yang-benar" hreflang="id" target="_blank" rel="noopener">
+        <h3 data-i18n="guides.g2.h">Tinggi Sadel Sepeda yang Benar</h3>
+        <p data-i18n="guides.g2.p">Saddle height by knee angle rather than by formula — and why published targets differ, since measured-while-pedalling angles run about 8° above static ones.</p>
+      </a>
+      <a class="feat" href="https://doniwirawan.xyz/blog/nyeri-lutut-saat-bersepeda" hreflang="id" target="_blank" rel="noopener">
+        <h3 data-i18n="guides.g3.h">Nyeri Lutut Saat Bersepeda</h3>
+        <p data-i18n="guides.g3.p">Which fit error each pain location commonly points to, and when to stop adjusting and see a physiotherapist instead.</p>
+      </a>
+      <a class="feat" href="https://doniwirawan.xyz/blog/sakit-punggung-dan-leher-saat-bersepeda" hreflang="id" target="_blank" rel="noopener">
+        <h3 data-i18n="guides.g4.h">Sakit Punggung dan Leher Saat Bersepeda</h3>
+        <p data-i18n="guides.g4.p">Reach and bar height, the cheap adjustments to try in order, and why numb hands is treated differently from ache.</p>
+      </a>
+    </div>
+  </section>
+
   <!-- ============ PRO FITTER NOTE ============ -->
   <section class="block">
     <div class="callout">
@@ -831,6 +862,18 @@
     "faq.a5":{en:"Yes. The analyzer runs in modern browsers on both phones and computers. Devices that support WebGPU will process the video faster, while older ones fall back to the CPU. That can be a little slower, but it still works.",id:"Ya. Analyzer berjalan di browser modern di HP maupun komputer. Perangkat yang mendukung WebGPU akan memproses video lebih cepat, sedangkan perangkat yang lebih lama akan menggunakan CPU. Prosesnya mungkin sedikit lebih lambat, tetapi tetap bisa digunakan."},
     "faq.q6":{en:"Is it free? Can I see the code?",id:"Apakah gratis? Bisakah saya lihat kodenya?"},
     "faq.a6":{en:'Yes, it is completely free to use. The full source is published so you can see exactly how it works and check the privacy claims for yourself — <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">read the code on GitHub</a>. It is source-available rather than open source: you are welcome to read it, learn from it and use the tool, but not to build a competing product from it.',id:'Ya, sepenuhnya gratis dipakai. Kodenya dipublikasikan supaya kamu bisa melihat persis cara kerjanya dan memeriksa sendiri klaim privasinya — <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">lihat kodenya di GitHub</a>. Sifatnya source-available, bukan open source: silakan dibaca, dipelajari, dan alatnya dipakai, tapi tidak untuk membuat produk saingan.'},
+    "guides.eyebrow":{en:"Guides",id:"Panduan"},
+    "guides.h2":{en:"Read this before you move anything",id:"Baca ini sebelum menggeser apa pun"},
+    "guides.lead":{en:'Longer write-ups on what the numbers mean, what to change, and the research the target ranges come from. In Indonesian. The English background on why this tool exists is <a href="https://doniwirawan.xyz/blog/why-i-built-bike-fit-analyzer" target="_blank" rel="noopener">here</a>.',id:'Tulisan yang lebih panjang soal arti angkanya, apa yang perlu diubah, dan penelitian yang jadi dasar rentang targetnya. Latar belakang kenapa alat ini dibuat ada <a href="https://doniwirawan.xyz/blog/why-i-built-bike-fit-analyzer" target="_blank" rel="noopener">di sini</a>, dalam bahasa Inggris.'},
+    "guides.g1.h":{en:"Bike Fitting Itu Apa, dan Cara Mengeceknya Sendiri dari Video",id:"Bike Fitting Itu Apa, dan Cara Mengeceknya Sendiri dari Video"},
+    "guides.g1.p":{en:"What bike fitting is, the four side-on angles this tool grades, how to film a clip worth measuring, and what a 2D read cannot see.",id:"Apa itu bike fitting, empat sudut yang dinilai alat ini, cara merekam klip yang layak diukur, dan apa yang tidak terlihat dari video 2D."},
+    "guides.g2.h":{en:"Tinggi Sadel Sepeda yang Benar",id:"Tinggi Sadel Sepeda yang Benar"},
+    "guides.g2.p":{en:"Saddle height by knee angle rather than by formula — and why published targets differ, since measured-while-pedalling angles run about 8° above static ones.",id:"Menentukan tinggi sadel dari sudut lutut, bukan dari rumus — dan kenapa angka yang beredar berbeda-beda, karena sudut yang diukur sambil mengayuh sekitar 8° lebih besar daripada yang diukur statis."},
+    "guides.g3.h":{en:"Nyeri Lutut Saat Bersepeda",id:"Nyeri Lutut Saat Bersepeda"},
+    "guides.g3.p":{en:"Which fit error each pain location commonly points to, and when to stop adjusting and see a physiotherapist instead.",id:"Letak nyerinya biasanya menunjuk ke kesalahan setelan yang mana, dan kapan sebaiknya berhenti menyetel lalu menemui fisioterapis."},
+    "guides.g4.h":{en:"Sakit Punggung dan Leher Saat Bersepeda",id:"Sakit Punggung dan Leher Saat Bersepeda"},
+    "guides.g4.p":{en:"Reach and bar height, the cheap adjustments to try in order, and why numb hands is treated differently from ache.",id:"Soal jangkauan dan tinggi setang, urutan penyetelan yang murah untuk dicoba lebih dulu, dan kenapa tangan kebas diperlakukan berbeda dari pegal."},
+
     "faq.q7":{en:"Can it replace a professional bike fit?",id:"Bisakah ini menggantikan bike fit profesional?"},
     "faq.a7":{en:"Not yet. This tool is built to help you run a basic check and find the clearly visible problems, before you adjust anything yourself or go to a bike fitter. For a genuinely precise result — especially if you have pain or specific fitting needs — a professional session is still the better option.",id:"Belum. Alat ini dibuat untuk membantu melakukan pengecekan dasar dan menemukan masalah yang cukup jelas sebelum melakukan penyesuaian atau datang ke bike fitter. Untuk hasil yang benar-benar presisi, terutama kalau ada keluhan atau kebutuhan fit yang spesifik, sesi bike fitting profesional tetap menjadi pilihan terbaik."}
   };
