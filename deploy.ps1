@@ -16,7 +16,7 @@ $ErrorActionPreference = 'Stop'
 $web  = Join-Path $PSScriptRoot 'web'
 $site = 'https://bikefit.doniwirawan.xyz'
 
-foreach ($f in 'index.html', 'app.html', 'vercel.json') {
+foreach ($f in 'index.html', 'app.html', 'vercel.json', 'sitemap.xml', 'blog/index.html') {
     if (-not (Test-Path (Join-Path $web $f))) {
         throw "$f is missing from $web — is this the right repo?"
     }
@@ -29,7 +29,12 @@ if (-not $VerifyOnly) {
 }
 
 $broken = @()
-foreach ($path in '/', '/app', '/privacy', '/terms', '/og.png') {
+# One blog post is enough of a canary: if web/blog/ fails to publish it fails as a
+# whole directory, so listing every post here would only be something to forget to
+# update. /sitemap.xml and /robots.txt are checked because nothing else would notice
+# them 404ing — no visitor ever opens them.
+foreach ($path in '/', '/app', '/blog', '/blog/what-to-adjust-first',
+                  '/privacy', '/terms', '/og.png', '/sitemap.xml', '/robots.txt') {
     $code = (Invoke-WebRequest -Uri "$site$path" -Method Head -SkipHttpErrorCheck).StatusCode
     Write-Host ("  {0}  {1}" -f $code, $path)
     if ($code -ne 200) { $broken += $path }
