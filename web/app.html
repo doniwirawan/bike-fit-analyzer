@@ -140,6 +140,9 @@
   /* big enough to recognise the rider and read the angle badges; contain, not cover, so the
      frame isn't cropped into an unreadable strip */
   .hitem img{width:104px;height:70px;object-fit:contain;border-radius:6px;flex:none;background:#000}
+  .hitem .hnothumb{width:104px;height:70px;border-radius:6px;flex:none;border:1px dashed var(--line);
+    display:flex;align-items:center;justify-content:center;text-align:center;padding:0 6px;
+    color:var(--mut);font-family:var(--mono);font-size:.56rem;letter-spacing:.05em;text-transform:uppercase}
   /* floor the text column so the buttons wrap under the row on a phone instead of squashing it */
   .hitem .hmeta{flex:1;min-width:120px}
   .hitem .hwhen{color:var(--mut);font-family:var(--mono);font-size:.64rem;letter-spacing:.05em;text-transform:uppercase}
@@ -501,7 +504,6 @@
     </div>
     <div class="fnote" data-i18n="foot.disclaimer">Not medical advice, and not a substitute for a professional bike fit.</div>
   </footer>
-  <div class="foot" style="margin-top:8px"><a href="privacy.html" data-i18n="foot.privacy">Privacy</a> &middot; <a href="terms.html" data-i18n="foot.terms">Terms</a></div>
 
 </div>
 
@@ -604,14 +606,13 @@ const I18N = {
   "hist.clear":{en:"Clear all",id:"Hapus semua"},
   "hist.load":{en:"Open",id:"Buka"},
   "hist.del":{en:"Delete",id:"Hapus"},
-  "foot.privacy":{en:"Privacy",id:"Privasi"},
-  "foot.terms":{en:"Terms",id:"Ketentuan"},
   "cmp.before":{en:"Before",id:"Sebelum"},
   "cmp.after":{en:"After",id:"Sesudah"},
   "cmp.change":{en:"Change",id:"Perubahan"},
   "cmp.hint":{en:"Tick two saved results to compare them.",id:"Centang dua hasil tersimpan untuk membandingkannya."},
   "cmp.note":{en:"Green means the reading moved into a better band, red means it moved out of one. Only the side view is compared.",id:"Hijau berarti angkanya pindah ke pita yang lebih baik, merah berarti keluar dari pita yang baik. Yang dibandingkan hanya tampak samping."},
   "hist.note":{en:"Saved in this browser only — never uploaded. Clearing your browser data removes them.",id:"Tersimpan di browser ini saja — tidak pernah diunggah. Kalau data browser dihapus, hasilnya ikut hilang."},
+  "hist.nothumb":{en:"No preview",id:"Tanpa preview"},
   "err.unsupported":{en:"This browser can't run the analyzer.",id:"Browser ini tidak bisa menjalankan analyzer."},
   "err.missing":{en:"Try a recent Chrome, Edge, Safari or Firefox. Missing here:",id:"Coba Chrome, Edge, Safari, atau Firefox versi baru. Yang tidak tersedia:"},
   "err.cpumode":{en:"Your device doesn't support WebGPU, so the analysis runs on the CPU. It still works, but a 20–30s clip can take a minute or two — keep this tab open.",id:"Perangkatmu tidak mendukung WebGPU, jadi analisis berjalan di CPU. Tetap bisa, tapi klip 20–30 detik bisa makan satu sampai dua menit — biarkan tab ini terbuka."},
@@ -1318,9 +1319,28 @@ function histThumb(){
     if(!cv.width) return null;
     const c=document.createElement("canvas"), w=320;
     c.width=w; c.height=Math.max(1,Math.round(cv.height*w/cv.width));
-    c.getContext("2d").drawImage(cv,0,0,c.width,c.height);
+    const cx=c.getContext("2d");
+    cx.drawImage(cv,0,0,c.width,c.height);
+    // A clip that ends on a black tail used to store a picture of nothing. Sample the
+    // frame and refuse it if there is essentially no image there, so the history falls
+    // back to the "no preview" placeholder instead of showing a black rectangle.
+    if(isBlank(cx,c.width,c.height)) return null;
     return c.toDataURL("image/jpeg",0.7);        // small: localStorage is a ~5MB budget
   }catch(e){ return null; }
+}
+// Mean brightness plus spread, on a coarse sample. A real frame of a rider has both;
+// a black or single-colour frame has neither.
+function isBlank(cx,w,h){
+  try{
+    const d=cx.getImageData(0,0,w,h).data;
+    let sum=0,min=255,max=0,n=0;
+    for(let i=0;i<d.length;i+=4*37){            // every 37th pixel is plenty
+      const l=(d[i]*0.299+d[i+1]*0.587+d[i+2]*0.114);
+      sum+=l; if(l<min)min=l; if(l>max)max=l; n++;
+    }
+    if(!n) return true;
+    return (sum/n)<8 || (max-min)<10;           // near-black, or almost no contrast
+  }catch(e){ return false; }                    // can't tell (tainted canvas) — keep it
 }
 function histSave(){
   const e={id:Date.now(), view:runView, bike:bikeType, thumb:histThumb(),
@@ -1363,7 +1383,8 @@ function renderHistory(){
     const ticked=cmpPick.includes(e.id)?"checked":"";
     return `<div class="hitem">
       ${e.side?`<input type="checkbox" class="hcmp" data-cmp="${e.id}" ${ticked} title="compare">`:``}
-      ${e.thumb?`<img src="${e.thumb}" alt="">`:``}
+      ${e.thumb?`<img src="${e.thumb}" alt="" loading="lazy">`
+               :`<span class="hnothumb" title="${t('hist.nothumb')}">${t('hist.nothumb')}</span>`}
       <div class="hmeta"><div class="hwhen">${when}${bike?" · "+bike.replace("_"," "):""}</div>
         <div class="hsum">${histSummary(e)}</div></div>
       <div class="hact">
