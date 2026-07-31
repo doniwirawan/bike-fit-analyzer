@@ -15,6 +15,7 @@ Needs: pywebview, ultralytics, opencv-python, numpy  (see requirements-desktop.t
 """
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -23,8 +24,14 @@ import webview
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import engine  # noqa: E402
 
-ROOT = Path(__file__).resolve().parent.parent
+FROZEN = getattr(sys, "frozen", False)
+ROOT = Path(sys._MEIPASS) if FROZEN else Path(__file__).resolve().parent.parent
 UI = ROOT / "web" / "app.html"
+
+# Saved results have to outlive the app. A frozen bundle unpacks to a temp directory that is
+# deleted on exit, so the browser profile must live somewhere the user owns instead.
+DATA = (Path(os.environ.get("LOCALAPPDATA", Path.home())) / "BikeFitAnalyzer"
+        if FROZEN else ROOT / ".desktop-data")
 
 VIDEO_TYPES = ("Video files (*.mp4;*.mov;*.webm;*.avi;*.mkv;*.m4v)", "All files (*.*)")
 
@@ -64,7 +71,31 @@ class Api:
             pass                                       # window closed mid-run
 
 
+def selftest(clip):
+    """Analyse a clip and print the numbers, without opening a window.
+
+        BikeFitAnalyzer.exe --selftest CLIP.mp4
+
+    A packaged build is otherwise only testable by looking at it, which says nothing about
+    whether torch, OpenCV and the pose model actually survived being frozen. This runs the
+    whole pipeline and prints the result, so a build can be checked from a terminal or a CI
+    job. Compare the angles against the same clip in the browser build.
+    """
+    result = engine.analyze(clip, "side", lambda stage, pct: print(f"  {stage} {pct}%", flush=True))
+    print("\nengine :", result["engine"])
+    print("strokes:", result["strokes"], " off-axis:", result["offAxis"])
+    for metric, value in result["R"].items():
+        print(f"  {metric:20} {value if value is None else round(value, 1)}")
+    print("  hip at top          ", None if result["hipTop"] is None else round(result["hipTop"], 1))
+    return 0
+
+
 def main():
+    if len(sys.argv) > 2 and sys.argv[1] == "--selftest":
+        # console=False means there is no attached console in a packaged build; redirect
+        # stdout when running it (build.ps1 and the README both show how).
+        sys.exit(selftest(sys.argv[2]))
+
     if not UI.exists():
         sys.exit(f"UI not found at {UI} — run this from the repo, not a copy of desktop/.")
 
@@ -92,7 +123,7 @@ def main():
     # private_mode defaults to True, which throws away localStorage when the window closes —
     # every saved result would vanish between runs. storage_path keeps them beside the app.
     webview.start(http_server=True, private_mode=False,
-                  storage_path=str(ROOT / ".desktop-data"))
+                  storage_path=str(DATA))
 
 
 if __name__ == "__main__":

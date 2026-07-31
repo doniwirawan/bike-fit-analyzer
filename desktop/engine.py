@@ -23,7 +23,10 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-ROOT = Path(__file__).resolve().parent.parent
+# Frozen builds unpack their data next to the bootloader, so the repo layout is preserved
+# there and everything below resolves the same way in both.
+ROOT = (Path(sys._MEIPASS) if getattr(sys, "frozen", False)
+        else Path(__file__).resolve().parent.parent)
 sys.path.insert(0, str(ROOT / "files"))
 import analyze_bikefit as core  # noqa: E402  (path must be set first)
 
