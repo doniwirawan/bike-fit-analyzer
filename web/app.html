@@ -1403,10 +1403,16 @@ $("#dlImage").onclick  = ()=>download(cv,"frame");
 const HKEY="bfa-history", HMAX=20;
 const histLoad=()=>{ try{ return JSON.parse(localStorage.getItem(HKEY))||[]; }catch(e){ return []; } };
 const histWrite=h=>{ try{ localStorage.setItem(HKEY,JSON.stringify(h)); return true; }catch(e){ return false; } };
+// This image is doing two jobs: the 104px thumbnail in the saved list, and the full-width
+// frame you get back when you reopen that result. It used to be stored 320px wide, which is
+// plenty for the list and visibly soft blown up to panel width — 900 keeps a reopened result
+// looking like the one you just ran. Twenty entries of this still sit inside the ~5MB
+// localStorage budget, and histWrite() drops old thumbnails first if a device disagrees.
+const THUMB_W=900;
 function histThumb(){
   try{
     if(!cv.width) return null;
-    const c=document.createElement("canvas"), w=320;
+    const c=document.createElement("canvas"), w=Math.min(THUMB_W,cv.width);
     c.width=w; c.height=Math.max(1,Math.round(cv.height*w/cv.width));
     const cx=c.getContext("2d");
     cx.drawImage(cv,0,0,c.width,c.height);
@@ -1414,7 +1420,7 @@ function histThumb(){
     // frame and refuse it if there is essentially no image there, so the history falls
     // back to the "no preview" placeholder instead of showing a black rectangle.
     if(isBlank(cx,c.width,c.height)) return null;
-    return c.toDataURL("image/jpeg",0.7);        // small: localStorage is a ~5MB budget
+    return c.toDataURL("image/jpeg",0.78);
   }catch(e){ return null; }
 }
 // Mean brightness plus spread, on a coarse sample. A real frame of a rider has both;

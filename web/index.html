@@ -148,12 +148,28 @@
 
   /* hero */
   .hero-bg{position:relative;overflow:hidden}
+  /* A soft colour field behind the hero rather than a flat page: the two blooms sit under
+     the headline and the mock, and never intercept a click. */
+  .hero-bg::before{content:"";position:absolute;inset:-30% -12% auto -12%;height:660px;pointer-events:none;
+    background:
+      radial-gradient(42% 52% at 20% 42%,color-mix(in srgb,var(--accent) 20%,transparent),transparent 70%),
+      radial-gradient(38% 48% at 82% 26%,color-mix(in srgb,var(--green) 13%,transparent),transparent 70%)}
   .hero{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:44px;
     align-items:center;padding:38px 0 54px}
   @media(max-width:900px){ .hero{grid-template-columns:1fr;gap:30px;padding:22px 0 36px} }
-  .hero h1{font-size:2.85rem;line-height:1.08;margin:0 0 16px;letter-spacing:-.025em;font-weight:800}
+  /* Fluid down to the smallest phone, so there is no single breakpoint where the
+     headline suddenly halves in size. */
+  .hero h1{font-size:clamp(2.05rem,5.6vw,3.5rem);line-height:1.03;margin:0 0 16px;
+    letter-spacing:-.032em;font-weight:800}
   .hero h1 .g{color:var(--green)} .hero h1 .a{color:var(--amber)} .hero h1 .r{color:var(--red)}
-  .hero p.sub{font-size:1.12rem;color:var(--mut);margin:0;max-width:520px}
+  .hero p.sub{font-size:clamp(1rem,1.6vw,1.16rem);color:var(--mut);margin:0;max-width:520px}
+  /* one line of proof, directly under the buttons */
+  .quote{display:flex;align-items:flex-start;gap:11px;margin-top:24px;padding:13px 15px;max-width:520px;
+    border-radius:12px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+  .quote svg{width:17px;height:17px;color:var(--mut);flex:none;margin-top:2px}
+  .quote p{margin:0;font-size:.88rem;color:var(--mut);line-height:1.5}
+  .quote a{font-weight:600;text-decoration:none;white-space:nowrap}
+  .quote a:hover{text-decoration:underline}
   .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px;align-items:center}
   .btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:10px;padding:13px 22px;
     font-weight:600;font-size:.96rem;cursor:pointer;font-family:inherit;text-decoration:none;transition:.15s}
@@ -188,10 +204,16 @@
   .GREEN{background:var(--green)} .AMBER{background:var(--amber)} .RED{background:var(--red)}
 
   /* sections */
-  section.block{padding:34px 0 8px}
+  section.block{padding:clamp(34px,5vw,62px) 0 8px}
   .eyebrow{font-family:var(--mono);font-size:.7rem;font-weight:600;letter-spacing:.12em;
     text-transform:uppercase;color:var(--accent);margin:0 0 9px}
-  h2.sec{font-size:1.7rem;letter-spacing:-.02em;margin:0 0 8px;font-weight:800}
+  h2.sec{font-size:clamp(1.45rem,3.2vw,2.1rem);letter-spacing:-.025em;margin:0 0 8px;font-weight:800}
+  /* Sections rise into place as you reach them. The class is added by script, so with JS off
+     — or when the reader asks for less motion — everything is simply visible. */
+  @media (prefers-reduced-motion:no-preference){
+    .reveal{opacity:0;transform:translateY(16px)}
+    .reveal.in{opacity:1;transform:none;transition:opacity .65s ease,transform .65s cubic-bezier(.2,.7,.3,1)}
+  }
   .sec-lead{color:var(--mut);font-size:1.02rem;margin:0 0 24px;max-width:680px}
   .legend{display:flex;gap:16px;flex-wrap:wrap;margin:4px 0 0;color:var(--mut);
     font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase}
@@ -246,6 +268,12 @@
   .relia{display:inline-block;font-family:var(--mono);font-size:.56rem;font-weight:700;letter-spacing:.06em;
     text-transform:uppercase;padding:2px 6px;border-radius:4px;color:#fff;white-space:nowrap}
   .relia.high{background:var(--green)} .relia.med{background:var(--amber)} .relia.soft{background:var(--gray)}
+
+  /* this-vs-a-pro-fit table: our column is tinted so the eye lands on it first */
+  .vs td:first-child{font-family:var(--mono);font-size:.64rem;text-transform:uppercase;
+    letter-spacing:.07em;color:var(--mut);white-space:nowrap;padding-right:14px}
+  .vs .ours{background:color-mix(in srgb,var(--accent) 7%,transparent)}
+  .vs th.ours{color:var(--accent)}
 
   /* feature grid */
   .cols2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -338,8 +366,7 @@
   .foot-legal a{color:var(--accent)}
 
   @media(max-width:600px){
-    .hero h1{font-size:2rem} .hero p.sub{font-size:1.02rem}
-    h2.sec{font-size:1.4rem}
+    /* type sizes are fluid now; only the buttons need a breakpoint */
     .btn{width:100%;justify-content:center}
     .cta{flex-direction:column;align-items:stretch}
   }
@@ -374,8 +401,8 @@
   <div class="hero-bg">
     <section class="hero">
       <div class="hero-copy">
-        <h1 data-i18n="hero.h1">Grade your bike fit — <span class="g">green</span>, <span class="a">amber</span>, <span class="r">red</span>.</h1>
-        <p class="sub" data-i18n="hero.sub">Film 20–30 seconds of pedaling. Get the angles a bike fitter measures, graded green, amber or red. Runs in your browser — nothing is uploaded.</p>
+        <h1 data-i18n="hero.h1">Stop guessing your saddle height.</h1>
+        <p class="sub" data-i18n="hero.sub">Film 20–30 seconds of pedaling and every fit angle comes back <span class="g">green</span>, <span class="a">amber</span> or <span class="r">red</span>, with what to change. Runs in your browser — nothing is uploaded.</p>
         <div class="cta">
           <a class="btn primary" href="app.html">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
@@ -395,6 +422,10 @@
           <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> <span data-i18n="chip.noupload">No video upload</span></span>
           <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> <span data-i18n="chip.opensource">Open source</span></span>
           <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> <span data-i18n="chip.anybike">Any bike</span></span>
+        </div>
+        <div class="quote">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-4-.9L3 21l1.9-4.6A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5Z"/></svg>
+          <p data-i18n="hero.proof">A rider ran their first clip through it and went away to raise their saddle. <a href="https://www.threads.com/@paceandpedal_/post/DbaWYJwCT4D" target="_blank" rel="noopener">@paceandpedal_ on Threads ↗</a></p>
         </div>
       </div>
 
@@ -537,6 +568,46 @@
 
     <p class="sec-lead" style="margin-top:20px" data-i18n="ideal.more">Every measurement in detail, view by view: <a href="/blog/how-it-works">how the analyzer works</a>.</p>
 
+  <!-- ============ THIS vs A PRO FIT ============ -->
+  <!-- The obvious objection, answered before the FAQ instead of after it. Being straight
+       about what a paid fit does better is what makes the rest of the page believable. -->
+  <section class="block">
+    <p class="eyebrow" data-i18n="vs.eyebrow">Honest comparison</p>
+    <h2 class="sec" data-i18n="vs.h2">This tool vs. a professional fit</h2>
+    <p class="sec-lead" data-i18n="vs.lead">They are not competitors. Run this first, then walk into a fitting knowing what to ask.</p>
+    <div class="panel">
+      <div class="tscroll">
+        <table class="vs">
+          <thead><tr>
+            <th></th>
+            <th class="ours" data-i18n="vs.col1">This tool</th>
+            <th data-i18n="vs.col2">A professional fit</th>
+          </tr></thead>
+          <tbody>
+            <tr><td data-i18n="vs.r1">Cost</td>
+              <td class="ours" data-i18n="vs.r1a">Free, as many clips as you like</td>
+              <td data-i18n="vs.r1b">Paid — varies by studio and country</td></tr>
+            <tr><td data-i18n="vs.r2">Where</td>
+              <td class="ours" data-i18n="vs.r2a">Your phone or laptop, at home, in minutes</td>
+              <td data-i18n="vs.r2b">A studio, usually a two to three hour session</td></tr>
+            <tr><td data-i18n="vs.r3">What it sees</td>
+              <td class="ours" data-i18n="vs.r3a">Joint angles from a 2D side, front or rear clip</td>
+              <td data-i18n="vs.r3b">Your body in 3D, plus pressure mapping, cleats and foot support</td></tr>
+            <tr><td data-i18n="vs.r4">How precise</td>
+              <td class="ours" data-i18n="vs.r4a">Within a few degrees. Knee is the most reliable, reach the least</td>
+              <td data-i18n="vs.r4b">Precise, and with a fitter watching you actually ride</td></tr>
+            <tr><td data-i18n="vs.r5">What you get</td>
+              <td class="ours" data-i18n="vs.r5a">A saddle-height change in mm, and which way your reach and bar height are off</td>
+              <td data-i18n="vs.r5b">All of that, plus the parts that would fix it and someone fitting them</td></tr>
+            <tr><td data-i18n="vs.r6">Best for</td>
+              <td class="ours" data-i18n="vs.r6a">Catching an obviously wrong saddle height before you spend anything</td>
+              <td data-i18n="vs.r6b">Pain, injury, racing, or setting up a new bike</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ FAQ ============ -->
   <section class="block">
     <p class="eyebrow" data-i18n="faq.eyebrow">FAQ</p>
@@ -673,8 +744,9 @@
     "doc.title":{en:"Bike Fit Analyzer — grade your bike fit in your browser",id:"Bike Fit Analyzer — nilai bike fit-mu langsung di browser"},
     "doc.desc":{en:"Drop a clip of yourself pedaling and get your bike-fit angles graded green, amber or red — right in your browser. Any bike, on-device, free.",id:"Masukkan klip saat kamu mengayuh, sudut bike fit-mu langsung dinilai hijau, kuning, atau merah di browser. Sepeda apa pun, gratis, tanpa upload."},
 
-    "hero.h1":{en:'Grade your bike fit — <span class="g">green</span>, <span class="a">amber</span>, <span class="r">red</span>.',id:'Cek apakah bike fit-mu sudah pas.'},
-    "hero.sub":{en:"Film 20–30 seconds of pedaling. Get the angles a bike fitter measures, graded green, amber or red. Runs in your browser — nothing is uploaded.",id:"Rekam 20–30 detik kamu mengayuh. Sudut yang biasa diukur bike fitter langsung dinilai hijau, kuning, atau merah. Jalan di browser — nggak ada yang diunggah."},
+    "hero.h1":{en:'Stop guessing your saddle height.',id:'Berhenti main tebak-tebakan tinggi sadel.'},
+    "hero.proof":{en:'A rider ran their first clip through it and went away to raise their saddle. <a href="https://www.threads.com/@paceandpedal_/post/DbaWYJwCT4D" target="_blank" rel="noopener">@paceandpedal_ on Threads ↗</a>',id:'Ada rider yang coba klip pertamanya di sini, lalu langsung naikin sadelnya. <a href="https://www.threads.com/@paceandpedal_/post/DbaWYJwCT4D" target="_blank" rel="noopener">@paceandpedal_ di Threads ↗</a>'},
+    "hero.sub":{en:'Film 20–30 seconds of pedaling and every fit angle comes back <span class="g">green</span>, <span class="a">amber</span> or <span class="r">red</span>, with what to change. Runs in your browser — nothing is uploaded.',id:'Rekam 20–30 detik kamu mengayuh, semua sudut fit-mu langsung keluar <span class="g">hijau</span>, <span class="a">kuning</span>, atau <span class="r">merah</span>, lengkap sama apa yang perlu diubah. Jalan di browser — nggak ada yang diunggah.'},
     "hero.launch":{en:"Launch the analyzer",id:"Buka analyzer"},
     "hero.apk":{en:"Android app",id:"Aplikasi Android"},
     "apk.note":{en:"The Android app analyses on your phone and works offline — it keeps going in the background and notifies you when it's done.",id:"Aplikasi Android menganalisis langsung di HP dan jalan offline — prosesnya lanjut di latar belakang dan memberi notifikasi saat selesai."},
@@ -829,6 +901,30 @@
     "tech.honest.h":{en:"How accurate is it, really?",id:"Seberapa akurat, sebenarnya?"},
     "tech.honest.p":{en:"The knee angle is the most consistent measurement, because it's the easiest to read from a side-on video. Torso and elbow are fairly stable too, while the reach-related angles are less precise, because 2D video can't capture depth properly. This is still a proof of concept and it can't replace a 3D bike fitting system. But for finding the clearly visible problems, like a saddle that's too high or too low, it's genuinely useful. If you do adjust something, change one thing at a time and re-film.",id:"Pengukuran sudut lutut adalah hasil yang paling konsisten karena memang paling mudah dianalisis dari video samping. Pengukuran torso dan siku juga cukup stabil, sedangkan sudut yang berkaitan dengan reach memiliki tingkat ketelitian yang lebih rendah karena video 2D tidak bisa menangkap kedalaman dengan sempurna. Ini masih proof of concept dan tentu belum bisa menggantikan sistem bike fitting 3D. Namun untuk menemukan masalah yang cukup jelas, seperti sadel terlalu tinggi atau terlalu rendah, hasilnya sudah sangat membantu. Kalau ingin melakukan penyesuaian, ubah satu hal saja lalu rekam ulang."},
 
+    "vs.eyebrow":{en:"Honest comparison",id:"Perbandingan jujur"},
+    "vs.h2":{en:"This tool vs. a professional fit",id:"Alat ini vs. bike fit profesional"},
+    "vs.lead":{en:"They are not competitors. Run this first, then walk into a fitting knowing what to ask.",id:"Bukan saingan. Coba ini dulu, biar pas datang ke fitter kamu sudah tahu mau tanya apa."},
+    "vs.col1":{en:"This tool",id:"Alat ini"},
+    "vs.col2":{en:"A professional fit",id:"Bike fit profesional"},
+    "vs.r1":{en:"Cost",id:"Biaya"},
+    "vs.r1a":{en:"Free, as many clips as you like",id:"Gratis, mau berapa klip pun"},
+    "vs.r1b":{en:"Paid — varies by studio and country",id:"Bayar — tergantung studio dan negaranya"},
+    "vs.r2":{en:"Where",id:"Di mana"},
+    "vs.r2a":{en:"Your phone or laptop, at home, in minutes",id:"Dari HP atau laptop, di rumah, cuma beberapa menit"},
+    "vs.r2b":{en:"A studio, usually a two to three hour session",id:"Di studio, biasanya dua sampai tiga jam"},
+    "vs.r3":{en:"What it sees",id:"Yang dilihat"},
+    "vs.r3a":{en:"Joint angles from a 2D side, front or rear clip",id:"Sudut sendi dari klip 2D tampak samping, depan, atau belakang"},
+    "vs.r3b":{en:"Your body in 3D, plus pressure mapping, cleats and foot support",id:"Badanmu dalam 3D, plus pressure mapping, cleat, dan penyangga kaki"},
+    "vs.r4":{en:"How precise",id:"Ketelitian"},
+    "vs.r4a":{en:"Within a few degrees. Knee is the most reliable, reach the least",id:"Meleset beberapa derajat. Lutut paling bisa dipercaya, jangkauan paling lemah"},
+    "vs.r4b":{en:"Precise, and with a fitter watching you actually ride",id:"Presisi, dan ada fitter yang benar-benar mengamati kamu mengayuh"},
+    "vs.r5":{en:"What you get",id:"Yang kamu dapat"},
+    "vs.r5a":{en:"A saddle-height change in mm, and which way your reach and bar height are off",id:"Angka setelan sadel dalam mm, plus arah koreksi jangkauan dan tinggi setang"},
+    "vs.r5b":{en:"All of that, plus the parts that would fix it and someone fitting them",id:"Semua itu, plus part yang memang perlu diganti dan orang yang memasangkannya"},
+    "vs.r6":{en:"Best for",id:"Paling cocok buat"},
+    "vs.r6a":{en:"Catching an obviously wrong saddle height before you spend anything",id:"Menemukan tinggi sadel yang jelas salah sebelum kamu keluar uang"},
+    "vs.r6b":{en:"Pain, injury, racing, or setting up a new bike",id:"Ada keluhan, cedera, balapan, atau menyetel sepeda baru"},
+
     "faq.eyebrow":{en:"FAQ",id:"Tanya jawab"},
     "faq.h2":{en:"Frequently asked questions",id:"Pertanyaan yang sering muncul"},
     "faq.q1":{en:"Is my video uploaded anywhere?",id:"Apakah video saya diupload ke mana-mana?"},
@@ -908,6 +1004,17 @@
       if(c) c.href=u.origin+u.pathname+'?lang='+lang;
     }catch(e){}
   }));
+
+  // Sections rise in as they're reached. The .reveal class is added here rather than in the
+  // markup, so with JS off nothing is ever left invisible; prefers-reduced-motion is handled
+  // in CSS, where .reveal carries no transition and no offset.
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(es=>es.forEach(e=>{
+      if(!e.isIntersecting) return;
+      e.target.classList.add('in'); io.unobserve(e.target);
+    }),{rootMargin:'0px 0px -8%'});
+    document.querySelectorAll('section.block').forEach(el=>{ el.classList.add('reveal'); io.observe(el); });
+  }
 
   // Threads posts load on demand: the iframe doesn't exist until the reader asks for it,
   // so the page keeps its promise of touching no third party on a normal visit.
