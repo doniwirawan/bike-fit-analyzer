@@ -40,12 +40,21 @@ python desktop/bikefit.py path\to\clip.mp4  # analyze that clip on startup
 |---|---|---|
 | Pose model | MediaPipe Pose (full) | YOLO11x-pose |
 | Runs on | anyone's phone or laptop | this machine, GPU if there is one |
-| Views | side, front, rear (front/rear beta) | side only |
+| Views | side, front, rear (front/rear beta) | all three, same beta caveat |
 | Webcam recording | yes | no — choose a file |
 | Drag and drop | yes | no; a webview can't see a dropped file's path |
 
-Front and rear are hidden in the desktop window rather than quietly falling back to the
-browser engine, because there is no Python implementation of the frontal metrics yet.
+The frontal (front/rear) maths in `analyze_frontal` is a port of the browser's
+`frontalMetrics()` / `finishFrontal()`, down to using the same `sorted[floor(n*q)]`
+percentile so short clips can't disagree by an off-by-one. It carries the same beta
+warning in the UI, for the same reason: 2D frontal readings have a precision floor of
+several degrees.
+
+**The frontal path is verified to run, not verified to be right.** There is no front or
+rear footage in this repo to test against — running it on a side-on clip exercises every
+line and returns a well-formed result, but the numbers from that are meaningless. First
+real front-on clip you have, compare it against the browser build on the same file; they
+should agree closely.
 
 ## How the two stay honest
 

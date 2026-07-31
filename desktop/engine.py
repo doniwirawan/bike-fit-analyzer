@@ -1,15 +1,19 @@
 """
-Side-view bike-fit analysis for the desktop app.
+Bike-fit analysis for the desktop app — side, front and rear.
 
-This is the same measurement pipeline as files/analyze_bikefit.py — the angle maths,
-the grading zones and the stroke detection are imported from it rather than copied, so
-the desktop app cannot drift away from the CLI. What differs is the output: nothing is
-written to disk, no overlay video is rendered, and the result comes back as plain data
-for the web UI to draw. That makes a run seconds rather than minutes.
+The side-view maths, the grading zones and the stroke detection are imported from
+files/analyze_bikefit.py rather than copied, so the desktop app cannot drift away from the
+CLI. The frontal-plane maths has no CLI equivalent and is implemented here, deliberately
+as a line-for-line port of the browser build's frontalMetrics()/finishFrontal() so both
+report the same numbers from the same clip.
+
+What differs from the CLI is the output: nothing is written to disk and no overlay video is
+rendered, the result comes back as plain data for the web UI to draw. That makes a run
+seconds rather than minutes.
 
 The pose model is YOLO11x-pose, which is why the desktop numbers are steadier than the
-browser's MediaPipe ones: it is a far larger model than anything sensible to ship to a
-web page, and it runs here on your own CPU or GPU.
+browser's MediaPipe ones: it is far larger than anything sensible to ship to a web page,
+and it runs here on your own CPU or GPU.
 """
 
 import base64
@@ -18,7 +22,6 @@ from pathlib import Path
 
 import cv2
 import numpy as np
-from ultralytics import YOLO
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "files"))
@@ -36,6 +39,10 @@ TARGET_FPS = 15.0
 # screen, small enough that the base64 data URL stays a sane size.
 MAX_FRAME_W = 1280
 
+# COCO-17 indices for the frontal view, where both sides matter (the side view uses
+# core.SIDE, which is one side at a time).
+FRONTAL_IDS = dict(hL=11, hR=12, kL=13, kR=14, aL=15, aR=16)
+
 _model = None
 
 
@@ -45,6 +52,7 @@ def _load_model(progress):
         if not MODEL_PATH.exists():
             raise RuntimeError(f"Pose model not found at {MODEL_PATH}")
         progress("model", 0)
+        from ultralytics import YOLO
         _model = YOLO(str(MODEL_PATH))
     return _model
 
@@ -57,29 +65,16 @@ def _device():
         return "cpu"
 
 
-def _frame_to_data_url(frame):
-    h, w = frame.shape[:2]
-    if w > MAX_FRAME_W:
-        scale = MAX_FRAME_W / w
-        frame = cv2.resize(frame, (MAX_FRAME_W, int(round(h * scale))), interpolation=cv2.INTER_AREA)
-    ok, buf = cv2.imencode(".jpg", frame, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
-    if not ok:
-        raise RuntimeError("Could not encode the analyzed frame")
-    return "data:image/jpeg;base64," + base64.b64encode(buf.tobytes()).decode("ascii"), frame.shape[1], frame.shape[0]
+def _pose_pass(src, progress):
+    """Run tracked pose over the clip and return one subject's keypoints per sampled frame.
 
-
-def analyze(video_path, progress=lambda stage, pct: None):
-    """Measure a side-on pedaling clip.
-
-    Returns the same shape the web UI already knows how to render: raw angles in R,
-    the deepest-stroke pose in P (in the pixels of the returned frame), and that frame
-    as a data URL. Grading is deliberately left to the UI, which owns the per-bike-type
-    zones — this way there is one set of thresholds on screen, not two.
+    Picking the highest-confidence detection independently per frame is what the CLI does,
+    and on a clip with anyone else in shot it silently flips subject halfway through. The
+    ankle then teleports, the measured stroke amplitude inflates to most of the frame, and
+    the prominence threshold derived from it rejects every real stroke — the clip comes
+    back as "no pedal strokes" rather than as a wrong answer. Tracking gives each person a
+    stable id, and we commit to the one seen most across the whole clip.
     """
-    src = Path(video_path)
-    if not src.exists():
-        raise RuntimeError(f"Video not found: {src}")
-
     model = _load_model(progress)
     device = _device()
 
@@ -88,22 +83,12 @@ def analyze(video_path, progress=lambda stage, pct: None):
         raise RuntimeError("Could not open that video. Try MP4, MOV or WebM.")
     fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
     total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) or 0
-    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-
     stride = max(1, int(round(fps / TARGET_FPS)))
-    eff_fps = fps / stride
+    expected = (total // stride) if total else 0
 
-    # ---- pass 1: pose, tracked ----
-    # Picking the highest-confidence detection independently per frame is what the CLI does,
-    # and on a clip with anyone else in shot it silently flips subject halfway through. The
-    # ankle then teleports, the measured stroke amplitude inflates to most of the frame, and
-    # the prominence threshold derived from it rejects every real stroke — the clip comes
-    # back as "no pedal strokes" rather than as a wrong answer. Tracking gives each person a
-    # stable id, and we commit to the one seen most across the whole clip.
     per_frame, source_frames = [], []      # {track_id: keypoints} for each sampled frame
     seen_conf = {}                         # track id -> summed detection confidence
     idx = 0
-    expected = (total // stride) if total else 0
     while True:
         ok, frame = cap.read()
         if not ok:
@@ -136,14 +121,52 @@ def analyze(video_path, progress=lambda stage, pct: None):
 
     subject = max(seen_conf, key=seen_conf.get)
     kps = [f.get(subject) for f in per_frame]
+    return kps, source_frames, fps / stride, device
 
-    # ---- near side: whichever half of the body the model is more confident about ----
+
+def _frame_at(src, frame_no):
+    cap = cv2.VideoCapture(str(src))
+    cap.set(cv2.CAP_PROP_POS_FRAMES, frame_no)
+    ok, frame = cap.read()
+    cap.release()
+    if not ok:
+        raise RuntimeError("Couldn't re-read the measured frame from the video.")
+    return frame
+
+
+def _encode(frame):
+    """JPEG data URL, plus the scale applied so keypoints can follow the resize."""
+    h, w = frame.shape[:2]
+    scale = 1.0
+    if w > MAX_FRAME_W:
+        scale = MAX_FRAME_W / w
+        frame = cv2.resize(frame, (MAX_FRAME_W, int(round(h * scale))), interpolation=cv2.INTER_AREA)
+    ok, buf = cv2.imencode(".jpg", frame, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
+    if not ok:
+        raise RuntimeError("Could not encode the analyzed frame")
+    url = "data:image/jpeg;base64," + base64.b64encode(buf.tobytes()).decode("ascii")
+    return url, frame.shape[1], frame.shape[0], scale
+
+
+def _pct(sorted_vals, q):
+    """The browser's percentile: sorted[floor(len*q)], clamped. Matched exactly so the two
+    builds can't disagree by an off-by-one on short clips."""
+    if not len(sorted_vals):
+        return None
+    i = min(len(sorted_vals) - 1, int(len(sorted_vals) * q))
+    return float(sorted_vals[i])
+
+
+# ---------------------------------------------------------------- side view
+
+def analyze_side(src, kps, source_frames, eff_fps, device):
+    ids = None
     side_conf = {"left": 0.0, "right": 0.0}
     for kp in kps:
         if kp is None:
             continue
-        for side, ids in core.SIDE.items():
-            side_conf[side] += float(sum(kp[j][2] for j in ids.values()))
+        for side, sids in core.SIDE.items():
+            side_conf[side] += float(sum(kp[j][2] for j in sids.values()))
     near = "left" if side_conf["left"] >= side_conf["right"] else "right"
     far = "right" if near == "left" else "left"
     ids = core.SIDE[near]
@@ -151,11 +174,8 @@ def analyze(video_path, progress=lambda stage, pct: None):
     # A square-on clip hides the far leg; when both sides read almost equally well the
     # camera is off to one side, which stretches the reach angles. Same 0.55 threshold
     # the browser build uses, from the ratio of far-side to near-side confidence.
-    off_axis = False
-    if side_conf[near] > 0:
-        off_axis = (side_conf[far] / side_conf[near]) > 0.55
+    off_axis = side_conf[near] > 0 and (side_conf[far] / side_conf[near]) > 0.55
 
-    # ---- per-frame angles ----
     n = len(kps)
     ankle_y = np.full(n, np.nan)
     angles = {k: np.full(n, np.nan) for k in
@@ -186,7 +206,6 @@ def analyze(video_path, progress=lambda stage, pct: None):
     if (~np.isnan(ankle_y)).sum() < 5:
         raise RuntimeError("Couldn't track your ankle clearly. Re-film side-on, well lit, whole body in frame.")
 
-    # ---- bottom and top of each pedal stroke ----
     amp = float(np.nanpercentile(ankle_y, 95) - np.nanpercentile(ankle_y, 5))
     min_dist = max(3, int(eff_fps * 0.35))
     prominence = max(2.0, 0.25 * amp)
@@ -205,34 +224,115 @@ def analyze(video_path, progress=lambda stage, pct: None):
         "elbow_flexion": median_at("elbow_flexion", bdc),
         "shoulder_angle": median_at("shoulder_angle", bdc),
     }
-    hip_top = median_at("hip_angle", tdc) if tdc else None
 
-    # ---- the frame the numbers came from: the deepest bottom-dead-centre ----
     deepest = max(bdc, key=lambda f: ankle_y[f])
-    cap = cv2.VideoCapture(str(src))
-    cap.set(cv2.CAP_PROP_POS_FRAMES, source_frames[deepest])
-    ok, frame = cap.read()
-    cap.release()
-    if not ok:
-        raise RuntimeError("Couldn't re-read the measured frame from the video.")
-
-    data_url, out_w, out_h = _frame_to_data_url(frame)
-    scale = out_w / frame.shape[1] if frame.shape[1] else 1.0
+    frame = _frame_at(src, source_frames[deepest])
+    url, out_w, out_h, scale = _encode(frame)
     pose = poses[deepest]
     P = {name: {"x": float(pose[name][0]) * scale,
                 "y": float(pose[name][1]) * scale,
                 "v": float(pose[name][2])}
          for name in ids}
 
-    progress("pose", 100)
     return {
+        "view": "side",
         "R": results,
-        "hipTop": hip_top,
+        "hipTop": median_at("hip_angle", tdc) if tdc else None,
         "strokes": len(bdc),
         "offAxis": bool(off_axis),
         "P": P,
         "pw": out_w,
         "ph": out_h,
-        "frame": data_url,
+        "frame": url,
         "engine": f"YOLO11x-pose ({'GPU' if device == 0 else 'CPU'})",
     }
+
+
+# ------------------------------------------------------- front / rear view
+
+def _frontal_frame(kp):
+    """One frame of frontal metrics, or None. Port of the browser's frontalMetrics()."""
+    p = {name: kp[j] for name, j in FRONTAL_IDS.items()}
+    seen = lambda *names: all(p[nm][2] >= core.MIN_CONF for nm in names)  # noqa: E731
+    center = (p["hL"][0] + p["hR"][0]) / 2
+
+    def leg(h, k, a):
+        if abs(a[1] - h[1]) < 1:
+            return None
+        # where the hip->ankle line sits at knee height, and how far the knee is off it
+        line_x = h[0] + (a[0] - h[0]) * ((k[1] - h[1]) / (a[1] - h[1]))
+        dev = k[0] - line_x
+        medial = dev if h[0] < center else -dev      # signed toward the body midline
+        return {"fppa": 180 - core.angle_at(h[:2], k[:2], a[:2]),
+                "medialSign": float(np.sign(medial))}
+
+    out = {
+        "L": leg(p["hL"], p["kL"], p["aL"]) if seen("hL", "kL", "aL") else None,
+        "R": leg(p["hR"], p["kR"], p["aR"]) if seen("hR", "kR", "aR") else None,
+        "hipTilt": (float(np.degrees(np.arctan2(p["hR"][1] - p["hL"][1], p["hR"][0] - p["hL"][0])))
+                    if seen("hL", "hR") else np.nan),
+        "P": {k: {"x": float(p[k][0]), "y": float(p[k][1])} for k in FRONTAL_IDS},
+    }
+    return out
+
+
+def analyze_frontal(src, kps, source_frames, view, device):
+    frames = [_frontal_frame(kp) for kp in kps if kp is not None]
+    if len(frames) < 5:
+        raise RuntimeError("Couldn't track your body clearly. Re-film square to the camera, "
+                           "well lit, whole body in frame.")
+
+    def leg_stat(side):
+        vals = [f[side]["medialSign"] * f[side]["fppa"] for f in frames if f[side]]
+        if len(vals) < 3:
+            return None
+        ordered = sorted(vals)
+        return {"peak": _pct(ordered, 0.9), "med": float(np.median(vals))}
+
+    L, R = leg_stat("L"), leg_stat("R")
+
+    tilts = sorted(f["hipTilt"] for f in frames if not np.isnan(f["hipTilt"]))
+    rock = None
+    if len(tilts) >= 5:
+        rock = _pct(tilts, 0.95) - _pct(tilts, 0.05)
+
+    # Show the frame where the knees are furthest off line — the one worth looking at.
+    def deviation(i):
+        f = frames[i]
+        return sum(abs(f[s]["medialSign"] * f[s]["fppa"]) for s in ("L", "R") if f[s])
+
+    worst = max(range(len(frames)), key=deviation)
+    tracked = [i for i, kp in enumerate(kps) if kp is not None]
+    frame = _frame_at(src, source_frames[tracked[worst]])
+    url, out_w, out_h, scale = _encode(frame)
+    P = {k: {"x": v["x"] * scale, "y": v["y"] * scale} for k, v in frames[worst]["P"].items()}
+
+    return {
+        "view": view,
+        "L": L,
+        "R": R,
+        "rock": rock,
+        "frames": len(frames),
+        "P": P,
+        "pw": out_w,
+        "ph": out_h,
+        "frame": url,
+        "engine": f"YOLO11x-pose ({'GPU' if device == 0 else 'CPU'})",
+    }
+
+
+def analyze(video_path, view="side", progress=lambda stage, pct: None):
+    """Measure a clip. `view` is "side", "front" or "rear".
+
+    Returns the shape the web UI already knows how to render. Grading is deliberately left
+    to the UI, which owns the per-bike-type zones — one set of thresholds on screen, not two.
+    """
+    src = Path(video_path)
+    if not src.exists():
+        raise RuntimeError(f"Video not found: {src}")
+
+    kps, source_frames, eff_fps, device = _pose_pass(src, progress)
+    progress("pose", 100)
+    if view == "side":
+        return analyze_side(src, kps, source_frames, eff_fps, device)
+    return analyze_frontal(src, kps, source_frames, view, device)

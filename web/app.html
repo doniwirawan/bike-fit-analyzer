@@ -960,8 +960,8 @@ $("#pick").onclick=()=>file.click();
 /* ---- desktop build: same UI, measured by Python/YOLO ----
    Everything below only runs inside the pywebview shell, where window.pywebview exists.
    In a browser NATIVE is false, nothing here is wired up, and the MediaPipe path above is
-   exactly what it was. The desktop side is side-view only — YOLO11x-pose is what makes it
-   worth having, and the frontal work has no Python equivalent yet. */
+   exactly what it was. All three views are analysed in Python; the frontal maths there is a
+   port of frontalMetrics()/finishFrontal() below, so both builds report the same numbers. */
 let NATIVE=false;
 
 async function pickNative(){
@@ -979,9 +979,26 @@ async function runNative(path){
     status.textContent = stage==="model" ? t('st.loadModel') : t('st.analyzing');
     if(stage!=="model") fill.style.width=pct+"%";
   };
-  const r=await window.pywebview.api.analyze(path);
+  runView=viewMode;                          // histSave() files the run under this
+  const r=await window.pywebview.api.analyze(path,viewMode);
   spin.hidden=true; bar.style.display="none"; status.textContent="";
   if(!r||!r.ok){ fail((r&&r.error)||t('err.track')); return; }
+  $("#stage").style.display="block";
+
+  if(viewMode!=="side"){
+    lastFront={L:r.L,R:r.R,rock:r.rock,frames:r.frames,view:viewMode}; lastSide=null;
+    renderFront();
+    $("#results").hidden=true; $("#frontresults").hidden=false;
+    $("#tabdot").hidden=false; showTab("report");
+    const frontId=histSave();
+    const fimg=new Image();
+    fimg.onload=()=>{                        // the frame the knees were furthest off line
+      cv.width=fimg.width; cv.height=fimg.height; ctx.drawImage(fimg,0,0);
+      drawFrontal({P:r.P}); histRethumb(frontId);
+    };
+    fimg.src=r.frame;
+    return;
+  }
 
   const G={}; for(const m in ZONES) G[m]=grade(m,r.R[m]);
   lastSide={R:r.R,G,strokes:r.strokes,hipTop:r.hipTop,offAxis:r.offAxis,P:r.P,pw:r.pw,ph:r.ph};
@@ -993,7 +1010,6 @@ async function runNative(path){
   // saved-results list are the browser build's own code, unchanged.
   const img=new Image();
   img.onload=()=>{
-    $("#stage").style.display="block";
     cv.width=img.width; cv.height=img.height; ctx.drawImage(img,0,0);
     drawSkeleton(r.P,G,r.R); shotPhoto=snapCanvas(); histRethumb(runId);
     drawSkeletonPlate(r.P,G,r.R); shotSkel=snapCanvas();
@@ -1008,7 +1024,6 @@ function enableNative(){
   NATIVE=true;
   drop.onclick=pickNative; $("#pick").onclick=pickNative;
   $("#rec").hidden=true;                                   // webcam capture is browser-only
-  document.querySelectorAll('[data-view="front"],[data-view="rear"]').forEach(b=>b.hidden=true);
   // swap the key, not just the text, so switching language doesn't restore the browser copy
   const hint=$("#drop").querySelector(".hint");
   hint.setAttribute("data-i18n","drop.native"); hint.textContent=t('drop.native');

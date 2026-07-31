@@ -44,9 +44,9 @@ class Api:
             webview.OPEN_DIALOG, allow_multiple=False, file_types=VIDEO_TYPES)
         return paths[0] if paths else None
 
-    def analyze(self, path):
+    def analyze(self, path, view="side"):
         try:
-            return {"ok": True, **engine.analyze(path, self._progress)}
+            return {"ok": True, **engine.analyze(path, view, self._progress)}
         except Exception as exc:                      # surfaced in the page's error box
             return {"ok": False, "error": str(exc)}
 
