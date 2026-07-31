@@ -1271,7 +1271,10 @@ function finish(){
   const deepest=bdc.reduce((a,b)=>frames[b].ankleY>frames[a].ankleY?b:a,bdc[0]);
   // Store the graded pose BEFORE saving — histSave() serialises lastSide, and without P in
   // it a reopened result could never redraw the skeleton-only figure.
-  lastSide.P=frames[deepest].P;
+  // P is in canvas pixels, and the canvas is the video's size right now — but a reopened run
+  // redraws onto a canvas the size of the stored frame instead. Keep the dimensions P was
+  // measured in so that redraw can scale it; without them the skeleton lands off-canvas.
+  lastSide.P=frames[deepest].P; lastSide.pw=cv.width; lastSide.ph=cv.height;
   const runId=histSave();
   // seek to the EXACT captured time of that frame so the skeleton lines up
   vid.pause();
@@ -1563,11 +1566,21 @@ function histOpen(id){
   document.querySelectorAll(".viewsel button").forEach(b=>b.classList.toggle("active",b.dataset.view===e.view));
   updateLeads();
   shotPhoto=shotSkel=null; $("#shotsel").hidden=true; $("#resultshot").hidden=true;
+  // The stored pose is in the pixels of the frame it was measured on; the canvas is now the
+  // size of the saved image. Scale it across, and refuse the redraw when the run predates
+  // pw/ph — guessing a scale would draw the skeleton somewhere plausible but wrong.
+  const posedFor=side=>{
+    if(!side||!side.P||!side.pw) return null;
+    const s=cv.width/side.pw, P={};
+    for(const k in side.P) P[k]={...side.P[k], x:side.P[k].x*s, y:side.P[k].y*s};
+    return P;
+  };
   const rebuildShots=()=>{
     shotPhoto=snapCanvas();
-    // entries saved before the pose was stored have no P, so there is nothing to redraw
-    if(e.side&&e.side.P){ drawSkeletonPlate(e.side.P,e.side.G,e.side.R); shotSkel=snapCanvas();
-      showShot("photo"); $("#shotsel").hidden=false; }
+    const P=posedFor(e.side);
+    shotSkel = P ? (drawSkeletonPlate(P,e.side.G,e.side.R), snapCanvas()) : null;
+    showShot("photo");                    // the frame itself always comes back
+    $("#shotsel").hidden = !shotSkel;     // the toggle only when there's a skeleton to show
   };
   if(e.thumb){ const img=new Image();
     img.onload=()=>{ cv.width=img.width; cv.height=img.height; ctx.drawImage(img,0,0); rebuildShots(); };
