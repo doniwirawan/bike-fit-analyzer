@@ -629,6 +629,7 @@ const I18N = {
   "err.decode":{en:"Couldn't read that video. Try a different clip or format (MP4, MOV, or WebM).",id:"Videonya tidak bisa dibaca. Coba klip lain atau format lain (MP4, MOV, atau WebM)."},
   "err.track":{en:"Couldn't track your body clearly. Re-film side-on, well-lit, with your whole body in frame.",id:"Tubuhmu susah dilacak. Rekam ulang dari samping, cahaya cukup, seluruh badan masuk frame."},
   "err.nostrokes":{en:"No clear pedal strokes found. Make sure you're actually pedaling and filmed side-on, then try again.",id:"Tidak ada kayuhan yang jelas. Pastikan kamu benar-benar mengayuh dan direkam dari samping, lalu coba lagi."},
+  "err.notFrontal":{en:"This clip looks side-on, not front or rear — the hips stay in line with each other the whole way through. Switch to Side, or re-film facing the camera.",id:"Klip ini kelihatannya dari samping, bukan depan atau belakang — posisi kedua pinggul sejajar terus. Ganti ke Samping, atau rekam ulang menghadap kamera."},
   "err.trackFront":{en:"Couldn't track your body clearly. Re-film square to the camera (front or rear), well-lit, whole body in frame.",id:"Tubuhmu susah dilacak. Rekam ulang lurus ke kamera (depan atau belakang), cahaya cukup, seluruh badan masuk frame."},
   "rec.record":{en:"Record",id:"Rekam"}, "rec.stop":{en:"Stop",id:"Berhenti"},
   "word.strokes":{en:"pedal strokes",id:"kayuhan"}, "word.frames":{en:"frames",id:"frame"},
@@ -1404,6 +1405,11 @@ function frontalMetrics(lm){
     L: ok(hL,kL,aL)?leg(hL,kL,aL):null,
     R: ok(hR,kR,aR)?leg(hR,kR,aR):null,
     hipTilt: ok(hL,hR)?deg(Math.atan2(hR.y-hL.y,hR.x-hL.x)):NaN,
+    // Seen from the front or the back the two hips are well apart across the frame; seen
+    // side-on they sit almost on top of each other, and then the tilt between them is just
+    // noise swinging through ±180°. Carry the separation so the run can refuse the clip
+    // rather than confidently reporting a nonsense pelvic rock.
+    hipSpan: ok(hL,hR)?Math.abs(hR.x-hL.x):NaN,
     P:{hL,hR,kL,kR,aL,aR},
   };
 }
@@ -1421,6 +1427,11 @@ function finishFrontal(){
   const legStat=s=>{ const v=F.map(f=>f[s]).filter(Boolean).map(x=>x.medialSign*x.fppa);
     if(v.length<3) return null; const q=[...v].sort((a,b)=>a-b);
     return { peak:q[Math.floor(q.length*0.9)], med:median(v) }; };
+  // Refuse a side-on clip that was submitted as front or rear. Under 4% of the frame width
+  // between the hips is nobody's frontal view — it's a rider seen from the side, and every
+  // frontal number from it would be meaningless.
+  const spans=F.map(f=>f.hipSpan).filter(x=>!isNaN(x));
+  if(spans.length>=5 && median(spans) < 0.04*cv.width){ fail(t('err.notFrontal')); return; }
   const L=legStat("L"), R=legStat("R");
   // NB: this local was once named `t`, which shadowed the i18n t() for the whole function
   // (TDZ) — so the fail(t('err.trackFront')) path above threw instead of showing the error.

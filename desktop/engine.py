@@ -83,6 +83,7 @@ def _pose_pass(src, progress):
         raise RuntimeError("Could not open that video. Try MP4, MOV or WebM.")
     fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
     total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) or 0
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     stride = max(1, int(round(fps / TARGET_FPS)))
     expected = (total // stride) if total else 0
 
@@ -121,7 +122,7 @@ def _pose_pass(src, progress):
 
     subject = max(seen_conf, key=seen_conf.get)
     kps = [f.get(subject) for f in per_frame]
-    return kps, source_frames, fps / stride, device
+    return kps, source_frames, fps / stride, width, device
 
 
 def _frame_at(src, frame_no):
@@ -271,16 +272,28 @@ def _frontal_frame(kp):
         "R": leg(p["hR"], p["kR"], p["aR"]) if seen("hR", "kR", "aR") else None,
         "hipTilt": (float(np.degrees(np.arctan2(p["hR"][1] - p["hL"][1], p["hR"][0] - p["hL"][0])))
                     if seen("hL", "hR") else np.nan),
+        # Seen from the front or back the hips are well apart across the frame; seen side-on
+        # they sit almost on top of each other and the tilt between them is noise swinging
+        # through +/-180 degrees. Carried so the run can refuse the clip.
+        "hipSpan": abs(p["hR"][0] - p["hL"][0]) if seen("hL", "hR") else np.nan,
         "P": {k: {"x": float(p[k][0]), "y": float(p[k][1])} for k in FRONTAL_IDS},
     }
     return out
 
 
-def analyze_frontal(src, kps, source_frames, view, device):
+def analyze_frontal(src, kps, source_frames, view, width, device):
     frames = [_frontal_frame(kp) for kp in kps if kp is not None]
     if len(frames) < 5:
         raise RuntimeError("Couldn't track your body clearly. Re-film square to the camera, "
                            "well lit, whole body in frame.")
+
+    # Same 4%-of-frame-width rule as the browser build: below that the hips are in line with
+    # each other, which is a side-on clip, and every frontal number from it is meaningless.
+    spans = [f["hipSpan"] for f in frames if not np.isnan(f["hipSpan"])]
+    if len(spans) >= 5 and float(np.median(spans)) < 0.04 * width:
+        raise RuntimeError("This clip looks side-on, not front or rear — the hips stay in line "
+                           "with each other the whole way through. Switch to Side, or re-film "
+                           "facing the camera.")
 
     def leg_stat(side):
         vals = [f[side]["medialSign"] * f[side]["fppa"] for f in frames if f[side]]
@@ -331,8 +344,8 @@ def analyze(video_path, view="side", progress=lambda stage, pct: None):
     if not src.exists():
         raise RuntimeError(f"Video not found: {src}")
 
-    kps, source_frames, eff_fps, device = _pose_pass(src, progress)
+    kps, source_frames, eff_fps, width, device = _pose_pass(src, progress)
     progress("pose", 100)
     if view == "side":
         return analyze_side(src, kps, source_frames, eff_fps, device)
-    return analyze_frontal(src, kps, source_frames, view, device)
+    return analyze_frontal(src, kps, source_frames, view, width, device)
