@@ -327,11 +327,6 @@
         </div>
         <div class="hint" style="margin-top:8px;color:var(--mut);font-size:.8rem" data-i18n="cam.hint">Point the camera square to your side, ~hip height. Auto-stops at 30s.</div>
       </div>
-      <!-- Skeleton-only is the shareable version: same numbers, no picture of your body. -->
-      <div class="viewsel" id="shotsel" hidden>
-        <button class="active" data-shot="photo" data-i18n="shot.photo">Photo + skeleton</button>
-        <button data-shot="skeleton" data-i18n="shot.skeleton">Skeleton only</button>
-      </div>
       <div id="stage"><canvas id="cv"></canvas></div>
       <video id="vid" playsinline muted></video>
       <div id="bar"><div id="fill"></div></div>
@@ -358,7 +353,7 @@
 
       <div id="example">
         <div class="badge" style="color:var(--amber);border-color:color-mix(in srgb,var(--amber) 45%,var(--line))" data-i18n="ex.badge">Sample — not your result</div>
-        <p class="lead" style="margin:-4px 0 14px" data-i18n="ex.lead">Here's what a finished analysis looks like. Your own numbers replace this once you add a clip on the left.</p>
+        <p class="lead" style="margin:-4px 0 14px" data-i18n="ex.lead">What a finished analysis looks like. Add a clip in the Analysis tab to see your own.</p>
         <!-- self-contained illustrative figure (no external assets), framed like the app window -->
         <div class="mock">
           <div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">bikefit.doniwirawan.xyz/app</div></div>
@@ -438,13 +433,20 @@
         <div class="cards" id="excards"></div>
         <div class="foot" style="margin-top:10px" data-i18n="ex.hip">Hip at top of stroke: 96° (reference 85–110°, informational — depends on flexibility &amp; reach).</div>
         <ul class="fixes"><li data-i18n="ex.fix">Elbow 13° → arms a touch straight; soften them slightly for comfort.</li></ul>
-        <div class="foot" data-i18n="ex.sample">This is a sample. Drop your own clip on the left to get your real numbers.</div>
       </div>
 
       <div id="results" hidden>
         <div class="badge" style="color:var(--accent);background:var(--soft)" data-i18n="res.badge">Your result</div>
         <div class="verdict" id="verdict"></div>
         <div class="warn" id="viewwarn" hidden><span class="i">&#9888;</span><span data-i18n="res.viewwarn"><b>This clip doesn't look square-on.</b> Off-axis footage stretches or squashes these angles — especially reach. Re-film with the camera directly beside you (90° to the bike, at hip height) for reliable numbers.</span></div>
+        <!-- The graded frame sits with the numbers: this is the tab you land on after a run,
+             and it's where the sample figure was. Skeleton-only is the shareable version —
+             same numbers, no picture of your body. -->
+        <div class="viewsel" id="shotsel" hidden>
+          <button class="active" data-shot="photo" data-i18n="shot.photo">Photo + skeleton</button>
+          <button data-shot="skeleton" data-i18n="shot.skeleton">Skeleton only</button>
+        </div>
+        <img id="resultshot" class="demoimg" hidden alt="">
         <div class="cards" id="cards"></div>
         <div class="foot" id="hipinfo" style="margin-top:10px"></div>
         <h4 style="margin:16px 0 4px" data-i18n="res.dothis">Do this</h4>
@@ -562,13 +564,12 @@ const I18N = {
   "cam.hint":{en:"Point the camera square to your side, ~hip height. Auto-stops at 30s.",id:"Arahkan kamera lurus ke samping tubuh, kira-kira setinggi pinggul. Otomatis berhenti di 30 detik."},
   "result.h2":{en:"2 · Your result",id:"2 · Hasilmu"},
   "ex.badge":{en:"Sample — not your result",id:"Contoh — bukan hasilmu"},
-  "ex.lead":{en:"Here's what a finished analysis looks like. Your own numbers replace this once you add a clip on the left.",id:"Tampilan hasilmu nanti kurang lebih seperti ini. Angka aslimu muncul begitu kamu masukkan klip di sebelah kiri."},
+  "ex.lead":{en:"What a finished analysis looks like. Add a clip in the Analysis tab to see your own.",id:"Contoh tampilan hasil analisis. Masukkan klipmu di tab Analisis buat lihat angka aslimu."},
   "ex.verdict":{en:"Minor tweaks · 5 pedal strokes",id:"Perlu sedikit tweak · 5 kayuhan"},
   "ex.knee":{en:"Knee at bottom",id:"Lutut di bawah"}, "ex.torso":{en:"Torso from horizontal",id:"Torso dari horizontal"},
   "ex.elbow":{en:"Elbow bend",id:"Tekukan siku"}, "ex.shoulder":{en:"Shoulder (reach)",id:"Bahu (jangkauan)"},
   "ex.hip":{en:"Hip at top of stroke: 96° (reference 85–110°, informational — depends on flexibility & reach).",id:"Pinggul di titik teratas kayuhan: 96° (acuan 85–110°, sekadar info — tergantung kelenturan dan jangkauan)."},
   "ex.fix":{en:"Elbow 13° → arms a touch straight; soften them slightly for comfort.",id:"Siku 13° → lengan agak lurus. Tekuk sedikit biar lebih nyaman."},
-  "ex.sample":{en:"This is a sample. Drop your own clip on the left to get your real numbers.",id:"Ini cuma contoh. Masukkan klipmu di kiri untuk lihat angka aslimu."},
   "res.badge":{en:"Your result",id:"Hasilmu"},
   "res.viewwarn":{en:'<b>This clip doesn\'t look square-on.</b> Off-axis footage stretches or squashes these angles — especially reach. Re-film with the camera directly beside you (90° to the bike, at hip height) for reliable numbers.',id:'<b>Klip ini kelihatannya tidak lurus dari samping.</b> Kalau kamera miring, sudutnya jadi ketarik atau kependekan — apalagi jangkauan. Rekam ulang dengan kamera pas di sampingmu (90° ke sepeda, setinggi pinggul) biar angkanya akurat.'},
   "res.dothis":{en:"Do this",id:"Yang perlu dilakukan"},
@@ -1207,11 +1208,21 @@ function drawSkeletonPlate(P,G,R){
   ctx.fillStyle="#0f1520"; ctx.fillRect(0,0,cv.width,cv.height);
   drawSkeleton(P,G,R);
 }
+// The report tab shows the same frame as a plain <img> — the canvas itself stays in the
+// analysis panel, and only one panel is on screen at a time. Downscaled first so a 4K clip
+// doesn't become a multi-megabyte data URL every time the toggle is clicked.
+const shotURL=src=>{ const c=document.createElement("canvas"), w=Math.min(src.width,1200);
+  c.width=w; c.height=Math.round(src.height*w/src.width);
+  c.getContext("2d").drawImage(src,0,0,c.width,c.height);
+  return c.toDataURL("image/jpeg",0.9); };
+
 function showShot(which){
   const src = which==="skeleton" ? shotSkel : shotPhoto;
   if(!src) return;
   cv.width=src.width; cv.height=src.height;        // setting width also clears the canvas
   ctx.drawImage(src,0,0);
+  const img=$("#resultshot");
+  img.src=shotURL(src); img.alt=t(which==="skeleton"?'shot.skeleton':'shot.photo'); img.hidden=false;
   document.querySelectorAll("#shotsel button")
     .forEach(b=>b.classList.toggle("active", b.dataset.shot===which));
 }
@@ -1545,7 +1556,7 @@ function histOpen(id){
   viewMode=e.view;
   document.querySelectorAll(".viewsel button").forEach(b=>b.classList.toggle("active",b.dataset.view===e.view));
   updateLeads();
-  shotPhoto=shotSkel=null; $("#shotsel").hidden=true;
+  shotPhoto=shotSkel=null; $("#shotsel").hidden=true; $("#resultshot").hidden=true;
   const rebuildShots=()=>{
     shotPhoto=snapCanvas();
     // entries saved before the pose was stored have no P, so there is nothing to redraw

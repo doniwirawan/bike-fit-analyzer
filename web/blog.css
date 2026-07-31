@@ -15,7 +15,8 @@
 /* --- listing --- */
 .lead{font-size:1.06rem;color:var(--mut);margin:0 0 34px}
 .postlist{display:grid;gap:14px;margin:0 0 10px;padding:0;list-style:none}
-.postlist a.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;
+.postlist a.card{display:flex;gap:16px;align-items:flex-start;
+  background:var(--card);border:1px solid var(--line);border-radius:12px;
   padding:18px 20px;text-decoration:none;color:inherit;
   transition:border-color .15s ease,transform .15s ease}
 .postlist a.card:hover,.postlist a.card:focus-visible{border-color:var(--accent);transform:translateY(-2px)}
@@ -23,6 +24,15 @@
 .postlist p{margin:0;color:var(--mut);font-size:.92rem}
 .postlist .when{display:block;font-family:var(--mono);font-size:.66rem;letter-spacing:.07em;
   text-transform:uppercase;color:var(--mut);margin-bottom:8px}
+/* thumbnail: line art on a tinted plate, so it follows the light/dark theme and needs no assets */
+.postlist .thumb{width:76px;height:76px;flex:none;border-radius:10px;background:var(--soft);
+  border:1px solid var(--line);color:var(--accent);display:flex;align-items:center;justify-content:center}
+.postlist .thumb svg{width:34px;height:34px}
+.postlist .txt{min-width:0}
+@media(max-width:520px){
+  .postlist .thumb{width:54px;height:54px}
+  .postlist .thumb svg{width:26px;height:26px}
+}
 
 /* --- prose inside a post --- */
 .post h2{font-size:1.22rem;margin:36px 0 10px;letter-spacing:-.01em}

@@ -66,37 +66,37 @@
         {
           "@type": "Question",
           "name": "Is my video uploaded anywhere?",
-          "acceptedAnswer": { "@type": "Answer", "text": "No. All the pose detection and calculation happen directly in your browser, on your own device. Your video is never uploaded to a server, no account is needed, and no data is sent while the analysis runs." }
+          "acceptedAnswer": { "@type": "Answer", "text": "No. Pose detection and every calculation run in your browser. Nothing is uploaded, and no account is needed." }
         },
         {
           "@type": "Question",
           "name": "Which bikes does it work with?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Almost any bike — road, mountain (MTB), gravel, TT/triathlon, hybrid, commuter, or e-bike. What gets analyzed is your body position, not the bike. The target angles follow the bike type you select, though very aggressive or very upright positions still have limits when they're only seen through 2D video." }
+          "acceptedAnswer": { "@type": "Answer", "text": "Almost any — road, MTB, gravel, TT/triathlon, hybrid, commuter or e-bike. It measures your body, not the bike, and the target angles follow the bike type you pick." }
         },
         {
           "@type": "Question",
           "name": "How accurate is it?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Accurate enough to find the obvious problems, like a saddle that's too high or too low. The knee angle is the most consistent measurement, while reach is the least precise. This is still 2D analysis and it can't replace a professional 3D bike fitting." }
+          "acceptedAnswer": { "@type": "Answer", "text": "Enough to catch the obvious problems, like a saddle that's too high or too low. Knee is the most consistent reading, reach the least. It's 2D, so it can't replace a professional 3D fit." }
         },
         {
           "@type": "Question",
           "name": "What kind of clip should I film?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Film about 20–30 seconds with the camera square to your side and at hip height. Pedal as you normally would, at a steady rhythm. With a turbo trainer and enough light, the result is usually more consistent." }
+          "acceptedAnswer": { "@type": "Answer", "text": "20–30 seconds, camera square to your side at hip height, pedaling as you normally would. A trainer and decent light make it more consistent." }
         },
         {
           "@type": "Question",
           "name": "Does it work on my phone?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Yes. The analyzer runs in modern browsers on both phones and computers. Devices that support WebGPU will process the video faster, while older ones fall back to the CPU. That can be a little slower, but it still works." }
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes, in any modern browser. Devices with WebGPU are faster; older ones fall back to the CPU and still work, just slower." }
         },
         {
           "@type": "Question",
           "name": "Is it free? Can I see the code?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Yes, it is completely free to use. The full source is published so you can see exactly how it works and check the privacy claims for yourself. It is source-available rather than open source: you are welcome to read it, learn from it and use the tool, but not to build a competing product from it." }
+          "acceptedAnswer": { "@type": "Answer", "text": "Free, and the full source is published so you can check the privacy claims yourself. It's source-available, not open source: read it, learn from it, use the tool — just don't build a competing product from it." }
         },
         {
           "@type": "Question",
           "name": "Can it replace a professional bike fit?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Not yet. This tool is built to help you run a basic check and find the clearly visible problems, before you adjust anything yourself or go to a bike fitter. For a genuinely precise result — especially if you have pain or specific fitting needs — a professional session is still the better option." }
+          "acceptedAnswer": { "@type": "Answer", "text": "Not yet. It's a basic check to run before you adjust anything yourself or book a fitter. If you have pain or specific fitting needs, see a professional." }
         }
       ]
     }
@@ -360,7 +360,7 @@
     <section class="hero">
       <div class="hero-copy">
         <h1 data-i18n="hero.h1">Grade your bike fit — <span class="g">green</span>, <span class="a">amber</span>, <span class="r">red</span>.</h1>
-        <p class="sub" data-i18n="hero.sub">Film yourself pedaling for 20–30 seconds. The analyzer measures the angles a bike fitter measures, and tells you which are already right. Runs in your browser — your video is never uploaded.</p>
+        <p class="sub" data-i18n="hero.sub">Film 20–30 seconds of pedaling. Get the angles a bike fitter measures, graded green, amber or red. Runs in your browser — nothing is uploaded.</p>
         <div class="cta">
           <a class="btn primary" href="app.html">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
@@ -465,19 +465,19 @@
         <span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m16 10 4.4-2.6a1 1 0 0 1 1.6.9v7.4a1 1 0 0 1-1.6.9L16 14"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg></span>
         <div class="step" data-i18n="step1.label">Step 1</div>
         <h3 data-i18n="step1.h3">Film your ride</h3>
-        <p data-i18n="step1.p">Put the camera square to your side, roughly at hip height. Pedal at a steady rhythm for about 20–30 seconds. If you have a turbo trainer, the result is usually more consistent.</p>
+        <p data-i18n="step1.p">Camera square to your side, about hip height. Pedal steadily for 20–30 seconds — a turbo trainer gives the most consistent result.</p>
       </div>
       <div class="mini">
         <span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>
         <div class="step" data-i18n="step2.label">Step 2</div>
         <h3 data-i18n="step2.h3">AI tracks your joints</h3>
-        <p data-i18n="step2.p">The AI detects your shoulder, elbow, hip, knee, ankle and other body points in every frame. It automatically picks the side of your body that's most visible and ignores frames that aren't clear enough.</p>
+        <p data-i18n="step2.p">Shoulder, elbow, hip, knee and ankle are found in every frame. It picks the side facing the camera and skips frames that aren't clear enough.</p>
       </div>
       <div class="mini">
         <span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
         <div class="step" data-i18n="step3.label">Step 3</div>
         <h3 data-i18n="step3.h3">Get graded advice</h3>
-        <p data-i18n="step3.p">The analyzer then measures the key angles, compares them against the ranges used in bike fitting, and gives you advice in plain language.</p>
+        <p data-i18n="step3.p">Every angle is compared against the ranges used in bike fitting, then explained in plain language.</p>
       </div>
     </div>
     <div class="legend" style="margin-top:18px">
@@ -495,7 +495,7 @@
     <div class="idealgrid">
       <div class="ideal">
         <div class="top"><h3 data-i18n="ideal.knee.h">Knee at the bottom</h3><span class="goal">30–40°</span></div>
-        <p data-i18n="ideal.knee.p">At the bottom of the stroke your knee should still be slightly bent. Too much bend usually means the saddle is too low. Almost fully straight means it's probably too high, which is when the hips start rocking and the Achilles takes more load.</p>
+        <p data-i18n="ideal.knee.p">Still slightly bent at the bottom of the stroke. Too much bend means the saddle is low; nearly straight means it's high — that's when the hips start rocking.</p>
       </div>
       <div class="ideal">
         <div class="top"><h3 data-i18n="ideal.torso.h">Back / torso angle</h3><span class="goal">40–50°</span></div>
@@ -503,7 +503,7 @@
       </div>
       <div class="ideal">
         <div class="top"><h3 data-i18n="ideal.elbow.h">Elbow bend</h3><span class="goal">15–30°</span></div>
-        <p data-i18n="ideal.elbow.p">Your elbows shouldn't be locked straight. A slight bend absorbs vibration, makes the bars easier to control, and takes pressure off your hands.</p>
+        <p data-i18n="ideal.elbow.p">Never locked straight. A slight bend absorbs vibration and takes pressure off your hands.</p>
       </div>
       <div class="ideal">
         <div class="top"><h3 data-i18n="ideal.reach.h">Reach to the bars</h3><span class="goal">80–95°</span></div>
@@ -511,7 +511,7 @@
       </div>
       <div class="ideal">
         <div class="top"><h3 data-i18n="ideal.hips.h">Stable hips</h3><span class="goal info" data-i18n="ideal.hips.g">from the rear</span></div>
-        <p data-i18n="ideal.hips.p">A pelvis that stays level and doesn't rock side to side. Rocking usually means the saddle is a touch too high.</p>
+        <p data-i18n="ideal.hips.p">Level, with no side-to-side rocking. Rocking usually means the saddle is a touch too high.</p>
       </div>
       <div class="ideal">
         <div class="top"><h3 data-i18n="ideal.knees.h">Knee tracking</h3><span class="goal info" data-i18n="ideal.knees.g">from the front</span></div>
@@ -520,20 +520,20 @@
     </div>
   </section>
 
-    <p class="sec-lead" style="margin-top:20px" data-i18n="ideal.more">Want the detail — what is measured from each view, how the bike type shifts the targets, and what does the tracking? <a href="/blog/how-it-works">How the analyzer works</a>.</p>
+    <p class="sec-lead" style="margin-top:20px" data-i18n="ideal.more">Every measurement in detail, view by view: <a href="/blog/how-it-works">how the analyzer works</a>.</p>
 
   <!-- ============ FAQ ============ -->
   <section class="block">
     <p class="eyebrow" data-i18n="faq.eyebrow">FAQ</p>
     <h2 class="sec" data-i18n="faq.h2">Frequently asked questions</h2>
     <div class="faq">
-      <details><summary data-i18n="faq.q1">Is my video uploaded anywhere?</summary><p data-i18n="faq.a1">No. All the pose detection and calculation happen directly in your browser, on your own device. Your video is never uploaded to a server, no account is needed, and no data is sent while the analysis runs.</p></details>
-      <details><summary data-i18n="faq.q2">Which bikes does it work with?</summary><p data-i18n="faq.a2">Almost any bike — road, mountain (MTB), gravel, TT/triathlon, hybrid, commuter, or e-bike. What gets analyzed is your body position, not the bike. The target angles follow the bike type you select, though very aggressive or very upright positions still have limits when they're only seen through 2D video.</p></details>
-      <details><summary data-i18n="faq.q3">How accurate is it?</summary><p data-i18n="faq.a3">Accurate enough to find the obvious problems, like a saddle that's too high or too low. The knee angle is the most consistent measurement, while reach is the least precise. This is still 2D analysis and it can't replace a professional 3D bike fitting.</p></details>
-      <details><summary data-i18n="faq.q4">What kind of clip should I film?</summary><p data-i18n="faq.a4">Film about 20–30 seconds with the camera square to your side and at hip height. Pedal as you normally would, at a steady rhythm. With a turbo trainer and enough light, the result is usually more consistent.</p></details>
-      <details><summary data-i18n="faq.q5">Does it work on my phone?</summary><p data-i18n="faq.a5">Yes. The analyzer runs in modern browsers on both phones and computers. Devices that support WebGPU will process the video faster, while older ones fall back to the CPU. That can be a little slower, but it still works.</p></details>
-      <details><summary data-i18n="faq.q6">Is it free? Can I see the code?</summary><p data-i18n="faq.a6">Yes, it is completely free to use. The full source is published so you can see exactly how it works and check the privacy claims for yourself — <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">read the code on GitHub</a>. It is source-available rather than open source: you are welcome to read it, learn from it and use the tool, but not to build a competing product from it.</p></details>
-      <details><summary data-i18n="faq.q7">Can it replace a professional bike fit?</summary><p data-i18n="faq.a7">Not yet. This tool is built to help you run a basic check and find the clearly visible problems, before you adjust anything yourself or go to a bike fitter. For a genuinely precise result — especially if you have pain or specific fitting needs — a professional session is still the better option.</p></details>
+      <details><summary data-i18n="faq.q1">Is my video uploaded anywhere?</summary><p data-i18n="faq.a1">No. Pose detection and every calculation run in your browser. Nothing is uploaded, and no account is needed.</p></details>
+      <details><summary data-i18n="faq.q2">Which bikes does it work with?</summary><p data-i18n="faq.a2">Almost any — road, MTB, gravel, TT/triathlon, hybrid, commuter or e-bike. It measures your body, not the bike, and the target angles follow the bike type you pick.</p></details>
+      <details><summary data-i18n="faq.q3">How accurate is it?</summary><p data-i18n="faq.a3">Enough to catch the obvious problems, like a saddle that's too high or too low. Knee is the most consistent reading, reach the least. It's 2D, so it can't replace a professional 3D fit.</p></details>
+      <details><summary data-i18n="faq.q4">What kind of clip should I film?</summary><p data-i18n="faq.a4">20–30 seconds, camera square to your side at hip height, pedaling as you normally would. A trainer and decent light make it more consistent.</p></details>
+      <details><summary data-i18n="faq.q5">Does it work on my phone?</summary><p data-i18n="faq.a5">Yes, in any modern browser. Devices with WebGPU are faster; older ones fall back to the CPU and still work, just slower.</p></details>
+      <details><summary data-i18n="faq.q6">Is it free? Can I see the code?</summary><p data-i18n="faq.a6">Free, and the full source is published so you can check the privacy claims yourself — <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">read the code on GitHub</a>. It's source-available, not open source: read it, learn from it, use the tool — just don't build a competing product from it.</p></details>
+      <details><summary data-i18n="faq.q7">Can it replace a professional bike fit?</summary><p data-i18n="faq.a7">Not yet. It's a basic check to run before you adjust anything yourself or book a fitter. If you have pain or specific fitting needs, see a professional.</p></details>
     </div>
   </section>
 
@@ -628,7 +628,7 @@
     "doc.desc":{en:"Drop a clip of yourself pedaling and get your bike-fit angles graded green, amber or red — right in your browser. Any bike, on-device, free.",id:"Masukkan klip saat kamu mengayuh, sudut bike fit-mu langsung dinilai hijau, kuning, atau merah di browser. Sepeda apa pun, gratis, tanpa upload."},
 
     "hero.h1":{en:'Grade your bike fit — <span class="g">green</span>, <span class="a">amber</span>, <span class="r">red</span>.',id:'Cek apakah bike fit-mu sudah pas.'},
-    "hero.sub":{en:"Film yourself pedaling for 20–30 seconds. The analyzer measures the angles a bike fitter measures, and tells you which are already right. Runs in your browser — your video is never uploaded.",id:"Rekam kamu mengayuh 20–30 detik. Analyzer mengukur sudut yang sama seperti bike fitter, lalu memberi tahu mana yang sudah pas. Jalan di browser — videomu tidak diunggah."},
+    "hero.sub":{en:"Film 20–30 seconds of pedaling. Get the angles a bike fitter measures, graded green, amber or red. Runs in your browser — nothing is uploaded.",id:"Rekam 20–30 detik kamu mengayuh. Sudut yang biasa diukur bike fitter langsung dinilai hijau, kuning, atau merah. Jalan di browser — nggak ada yang diunggah."},
     "hero.launch":{en:"Launch the analyzer",id:"Buka analyzer"},
     "hero.apk":{en:"Android app",id:"Aplikasi Android"},
     "apk.note":{en:"The Android app analyses on your phone and works offline — it keeps going in the background and notifies you when it's done.",id:"Aplikasi Android menganalisis langsung di HP dan jalan offline — prosesnya lanjut di latar belakang dan memberi notifikasi saat selesai."},
@@ -648,13 +648,13 @@
     "how.lead":{en:"Google's MediaPipe Pose does the tracking, entirely on your own device.",id:"Pelacakannya pakai MediaPipe Pose dari Google, semuanya di perangkatmu sendiri."},
     "step1.label":{en:"Step 1",id:"Langkah 1"},
     "step1.h3":{en:"Film your ride",id:"Rekam saat mengayuh"},
-    "step1.p":{en:"Put the camera square to your side, roughly at hip height. Pedal at a steady rhythm for about 20–30 seconds. If you have a turbo trainer, the result is usually more consistent.",id:"Letakkan kamera tepat dari samping, kira-kira setinggi pinggul. Kayuh dengan ritme yang stabil selama sekitar 20–30 detik. Kalau punya turbo trainer, hasilnya biasanya lebih konsisten."},
+    "step1.p":{en:"Camera square to your side, about hip height. Pedal steadily for 20–30 seconds — a turbo trainer gives the most consistent result.",id:"Kamera tepat dari samping, kira-kira setinggi pinggul. Kayuh stabil 20–30 detik — pakai turbo trainer hasilnya paling konsisten."},
     "step2.label":{en:"Step 2",id:"Langkah 2"},
     "step2.h3":{en:"AI tracks your joints",id:"AI melacak sendimu"},
-    "step2.p":{en:"The AI detects your shoulder, elbow, hip, knee, ankle and other body points in every frame. It automatically picks the side of your body that's most visible and ignores frames that aren't clear enough.",id:"AI akan mendeteksi posisi bahu, siku, pinggul, lutut, pergelangan kaki, dan titik tubuh lainnya di setiap frame. Sistem otomatis memilih sisi tubuh yang paling terlihat dan mengabaikan frame yang kualitasnya kurang baik."},
+    "step2.p":{en:"Shoulder, elbow, hip, knee and ankle are found in every frame. It picks the side facing the camera and skips frames that aren't clear enough.",id:"Bahu, siku, pinggul, lutut, dan pergelangan kaki dibaca di tiap frame. Sisi yang menghadap kamera dipilih otomatis, frame yang kurang jelas dilewati."},
     "step3.label":{en:"Step 3",id:"Langkah 3"},
     "step3.h3":{en:"Get graded advice",id:"Dapat nilai dan saran"},
-    "step3.p":{en:"The analyzer then measures the key angles, compares them against the ranges used in bike fitting, and gives you advice in plain language.",id:"Setelah itu analyzer menghitung sudut-sudut penting, membandingkannya dengan rentang yang umum dipakai dalam bike fitting, lalu memberikan saran yang mudah dipahami."},
+    "step3.p":{en:"Every angle is compared against the ranges used in bike fitting, then explained in plain language.",id:"Tiap sudut dibandingkan dengan rentang yang dipakai di bike fitting, lalu dijelaskan pakai bahasa sederhana."},
     "legend.dialed":{en:"dialed",id:"pas"},
     "legend.borderline":{en:"borderline",id:"batas"},
     "legend.fixit":{en:"fix it",id:"perbaiki"},
@@ -667,16 +667,16 @@
     "ideal.h2":{en:"What a good bike fit looks like",id:"Seperti apa bike fit yang bagus"},
     "ideal.lead":{en:"A good fit is not only about power — it is what keeps you comfortable and in control.",id:"Bike fit yang bagus bukan cuma soal tenaga — itu yang bikin kamu nyaman dan tetap terkontrol."},
     "ideal.knee.h":{en:"Knee at the bottom",id:"Lutut di titik terbawah"},
-    "ideal.knee.p":{en:"At the bottom of the stroke your knee should still be slightly bent. Too much bend usually means the saddle is too low. Almost fully straight means it's probably too high, which is when the hips start rocking and the Achilles takes more load.",id:"Di titik terbawah kayuhan, lutut sebaiknya masih sedikit menekuk. Kalau terlalu menekuk biasanya sadel terlalu rendah. Kalau hampir lurus sepenuhnya, sadel kemungkinan terlalu tinggi sehingga panggul mulai bergoyang dan beban pada Achilles meningkat."},
+    "ideal.knee.p":{en:"Still slightly bent at the bottom of the stroke. Too much bend means the saddle is low; nearly straight means it's high — that's when the hips start rocking.",id:"Di titik terbawah kayuhan lutut harusnya masih sedikit menekuk. Kalau terlalu menekuk berarti sadel kerendahan; kalau hampir lurus berarti kelewat tinggi — di situ panggul mulai goyang."},
     "ideal.torso.h":{en:"Back / torso angle",id:"Sudut punggung / torso"},
     "ideal.torso.p":{en:"Low enough to be efficient and aero, but high enough to breathe and stay comfortable for the length of your ride.",id:"Cukup rendah biar efisien dan aero, tapi cukup tinggi biar napas lega dan badan tetap nyaman sepanjang perjalanan."},
     "ideal.elbow.h":{en:"Elbow bend",id:"Tekukan siku"},
-    "ideal.elbow.p":{en:"Your elbows shouldn't be locked straight. A slight bend absorbs vibration, makes the bars easier to control, and takes pressure off your hands.",id:"Siku sebaiknya tidak terkunci lurus. Sedikit tekukan membantu meredam getaran, membuat kontrol setang lebih nyaman, dan mengurangi tekanan pada tangan."},
+    "ideal.elbow.p":{en:"Never locked straight. A slight bend absorbs vibration and takes pressure off your hands.",id:"Jangan sampai terkunci lurus. Tekukan sedikit meredam getaran dan mengurangi tekanan di tangan."},
     "ideal.reach.h":{en:"Reach to the bars",id:"Jangkauan ke setang"},
     "ideal.reach.p":{en:"A reach that fits keeps your shoulders relaxed, without feeling stretched out or cramped.",id:"Reach yang pas membuat bahu tetap rileks tanpa terasa terlalu jauh atau terlalu sempit."},
     "ideal.hips.h":{en:"Stable hips",id:"Panggul stabil"},
     "ideal.hips.g":{en:"from the rear",id:"tampak belakang"},
-    "ideal.hips.p":{en:"A pelvis that stays level and doesn't rock side to side. Rocking usually means the saddle is a touch too high.",id:"Panggul tetap rata, tidak goyang kiri-kanan. Kalau goyang, biasanya sadelnya sedikit kelewat tinggi."},
+    "ideal.hips.p":{en:"Level, with no side-to-side rocking. Rocking usually means the saddle is a touch too high.",id:"Rata, tidak goyang kiri-kanan. Kalau goyang, biasanya sadelnya sedikit kelewat tinggi."},
     "ideal.knees.h":{en:"Knee tracking",id:"Jalur lutut"},
     "ideal.knees.g":{en:"from the front",id:"tampak depan"},
     "ideal.knees.p":{en:"Knees driving straight up and down over the pedals, not diving in or bowing out — a cleat and stability cue.",id:"Lutut naik-turun lurus di atas pedal, tidak masuk ke dalam atau membuka keluar — ini petunjuk soal cleat dan stabilitas."},
@@ -779,18 +779,18 @@
     "faq.eyebrow":{en:"FAQ",id:"Tanya jawab"},
     "faq.h2":{en:"Frequently asked questions",id:"Pertanyaan yang sering muncul"},
     "faq.q1":{en:"Is my video uploaded anywhere?",id:"Apakah video saya diupload ke mana-mana?"},
-    "faq.a1":{en:"No. All the pose detection and calculation happen directly in your browser, on your own device. Your video is never uploaded to a server, no account is needed, and no data is sent while the analysis runs.",id:"Tidak. Semua deteksi pose dan perhitungan dilakukan langsung di browser, di perangkatmu sendiri. Videomu tidak pernah diunggah ke server, tidak perlu akun, dan tidak ada data yang dikirim selama proses analisis."},
+    "faq.a1":{en:"No. Pose detection and every calculation run in your browser. Nothing is uploaded, and no account is needed.",id:"Tidak. Deteksi pose dan semua perhitungan jalan di browser-mu. Nggak ada yang diunggah, dan nggak perlu akun."},
     "faq.q2":{en:"Which bikes does it work with?",id:"Cocok untuk sepeda apa saja?"},
-    "faq.a2":{en:"Almost any bike — road, mountain (MTB), gravel, TT/triathlon, hybrid, commuter, or e-bike. What gets analyzed is your body position, not the bike. The target angles follow the bike type you select, though very aggressive or very upright positions still have limits when they're only seen through 2D video.",id:"Hampir semua jenis sepeda bisa dianalisis, termasuk road, MTB, gravel, TT/triathlon, hybrid, sepeda komuter, dan e-bike. Yang dianalisis adalah posisi tubuhmu, bukan sepedanya. Target sudut akan menyesuaikan jenis sepeda yang kamu pilih, meski posisi yang sangat agresif atau sangat tegak tetap punya keterbatasan kalau hanya dilihat dari video 2D."},
+    "faq.a2":{en:"Almost any — road, MTB, gravel, TT/triathlon, hybrid, commuter or e-bike. It measures your body, not the bike, and the target angles follow the bike type you pick.",id:"Hampir semua — road, MTB, gravel, TT/triathlon, hybrid, komuter, atau e-bike. Yang diukur badanmu, bukan sepedanya, dan target sudutnya ikut jenis sepeda yang kamu pilih."},
     "faq.q3":{en:"How accurate is it?",id:"Seberapa akurat?"},
-    "faq.a3":{en:"Accurate enough to find the obvious problems, like a saddle that's too high or too low. The knee angle is the most consistent measurement, while reach is the least precise. This is still 2D analysis and it can't replace a professional 3D bike fitting.",id:"Cukup akurat untuk menemukan masalah yang jelas, seperti sadel terlalu tinggi atau terlalu rendah. Pengukuran sudut lutut adalah yang paling konsisten, sedangkan pengukuran jangkauan memiliki tingkat ketelitian yang lebih rendah. Ini masih analisis 2D dan belum bisa menggantikan bike fitting profesional berbasis 3D."},
+    "faq.a3":{en:"Enough to catch the obvious problems, like a saddle that's too high or too low. Knee is the most consistent reading, reach the least. It's 2D, so it can't replace a professional 3D fit.",id:"Cukup buat menemukan masalah yang jelas, misalnya sadel kelewat tinggi atau kerendahan. Lutut paling konsisten, jangkauan paling lemah. Ini analisis 2D, jadi belum bisa menggantikan bike fit 3D profesional."},
     "faq.q4":{en:"What kind of clip should I film?",id:"Klip seperti apa yang harus saya rekam?"},
-    "faq.a4":{en:"Film about 20–30 seconds with the camera square to your side and at hip height. Pedal as you normally would, at a steady rhythm. With a turbo trainer and enough light, the result is usually more consistent.",id:"Rekam sekitar 20–30 detik dengan kamera tepat dari samping dan setinggi pinggul. Kayuh seperti biasa dengan ritme yang stabil. Kalau memakai turbo trainer dan pencahayaan yang cukup, hasilnya biasanya lebih konsisten."},
+    "faq.a4":{en:"20–30 seconds, camera square to your side at hip height, pedaling as you normally would. A trainer and decent light make it more consistent.",id:"20–30 detik, kamera tepat dari samping setinggi pinggul, kayuh seperti biasa. Pakai trainer dan cahaya yang cukup bikin hasilnya lebih stabil."},
     "faq.q5":{en:"Does it work on my phone?",id:"Apakah jalan di HP saya?"},
-    "faq.a5":{en:"Yes. The analyzer runs in modern browsers on both phones and computers. Devices that support WebGPU will process the video faster, while older ones fall back to the CPU. That can be a little slower, but it still works.",id:"Ya. Analyzer berjalan di browser modern di HP maupun komputer. Perangkat yang mendukung WebGPU akan memproses video lebih cepat, sedangkan perangkat yang lebih lama akan menggunakan CPU. Prosesnya mungkin sedikit lebih lambat, tetapi tetap bisa digunakan."},
+    "faq.a5":{en:"Yes, in any modern browser. Devices with WebGPU are faster; older ones fall back to the CPU and still work, just slower.",id:"Ya, di browser modern mana pun. Perangkat dengan WebGPU lebih cepat; yang lama pakai CPU — tetap jalan, cuma lebih lambat."},
     "faq.q6":{en:"Is it free? Can I see the code?",id:"Apakah gratis? Bisakah saya lihat kodenya?"},
-    "faq.a6":{en:'Yes, it is completely free to use. The full source is published so you can see exactly how it works and check the privacy claims for yourself — <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">read the code on GitHub</a>. It is source-available rather than open source: you are welcome to read it, learn from it and use the tool, but not to build a competing product from it.',id:'Ya, sepenuhnya gratis dipakai. Kodenya dipublikasikan supaya kamu bisa melihat persis cara kerjanya dan memeriksa sendiri klaim privasinya — <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">lihat kodenya di GitHub</a>. Sifatnya source-available, bukan open source: silakan dibaca, dipelajari, dan alatnya dipakai, tapi tidak untuk membuat produk saingan.'},
-    "ideal.more":{en:'Want the detail — what is measured from each view, how the bike type shifts the targets, and what does the tracking? <a href="/blog/how-it-works">How the analyzer works</a>.',id:'Mau lihat detailnya — apa yang diukur dari tiap tampak, bagaimana jenis sepeda menggeser targetnya, dan apa yang melacak posisinya? <a href="/blog/how-it-works">Cara kerja analyzer-nya</a>.'},
+    "faq.a6":{en:'Free, and the full source is published so you can check the privacy claims yourself — <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">read the code on GitHub</a>. It\'s source-available, not open source: read it, learn from it, use the tool — just don\'t build a competing product from it.',id:'Gratis, dan kodenya dipublikasikan supaya kamu bisa cek sendiri klaim privasinya — <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">lihat kodenya di GitHub</a>. Sifatnya source-available, bukan open source: silakan dibaca, dipelajari, dan alatnya dipakai — asal jangan bikin produk saingan.'},
+    "ideal.more":{en:'Every measurement in detail, view by view: <a href="/blog/how-it-works">how the analyzer works</a>.',id:'Detail tiap pengukuran, per tampak: <a href="/blog/how-it-works">cara kerja analyzer-nya</a>.'},
     "nav.guides":{en:"Guides",id:"Panduan"},
     "guides.eyebrow":{en:"Guides",id:"Panduan"},
     "guides.h2":{en:"Read this before you move anything",id:"Baca ini sebelum menggeser apa pun"},
@@ -806,7 +806,7 @@
     "guides.idnote":{en:'The Indonesian versions are at <a href="https://doniwirawan.xyz/blog/bike-fitting-cek-sendiri-dari-video" hreflang="id" target="_blank" rel="noopener">bike fitting dari video</a>, <a href="https://doniwirawan.xyz/blog/tinggi-sadel-sepeda-yang-benar" hreflang="id" target="_blank" rel="noopener">tinggi sadel</a>, <a href="https://doniwirawan.xyz/blog/nyeri-lutut-saat-bersepeda" hreflang="id" target="_blank" rel="noopener">nyeri lutut</a>, and <a href="https://doniwirawan.xyz/blog/sakit-punggung-dan-leher-saat-bersepeda" hreflang="id" target="_blank" rel="noopener">sakit punggung dan leher</a>. <a href="/blog">All guides →</a>',id:'Panduan di atas bahasa Inggris. Versi Indonesianya: <a href="https://doniwirawan.xyz/blog/bike-fitting-cek-sendiri-dari-video" hreflang="id" target="_blank" rel="noopener">bike fitting dari video</a>, <a href="https://doniwirawan.xyz/blog/tinggi-sadel-sepeda-yang-benar" hreflang="id" target="_blank" rel="noopener">tinggi sadel</a>, <a href="https://doniwirawan.xyz/blog/nyeri-lutut-saat-bersepeda" hreflang="id" target="_blank" rel="noopener">nyeri lutut</a>, dan <a href="https://doniwirawan.xyz/blog/sakit-punggung-dan-leher-saat-bersepeda" hreflang="id" target="_blank" rel="noopener">sakit punggung dan leher</a>. <a href="/blog">Semua panduan →</a>'},
 
     "faq.q7":{en:"Can it replace a professional bike fit?",id:"Bisakah ini menggantikan bike fit profesional?"},
-    "faq.a7":{en:"Not yet. This tool is built to help you run a basic check and find the clearly visible problems, before you adjust anything yourself or go to a bike fitter. For a genuinely precise result — especially if you have pain or specific fitting needs — a professional session is still the better option.",id:"Belum. Alat ini dibuat untuk membantu melakukan pengecekan dasar dan menemukan masalah yang cukup jelas sebelum melakukan penyesuaian atau datang ke bike fitter. Untuk hasil yang benar-benar presisi, terutama kalau ada keluhan atau kebutuhan fit yang spesifik, sesi bike fitting profesional tetap menjadi pilihan terbaik."}
+    "faq.a7":{en:"Not yet. It's a basic check to run before you adjust anything yourself or book a fitter. If you have pain or specific fitting needs, see a professional.",id:"Belum. Ini pengecekan dasar sebelum kamu utak-atik sendiri atau datang ke fitter. Kalau ada keluhan atau kebutuhan fit yang spesifik, tetap ke profesional."}
   };
 
   const metaDesc = document.getElementById('metaDesc');
