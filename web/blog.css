@@ -16,7 +16,7 @@
 .lead{font-size:1.06rem;color:var(--mut);margin:0 0 34px}
 .postlist{display:grid;gap:14px;margin:0 0 10px;padding:0;list-style:none}
 .postlist a.card{display:flex;gap:16px;align-items:flex-start;
-  background:var(--card);border:1px solid var(--line);border-radius:12px;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
   padding:18px 20px;text-decoration:none;color:inherit;
   transition:border-color .15s ease,transform .15s ease}
 .postlist a.card:hover,.postlist a.card:focus-visible{border-color:var(--accent);transform:translateY(-2px)}
@@ -25,7 +25,7 @@
 .postlist .when{display:block;font-family:var(--mono);font-size:.66rem;letter-spacing:.07em;
   text-transform:uppercase;color:var(--mut);margin-bottom:8px}
 /* thumbnail: line art on a tinted plate, so it follows the light/dark theme and needs no assets */
-.postlist .thumb{width:76px;height:76px;flex:none;border-radius:10px;background:var(--soft);
+.postlist .thumb{width:76px;height:76px;flex:none;border-radius:var(--radius);background:var(--soft);
   border:1px solid var(--line);color:var(--accent);display:flex;align-items:center;justify-content:center}
 .postlist .thumb svg{width:34px;height:34px}
 .postlist .txt{min-width:0}
@@ -41,7 +41,7 @@
 .post blockquote{margin:20px 0;padding:2px 0 2px 16px;border-left:3px solid var(--accent);
   color:var(--mut)}
 .post figure{margin:22px 0}
-.post figure img{width:100%;border-radius:10px;border:1px solid var(--line);display:block}
+.post figure img{width:100%;border-radius:var(--radius);border:1px solid var(--line);display:block}
 .post figcaption{color:var(--mut);font-size:.8rem;margin-top:8px}
 
 /* angle-target table; scrolls on its own so a phone never scrolls the page sideways */
@@ -53,7 +53,7 @@ table.nums td{padding:8px 10px 8px 0;border-top:1px solid var(--line);vertical-a
 table.nums td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
 
 /* --- call to action at the end of a post --- */
-.cta{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:34px 0 0}
+.cta{background:var(--soft);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin:34px 0 0}
 .cta p{margin:0 0 12px}
 .cta p:last-child{margin:0}
 .btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:600;

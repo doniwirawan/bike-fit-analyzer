@@ -103,25 +103,13 @@
   ]
 }
 </script>
+<link rel="stylesheet" href="open-props.min.css">
+<link rel="stylesheet" href="base.css">
 <style>
-  :root{
-    color-scheme: light dark;
-    --bg:#eceff4; --card:#ffffff; --fg:#0e1620; --mut:#59647a; --line:#dbe1ea;
-    --grid:#eef1f6; --accent:#1f6feb; --accent-ink:#fff; --soft:#e9eff9;
-    --green:#16a34a; --amber:#d97706; --red:#dc2626; --gray:#9aa3b2;
-    --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
-    --shadow:0 1px 2px rgba(16,24,40,.05);
-    --shadow-lg:0 24px 60px -24px rgba(16,24,40,.28),0 2px 8px rgba(16,24,40,.06);
-  }
-  @media (prefers-color-scheme: dark){
-    :root{ --bg:#0b0f16; --card:#111825; --fg:#dfe6f0; --mut:#8b97a8; --line:#1e2734;
-           --grid:#161e29; --accent:#4d8bff; --soft:#152033; --shadow:0 1px 0 rgba(0,0,0,.5);
-           --shadow-lg:0 30px 70px -30px rgba(0,0,0,.75),0 2px 10px rgba(0,0,0,.4); }
-  }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   html,body{max-width:100%;overflow-x:hidden}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif;
+  body{margin:0;font-family:var(--sans);
     background:var(--bg);color:var(--fg);line-height:1.5;overflow-wrap:break-word;-webkit-font-smoothing:antialiased}
   body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
   .wrap{max-width:1140px;margin:0 auto;padding:0 22px}
@@ -165,13 +153,13 @@
   .hero p.sub{font-size:clamp(1rem,1.6vw,1.16rem);color:var(--mut);margin:0;max-width:520px}
   /* one line of proof, directly under the buttons */
   .quote{display:flex;align-items:flex-start;gap:11px;margin-top:24px;padding:13px 15px;max-width:520px;
-    border-radius:12px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+    border-radius:var(--radius);background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
   .quote svg{width:17px;height:17px;color:var(--mut);flex:none;margin-top:2px}
   .quote p{margin:0;font-size:.88rem;color:var(--mut);line-height:1.5}
   .quote a{font-weight:600;text-decoration:none;white-space:nowrap}
   .quote a:hover{text-decoration:underline}
   .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px;align-items:center}
-  .btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:10px;padding:13px 22px;
+  .btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:var(--radius);padding:13px 22px;
     font-weight:600;font-size:.96rem;cursor:pointer;font-family:inherit;text-decoration:none;transition:.15s}
   .btn.primary{background:var(--accent);color:var(--accent-ink);box-shadow:0 8px 20px -8px color-mix(in srgb,var(--accent) 70%,transparent)}
   .btn.primary:hover{filter:brightness(1.06);transform:translateY(-1px)}
@@ -185,7 +173,7 @@
   .chip svg{width:13px;height:13px;color:var(--green)}
 
   /* hero product mock */
-  .mock{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden}
+  .mock{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-lg);overflow:hidden}
   .mock .bar{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--line);
     background:color-mix(in srgb,var(--fg) 3%,var(--card))}
   .mock .dots{display:flex;gap:6px}
@@ -194,7 +182,7 @@
     border:1px solid var(--line);border-radius:6px;padding:4px 10px;text-align:center;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .mock .body{padding:16px}
-  .mock .demoimg{display:block;border-radius:10px;border:1px solid var(--line);width:100%}
+  .mock .demoimg{display:block;border-radius:var(--radius);border:1px solid var(--line);width:100%}
   .mock .verdict{display:flex;align-items:center;gap:9px;font-weight:700;font-size:1rem;margin:14px 2px 12px}
   .vdot{width:10px;height:10px;border-radius:2px;display:inline-block}
   .mrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 2px;
@@ -223,7 +211,7 @@
   /* steps */
   .cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
   @media(max-width:760px){ .cols3{grid-template-columns:1fr} }
-  .mini{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+  .mini{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
   .mini .mi{width:38px;height:38px;border-radius:9px;background:var(--soft);color:var(--accent);
     display:inline-flex;align-items:center;justify-content:center;margin-bottom:13px}
   .mini .mi svg{width:20px;height:20px}
@@ -234,13 +222,13 @@
   /* bike types */
   .biketags{display:flex;flex-wrap:wrap;gap:9px;margin:0}
   .biketags .bt{display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:.9rem;
-    padding:9px 15px;border:1px solid var(--line);border-radius:100px;background:var(--card);box-shadow:var(--shadow)}
+    padding:9px 15px;border:1px solid var(--line);border-radius:var(--radius);background:var(--card);box-shadow:var(--shadow)}
   .biketags .bt svg{width:17px;height:17px;color:var(--accent)}
 
   /* ideal fit cards */
   .idealgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   @media(max-width:760px){ .idealgrid{grid-template-columns:1fr} }
-  .ideal{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:var(--shadow)}
+  .ideal{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
   .ideal .top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
   .ideal h3{margin:0;font-size:1.02rem;font-weight:700}
   .ideal .goal{font-family:var(--mono);font-size:.7rem;font-weight:700;color:var(--green);white-space:nowrap;
@@ -250,7 +238,7 @@
   .ideal p{margin:0;color:var(--mut);font-size:.9rem;line-height:1.5}
 
   /* metric panels */
-  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:24px;margin-bottom:16px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:16px}
   .panel > h3{margin:0 0 4px;font-size:1.14rem;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .tag{font-family:var(--mono);font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
     padding:3px 8px;border-radius:5px;border:1px solid var(--line);color:var(--mut)}
@@ -278,7 +266,7 @@
   /* feature grid */
   .cols2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   @media(max-width:760px){ .cols2{grid-template-columns:1fr} }
-  .feat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+  .feat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
   .feat .mi{width:36px;height:36px;border-radius:9px;background:var(--soft);color:var(--accent);
     display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px}
   .feat .mi svg{width:19px;height:19px}
@@ -292,7 +280,7 @@
 
   /* Threads posts. The card is ours and the iframe is only created on click, so a normal
      page load still fetches nothing from Meta — which is what the privacy page promises. */
-  .tpost{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .tpost{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
   .tpost .thead{display:flex;align-items:center;gap:9px;padding:14px 16px;border-bottom:1px solid var(--line);font-size:.92rem}
   .tpost .thead svg{width:17px;height:17px;color:var(--mut);flex:none}
   .tpost .thead .who{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -306,7 +294,7 @@
   .tpost iframe{display:block;width:100%;height:520px;border:0;background:var(--card)}
 
   /* callout */
-  .callout{display:flex;gap:14px;align-items:flex-start;padding:20px 22px;border-radius:14px;margin:0;
+  .callout{display:flex;gap:14px;align-items:flex-start;padding:20px 22px;border-radius:var(--radius);margin:0;
     background:color-mix(in srgb,var(--amber) 9%,var(--card));border:1px solid color-mix(in srgb,var(--amber) 45%,var(--line))}
   .callout .i{color:var(--amber);font-weight:700;font-size:1.3rem;line-height:1;flex:none;margin-top:1px}
   .callout h3{margin:0 0 6px;font-size:1.08rem}
@@ -318,7 +306,7 @@
 
   /* faq */
   .faq{display:grid;gap:10px}
-  .faq details{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+  .faq details{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
   .faq summary{list-style:none;cursor:pointer;padding:16px 18px;font-weight:700;font-size:.98rem;
     display:flex;align-items:center;justify-content:space-between;gap:12px}
   .faq summary::-webkit-details-marker{display:none}
@@ -330,7 +318,7 @@
   /* creator + promo */
   .duo{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   @media(max-width:760px){ .duo{grid-template-columns:1fr} }
-  .promo{border-radius:16px;padding:26px;box-shadow:var(--shadow);display:flex;flex-direction:column;border:1px solid var(--line);background:var(--card)}
+  .promo{border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);display:flex;flex-direction:column;border:1px solid var(--line);background:var(--card)}
   .promo .kicker{font-family:var(--mono);font-size:.64rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin:0 0 12px}
   .promo h3{margin:0 0 8px;font-size:1.28rem;font-weight:800;letter-spacing:-.01em}
   .promo p{margin:0 0 20px;color:var(--mut);font-size:.93rem;flex:1;line-height:1.55}
@@ -340,11 +328,11 @@
   .strava .avatar{background:#fc4c02} .strava .btn{background:#fc4c02;color:#fff}
   .ascent{background:linear-gradient(155deg,color-mix(in srgb,var(--accent) 16%,var(--card)),var(--card) 70%);border-color:color-mix(in srgb,var(--accent) 30%,var(--line))}
   /* the Ascent icon ships its own dark squircle, so the avatar chip gets out of its way */
-  .ascent .avatar{background:none;border-radius:12px}
-  .ascent .avatar img{width:46px;height:46px;border-radius:12px;display:block}
+  .ascent .avatar{background:none;border-radius:var(--radius)}
+  .ascent .avatar img{width:46px;height:46px;border-radius:var(--radius);display:block}
 
   /* final cta */
-  .finalcta{text-align:center;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:44px 24px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .finalcta{text-align:center;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:44px 24px;box-shadow:var(--shadow);position:relative;overflow:hidden}
   .finalcta::before{content:"";position:absolute;inset:auto -20% -60% -20%;height:300px;
     background:radial-gradient(50% 60% at 50% 100%,color-mix(in srgb,var(--accent) 20%,transparent),transparent 70%)}
   .finalcta > *{position:relative}
@@ -372,6 +360,8 @@
   }
 </style>
 <script defer src="/_vercel/insights/script.js"></script>
+<script>try{var t=localStorage.getItem("bfa-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script defer src="theme.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -389,6 +379,11 @@
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.26 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.2.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
           <span class="lbl">GitHub</span>
         </a>
+        <div class="themesw" role="group" aria-label="Theme">
+          <button data-theme="auto" title="Match my system" aria-label="Match my system"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg></button>
+          <button data-theme="light" title="Light" aria-label="Light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg></button>
+          <button data-theme="dark" title="Dark" aria-label="Dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 13.2A8.6 8.6 0 0 1 10.8 3a8.6 8.6 0 1 0 10.2 10.2Z"/></svg></button>
+        </div>
         <div class="langsw" role="group" aria-label="Language">
           <button data-lang="en" aria-label="English">EN</button>
           <button data-lang="id" aria-label="Bahasa Indonesia">ID</button>

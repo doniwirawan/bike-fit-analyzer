@@ -69,8 +69,11 @@ def main():
         sys.exit(f"UI not found at {UI} — run this from the repo, not a copy of desktop/.")
 
     api = Api()
+    # Hand pywebview the path, not a file:// URI, so http_server below can serve it from
+    # 127.0.0.1. A file:// page is an opaque origin: localStorage is unreliable there, and
+    # localStorage is where every saved result lives.
     window = webview.create_window(
-        "Bike Fit Analyzer", UI.as_uri(), js_api=api,
+        "Bike Fit Analyzer", str(UI), js_api=api,
         width=1200, height=920, min_size=(880, 640))
     api.window = window
 
@@ -86,7 +89,10 @@ def main():
 
         window.events.loaded += kickoff
 
-    webview.start()
+    # private_mode defaults to True, which throws away localStorage when the window closes —
+    # every saved result would vanish between runs. storage_path keeps them beside the app.
+    webview.start(http_server=True, private_mode=False,
+                  storage_path=str(ROOT / ".desktop-data"))
 
 
 if __name__ == "__main__":
