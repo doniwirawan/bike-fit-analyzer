@@ -48,7 +48,7 @@
   header{padding:22px 0}
   .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
   .brand{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-weight:700;
-    font-size:.95rem;letter-spacing:.14em;text-transform:uppercase}
+    font-size:.95rem;letter-spacing:.14em;text-transform:uppercase;color:inherit;text-decoration:none}
   .brand .blogo{width:28px;height:28px;object-fit:contain;display:block;flex:none}
   .headright{display:flex;align-items:center;gap:14px}
   .navlink{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;
@@ -251,10 +251,10 @@
   <!-- ============ HEADER ============ -->
   <header>
     <div class="topbar">
-      <div class="brand">
+      <a class="brand" href="/">
         <img class="blogo" src="/logo-64.png" alt="" width="28" height="28">
         Bike Fit Analyzer
-      </div>
+      </a>
       <div class="headright">
         <a class="navlink" href="/blog" data-i18n="nav.guides">Guides</a>
         <a class="navlink" href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">
@@ -430,7 +430,7 @@
       </div>
       <div class="promo ascent">
         <p class="kicker" data-i18n="promo.also">Also by the creator</p>
-        <span class="avatar"><img src="ascent-icon.png" alt="Ascent Analytics" width="46" height="46" loading="lazy"></span>
+        <span class="avatar"><img src="/ascent-icon.png" alt="Ascent Analytics" width="46" height="46" loading="lazy"></span>
         <h3>Ascent Analytics</h3>
         <p data-i18n="promo.ascent.p">Deeper cycling data and performance analytics to turn your rides into insight. If this fit tool is useful, you'll want to check out Ascent.</p>
         <a class="btn primary" href="https://ascent-analytics.doniwirawan.xyz/" target="_blank" rel="noopener">
@@ -446,10 +446,10 @@
   <footer class="site-foot">
     <div class="foot-grid">
       <div class="foot-brand">
-        <div class="brand">
+        <a class="brand" href="/">
           <img class="blogo" src="/logo-64.png" alt="" width="28" height="28">
           Bike Fit Analyzer
-        </div>
+        </a>
         <p data-i18n="foot.tagline">Grade your bike fit in your browser. Works with any bike. Free &amp; open source.</p>
       </div>
       <div class="foot-col">
