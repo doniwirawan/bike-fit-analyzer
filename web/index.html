@@ -262,6 +262,21 @@
   a.feat:hover,a.feat:focus-visible{border-color:var(--accent);transform:translateY(-2px)}
   a.feat h3{color:var(--accent)}
 
+  /* Threads posts. The card is ours and the iframe is only created on click, so a normal
+     page load still fetches nothing from Meta — which is what the privacy page promises. */
+  .tpost{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .tpost .thead{display:flex;align-items:center;gap:9px;padding:14px 16px;border-bottom:1px solid var(--line);font-size:.92rem}
+  .tpost .thead svg{width:17px;height:17px;color:var(--mut);flex:none}
+  .tpost .thead .who{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tpost .thead a{margin-left:auto;flex:none;font-family:var(--mono);font-size:.64rem;letter-spacing:.06em;
+    text-transform:uppercase;text-decoration:none}
+  .tpost .tbody{padding:26px 18px;text-align:center}
+  .tpost .tload{border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line));background:transparent;
+    color:var(--accent);border-radius:9px;padding:10px 18px;font:inherit;font-weight:600;font-size:.9rem;cursor:pointer}
+  .tpost .tload:hover{background:var(--soft)}
+  .tpost .tnote{color:var(--mut);font-size:.76rem;margin:10px 0 0}
+  .tpost iframe{display:block;width:100%;height:520px;border:0;background:var(--card)}
+
   /* callout */
   .callout{display:flex;gap:14px;align-items:flex-start;padding:20px 22px;border-radius:14px;margin:0;
     background:color-mix(in srgb,var(--amber) 9%,var(--card));border:1px solid color-mix(in srgb,var(--amber) 45%,var(--line))}
@@ -571,6 +586,37 @@
       <a href="/blog">All guides →</a></p>
   </section>
 
+  <!-- ============ ON THREADS ============ -->
+  <section class="block">
+    <p class="eyebrow" data-i18n="social.eyebrow">On Threads</p>
+    <h2 class="sec" data-i18n="social.h2">People are already riding with it</h2>
+    <p class="sec-lead" data-i18n="social.lead">A rider's first run with the analyzer, and the post it launched from.</p>
+    <div class="cols2">
+      <div class="tpost">
+        <div class="thead">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-4-.9L3 21l1.9-4.6A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5Z"/></svg>
+          <span class="who">@paceandpedal_</span>
+          <a href="https://www.threads.com/@paceandpedal_/post/DbaWYJwCT4D" target="_blank" rel="noopener" data-i18n="social.open">Open ↗</a>
+        </div>
+        <div class="tbody">
+          <button class="tload" data-embed="https://www.threads.com/@paceandpedal_/post/DbaWYJwCT4D/embed" data-i18n="social.load">Load the post</button>
+          <p class="tnote" data-i18n="social.note">Nothing is fetched from Threads until you click.</p>
+        </div>
+      </div>
+      <div class="tpost">
+        <div class="thead">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-4-.9L3 21l1.9-4.6A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5Z"/></svg>
+          <span class="who">@doniwirawans</span>
+          <a href="https://www.threads.com/@doniwirawans/post/Daxeda6Ew_v" target="_blank" rel="noopener" data-i18n="social.open">Open ↗</a>
+        </div>
+        <div class="tbody">
+          <button class="tload" data-embed="https://www.threads.com/@doniwirawans/post/Daxeda6Ew_v/embed" data-i18n="social.load">Load the post</button>
+          <p class="tnote" data-i18n="social.note">Nothing is fetched from Threads until you click.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ FINAL CTA ============ -->
   <section class="block">
     <div class="finalcta">
@@ -743,6 +789,13 @@
     "promo.ascent.p":{en:"Deeper cycling data and performance analytics to turn your rides into insight. If this fit tool is useful, you'll want to check out Ascent.",id:"Data bersepeda yang lebih dalam plus analitik performa, biar tiap ride jadi bahan evaluasi. Kalau alat fit ini kamu rasa berguna, Ascent layak dicoba."},
     "promo.ascent.btn":{en:"Explore Ascent Analytics",id:"Jelajahi Ascent Analytics"},
 
+    "social.eyebrow":{en:"On Threads",id:"Di Threads"},
+    "social.h2":{en:"People are already riding with it",id:"Sudah dipakai orang"},
+    "social.lead":{en:"A rider's first run with the analyzer, and the post it launched from.",id:"Percobaan pertama seorang rider pakai analyzer ini, plus postingan waktu rilisnya."},
+    "social.open":{en:"Open ↗",id:"Buka ↗"},
+    "social.load":{en:"Load the post",id:"Tampilkan postingannya"},
+    "social.note":{en:"Nothing is fetched from Threads until you click.",id:"Nggak ada yang diambil dari Threads sampai kamu klik."},
+
     "final.h":{en:"Ready to see your numbers?",id:"Siap lihat angkamu?"},
     "final.p":{en:"Drop a clip and get a graded read in under a minute — free, in your browser.",id:"Masukkan klipmu dan lihat hasilnya kurang dari semenit — gratis, langsung di browser."},
     "final.btn":{en:"Launch the analyzer",id:"Buka analyzer"},
@@ -854,6 +907,16 @@
       const c=document.querySelector('link[rel="canonical"]');
       if(c) c.href=u.origin+u.pathname+'?lang='+lang;
     }catch(e){}
+  }));
+
+  // Threads posts load on demand: the iframe doesn't exist until the reader asks for it,
+  // so the page keeps its promise of touching no third party on a normal visit.
+  document.querySelectorAll('.tload').forEach(b=>b.addEventListener('click',()=>{
+    const f=document.createElement('iframe');
+    f.src=b.dataset.embed;
+    f.loading='lazy';
+    f.title='Threads post';
+    b.closest('.tbody').replaceWith(f);
   }));
 
   applyLang(detectLang());
