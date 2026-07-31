@@ -1,0 +1,8 @@
+# Desktop app (desktop/bikefit.py). The web version needs none of this — it runs in a
+# browser with MediaPipe. These are what the more accurate YOLO11x-pose engine costs.
+pywebview>=5.0
+ultralytics>=8.3
+opencv-python>=4.9
+numpy>=1.26
+# torch comes in with ultralytics. For an NVIDIA GPU install the CUDA build first, from
+# https://pytorch.org/get-started/locally/ — analysis goes from minutes to seconds.

@@ -53,6 +53,14 @@
   .brand{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-weight:700;
     font-size:.95rem;letter-spacing:.14em;text-transform:uppercase}
   .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  /* same nav as the home page — this page was the only one with no way back out to the
+     guides or the source */
+  .headright{display:flex;align-items:center;gap:14px}
+  .navlink{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--mut);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+  .navlink svg{width:15px;height:15px}
+  .navlink:hover{color:var(--accent)}
+  @media(max-width:560px){ .navlink .lbl{display:none} }
   .langsw{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--card)}
   .langsw button{border:0;background:transparent;color:var(--mut);font-family:var(--mono);font-size:.68rem;font-weight:600;letter-spacing:.06em;padding:6px 10px;cursor:pointer}
   .langsw button+button{border-left:1px solid var(--line)}
@@ -253,9 +261,16 @@
   <header>
     <div class="topbar">
       <a class="brand" href="/" style="color:inherit;text-decoration:none"><img class="blogo" src="logo-64.png" alt="" width="28" height="28"> Bike Fit Analyzer</a>
-      <div class="langsw" role="group" aria-label="Language">
-        <button data-lang="en" aria-label="English">EN</button>
-        <button data-lang="id" aria-label="Bahasa Indonesia">ID</button>
+      <div class="headright">
+        <a class="navlink" href="/blog" data-i18n="nav.guides">Guides</a>
+        <a class="navlink" href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.26 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.2.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
+          <span class="lbl">GitHub</span>
+        </a>
+        <div class="langsw" role="group" aria-label="Language">
+          <button data-lang="en" aria-label="English">EN</button>
+          <button data-lang="id" aria-label="Bahasa Indonesia">ID</button>
+        </div>
       </div>
     </div>
     <div class="hero">
@@ -537,8 +552,10 @@
 </div>
 
 <script type="module">
-import { FilesetResolver, PoseLandmarker }
-  from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18";
+// MediaPipe is imported when a clip is actually analyzed, not on page load: the desktop
+// build (desktop/bikefit.py) measures with YOLO in Python and never needs it, and a
+// browser that only reads the page shouldn't pay for the download either.
+const MEDIAPIPE="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18";
 
 /* ================= i18n (EN / ID) ================= */
 let lastSide=null, lastFront=null;
@@ -647,6 +664,8 @@ const I18N = {
   "hist.nothumb":{en:"No preview",id:"Tanpa preview"},
   "err.unsupported":{en:"This browser can't run the analyzer.",id:"Browser ini tidak bisa menjalankan analyzer."},
   "err.missing":{en:"Try a recent Chrome, Edge, Safari or Firefox. Missing here:",id:"Coba Chrome, Edge, Safari, atau Firefox versi baru. Yang tidak tersedia:"},
+  "nav.guides":{en:"Guides",id:"Panduan"},
+  "drop.native":{en:"Click to choose a clip · .mp4 .mov .webm · measured on this computer",id:"Klik buat pilih klip · .mp4 .mov .webm · diproses di komputer ini"},
   "err.cpumode":{en:"Your device doesn't support WebGPU, so the analysis runs on the CPU. It still works, but a 20–30s clip can take a minute or two — keep this tab open.",id:"Perangkatmu tidak mendukung WebGPU, jadi analisis berjalan di CPU. Tetap bisa, tapi klip 20–30 detik bisa makan satu sampai dua menit — biarkan tab ini terbuka."},
 };
 const ID_TZ=/Asia\/(Jakarta|Pontianak|Makassar|Jayapura)/;
@@ -917,7 +936,8 @@ const UNSUPPORTED = gateUnsupported();
 
 async function initModel(){
   status.textContent=t('st.loadModel');
-  const files=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm");
+  const {FilesetResolver,PoseLandmarker}=await import(MEDIAPIPE);
+  const files=await FilesetResolver.forVisionTasks(MEDIAPIPE+"/wasm");
   const make=delegate=>PoseLandmarker.createFromOptions(files,{
     baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task",delegate},
     runningMode:"VIDEO", numPoses:1,
@@ -936,6 +956,67 @@ async function initModel(){
 
 drop.onclick=()=>file.click();
 $("#pick").onclick=()=>file.click();
+
+/* ---- desktop build: same UI, measured by Python/YOLO ----
+   Everything below only runs inside the pywebview shell, where window.pywebview exists.
+   In a browser NATIVE is false, nothing here is wired up, and the MediaPipe path above is
+   exactly what it was. The desktop side is side-view only — YOLO11x-pose is what makes it
+   worth having, and the frontal work has no Python equivalent yet. */
+let NATIVE=false;
+
+async function pickNative(){
+  const path=await window.pywebview.api.pick_video();
+  if(path) runNative(path);
+}
+
+async function runNative(path){
+  $("#errbox").hidden=true; $("#example").hidden=true;
+  drop.style.display="none"; $(".try").style.display="none";
+  bar.style.display="block"; fill.style.width="0%"; spin.hidden=false;
+  status.textContent=t('st.loadModel');
+  // Python reports a stage, not a sentence, so the progress line stays in the UI's language
+  window.__nativeProgress=(stage,pct)=>{
+    status.textContent = stage==="model" ? t('st.loadModel') : t('st.analyzing');
+    if(stage!=="model") fill.style.width=pct+"%";
+  };
+  const r=await window.pywebview.api.analyze(path);
+  spin.hidden=true; bar.style.display="none"; status.textContent="";
+  if(!r||!r.ok){ fail((r&&r.error)||t('err.track')); return; }
+
+  const G={}; for(const m in ZONES) G[m]=grade(m,r.R[m]);
+  lastSide={R:r.R,G,strokes:r.strokes,hipTop:r.hipTop,offAxis:r.offAxis,P:r.P,pw:r.pw,ph:r.ph};
+  renderSide();
+  $("#results").hidden=false; $("#frontresults").hidden=true;
+  $("#tabdot").hidden=false; showTab("report");
+  const runId=histSave();
+  // Python hands back the measured frame; from here the drawing, the exports and the
+  // saved-results list are the browser build's own code, unchanged.
+  const img=new Image();
+  img.onload=()=>{
+    $("#stage").style.display="block";
+    cv.width=img.width; cv.height=img.height; ctx.drawImage(img,0,0);
+    drawSkeleton(r.P,G,r.R); shotPhoto=snapCanvas(); histRethumb(runId);
+    drawSkeletonPlate(r.P,G,r.R); shotSkel=snapCanvas();
+    showShot("photo"); $("#shotsel").hidden=false;
+  };
+  img.src=r.frame;
+}
+window.__nativeRun=runNative;            // so a clip passed on the command line can start itself
+
+function enableNative(){
+  if(NATIVE) return;
+  NATIVE=true;
+  drop.onclick=pickNative; $("#pick").onclick=pickNative;
+  $("#rec").hidden=true;                                   // webcam capture is browser-only
+  document.querySelectorAll('[data-view="front"],[data-view="rear"]').forEach(b=>b.hidden=true);
+  // swap the key, not just the text, so switching language doesn't restore the browser copy
+  const hint=$("#drop").querySelector(".hint");
+  hint.setAttribute("data-i18n","drop.native"); hint.textContent=t('drop.native');
+  $("#unsup").hidden=true; drop.style.display=""; $(".try").style.display="";  // no WebGPU needed here
+}
+window.addEventListener("pywebviewready",enableNative);
+if(window.pywebview&&window.pywebview.api) enableNative();
+
 ["dragover","dragenter"].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.add("hi");}));
 ["dragleave","drop"].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.remove("hi");}));
 drop.addEventListener("drop",e=>{ if(e.dataTransfer.files[0]) start(e.dataTransfer.files[0]); });
