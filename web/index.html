@@ -136,12 +136,6 @@
 
   /* hero */
   .hero-bg{position:relative;overflow:hidden}
-  /* A soft colour field behind the hero rather than a flat page: the two blooms sit under
-     the headline and the mock, and never intercept a click. */
-  .hero-bg::before{content:"";position:absolute;inset:-30% -12% auto -12%;height:660px;pointer-events:none;
-    background:
-      radial-gradient(42% 52% at 20% 42%,color-mix(in srgb,var(--accent) 20%,transparent),transparent 70%),
-      radial-gradient(38% 48% at 82% 26%,color-mix(in srgb,var(--green) 13%,transparent),transparent 70%)}
   .hero{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:44px;
     align-items:center;padding:38px 0 54px}
   @media(max-width:900px){ .hero{grid-template-columns:1fr;gap:30px;padding:22px 0 36px} }
