@@ -149,3 +149,25 @@ html{scrollbar-color:var(--line) transparent}
 .site-foot .legal{margin-top:28px;padding-top:20px;border-top:1px solid var(--line);font-size:.84rem;line-height:1.6;
   padding-right:max(0px,calc(100% - 820px))}
 .site-foot .legal a{color:inherit}
+
+/* ------------------------------------------------------- sample carousel */
+/* The six sample figures sit on top of each other and cross-fade; only the current one is
+   visible to sight and to assistive tech. */
+.figstack,.figstack.demoimg{display:grid}
+.figstack > svg{grid-area:1 / 1;width:100%;height:auto;display:block;border-radius:12px;opacity:0;visibility:hidden;
+  transition:opacity .45s var(--ease),visibility 0s linear .45s}
+.figstack > svg.on{opacity:1;visibility:visible;transition-delay:0s}
+.carctl{display:flex;align-items:center;gap:8px;margin:12px 0 0}
+.bikes{display:flex;gap:2px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none;padding:2px;
+  border:1px solid var(--line);border-radius:11px;background:var(--bg)}
+.bikes::-webkit-scrollbar{display:none}
+.bikes button{flex:1 0 auto;border:0;background:transparent;color:var(--mut);font:inherit;font-weight:700;font-size:.82rem;
+  min-height:40px;padding:0 11px;border-radius:8px;white-space:nowrap}
+.bikes button:hover{color:var(--fg)}
+.bikes button[aria-pressed="true"]{background:var(--card);color:var(--fg);box-shadow:0 0 0 1px var(--line)}
+.cplay{width:46px;height:46px;flex:none;border:1px solid var(--line);border-radius:11px;background:var(--card);color:var(--fg);
+  display:inline-flex;align-items:center;justify-content:center}
+.cplay:hover{border-color:color-mix(in srgb,var(--fg) 30%,var(--line))}
+.cplay svg{width:16px;height:16px}
+.cplay .i-play,.cplay.paused .i-pause{display:none}
+.cplay.paused .i-play{display:block}
