@@ -398,7 +398,7 @@ def _write_reports(out_dir, results, grades):
         vs = f"{v:.0f}" if v is not None else "n/a"
         lines.append(f"- {labels[m]}: {vs} -> {grades[m]}")
     if results.get("hip_angle_top") is not None:
-        lines.append(f"- hip_angle_top: {results['hip_angle_top']:.0f} (report only, ~85-110)")
+        lines.append(f"- hip_angle_top: {results['hip_angle_top']:.0f} (report only, road ref ~55-65, Burt 2014)")
 
     fixes = [t for m in ZONES for t in [_fix_text(m, results[m], grades[m])] if t]
     lines += ["", "## Do this"]

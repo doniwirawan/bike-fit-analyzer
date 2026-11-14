@@ -213,7 +213,7 @@ along with the site.
 | Torso from horizontal | 40–50° | over 56 too upright; under 34 very aggressive |
 | Elbow bend | 15–30° | near 0 locked out (soften / shorten reach) |
 | Shoulder (torso to arm) | ~80–95° | closed/scrunched cockpit, weight on the hands |
-| Hip at the top | ~85–110° | flexibility / reach (report only) |
+| Hip at the top | ~55–65° (road) | shoulder–hip–knee; flexibility / reach (report only) |
 
 Full sources are in [`files/bikefit-research-ranges.md`](files/bikefit-research-ranges.md).
 

@@ -668,6 +668,7 @@
         </div>
         <div class="verdict"><span class="vdot AMBER" id="exvdot"></span><span id="exverdict">Minor tweaks · 5 pedal strokes</span></div>
         <div class="cards" id="excards"></div>
+        <div class="foot" style="margin-top:10px" id="exhip"></div>
         <ul class="fixes" id="exfix"></ul>
       </div>
 
@@ -910,7 +911,10 @@ let LANG=detectLang();
 const t=k=>{const e=I18N[k];return e?(e[LANG]||e.en):k;};
 // dynamic advice/metrics text (interpolated), branch on LANG
 const DX = {
-  hipInfo:x=>LANG==='id'?`Pinggul di titik teratas kayuhan: ${x}° (acuan 85–110°, sekadar info, tergantung kelenturan dan jangkauan).`:`Hip at top of stroke: ${x}° (reference 85–110°, informational: depends on flexibility & reach).`,
+  // Hip at the top of the stroke, as shoulder–hip–knee. The road reference is Burt (2014), the one
+  // published range that uses this same three-point angle; aggressive and TT positions sit lower,
+  // upright bikes higher. Report only: it depends on flexibility and reach.
+  hipInfo:x=>LANG==='id'?`Pinggul di titik teratas kayuhan: ${x}° (acuan road sekitar 55–65°, lebih kecil di sepeda agresif dan TT, lebih besar di sepeda tegak; sekadar info, tergantung kelenturan dan jangkauan).`:`Hip at top of stroke: ${x}° (road reference about 55–65°, lower on aggressive and TT bikes, higher on upright ones; informational: depends on flexibility & reach).`,
   saddle:(k,mm)=> k>40 ? (LANG==='id'?`Sadel kelihatannya kurang tinggi: lutut masih menekuk ${k}° di bawah (target 30–40°). Naikkan sekitar ${mm}mm, bertahap 2–3mm, lalu rekam lagi. Ini angka paling bisa dipercaya di sini.`:`Saddle looks low: knee still bent ${k}° at the bottom (aim 30–40°). Raise it about ${mm}mm, in 2–3mm steps, and re-film. This is the most reliable reading here.`) : (LANG==='id'?`Sadel kelihatannya kelewat tinggi: kaki hampir lurus (${k}°) di bawah (target 30–40°). Turunkan sekitar ${mm}mm, bertahap 2–3mm, lalu rekam lagi. Ini angka paling bisa dipercaya di sini.`:`Saddle looks high: leg nearly straight (${k}°) at the bottom (aim 30–40°). Lower it about ${mm}mm, in 2–3mm steps, and re-film. This is the most reliable reading here.`),
   torso:(v,aim,upright)=> upright ? (LANG==='id'?`Torso lebih tegak (${v}°) dari biasanya untuk sepeda ini (target ${aim}). Nyaman kok, tapi kalau mau lebih bertenaga/aero dan badanmu lentur, turunkan sedikit bagian depan (spacer/stem).`:`Torso more upright (${v}°) than typical for this bike (aim ${aim}). Comfortable, but if you want more power/aero and your flexibility allows, a slightly lower front end (spacers/stem) helps.`) : (LANG==='id'?`Torso lebih rendah/agresif (${v}°) dari biasanya untuk sepeda ini (target ${aim}). Kalau punggung bawah atau leher mulai sakit, naikkan setang atau perpendek jangkauan sedikit.`:`Torso lower/more aggressive (${v}°) than typical for this bike (aim ${aim}). If your lower back or neck complains, raise the bars or shorten the reach a touch.`),
   elbowLocked:v=>LANG==='id'?`Siku ${v}° → lengan kelihatan terkunci. Tekuk sikumu sedikit dulu. Tekukan ringan meredam getaran jalan dan sering langsung menyelesaikannya tanpa utak-atik sepeda.`:`Elbow ${v}° → arms look locked. Soften your elbows first. A slight bend absorbs road buzz and often fixes this without touching the bike.`,
@@ -1013,6 +1017,7 @@ function renderExample(){
   box.innerHTML=Object.keys(ZZ).map(m=>angleCard(m,V[m],G[m],`${ZZ[m][0]}–${ZZ[m][1]}°`,ZZ)).join("");
   $("#exvdot").style.background=CSSCOL[s.verdict];
   $("#exverdict").textContent=`${t('vd.'+s.verdict)} · ${s.strokes} ${t('word.strokes')}`;
+  $("#exhip").textContent=DX.hipInfo(String(s.hip));
   $("#exfix").innerHTML=`<li>${s.fix[LANG]||s.fix.en}</li>`;
   document.querySelectorAll("#example .bikes button").forEach((b,j)=>b.textContent=S.SLIDES[j].tab[LANG]||S.SLIDES[j].tab.en);
 }

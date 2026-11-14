@@ -10,7 +10,7 @@ static goniometer numbers.
 | Torso from horizontal | 40-50 deg | over ~56 too upright; under ~34 very aggressive |
 | Elbow bend | 15-30 deg | near 0 locked out (soften / shorten reach) |
 | Shoulder (torso to upper arm) | 80-95 deg | much lower = closed/scrunched cockpit, weight on hands |
-| Hip at top (TDC) | ~85-110 deg | flexibility / reach dependent (report only) |
+| Hip at top (TDC) | ~55-65 deg (road) | shoulder-hip-knee; flexibility / reach dependent (report only) |
 
 Angles use ~2.5 deg edge tolerance because a phone video only resolves to a few
 degrees. BDC is measured as the median across several strokes so one blurry
@@ -62,5 +62,16 @@ comes off.
 - **Dynamic-vs-static validity study** - angles measured while pedaling on video
   run ~8 deg higher than static goniometer numbers (why the knee zone is a
   dynamic 30-40, not the static 25-35): https://pubmed.ncbi.nlm.nih.gov/24499342/
+- **Hip at the top of the stroke (report only)** - the tool measures the
+  three-point angle shoulder - hip - knee at top dead centre. The one published
+  recommendation that uses that same definition is Burt (2014), *Bike Fit*,
+  "femur - greater trochanter - shoulder", 55-65 deg on a road bike, as tabled in
+  the Holmes-method paper above (Table 2). It is a fitter's reference, not a
+  study. The Holmes paper's own 77 +/- 5 deg (range 67-86) is a different angle:
+  femur against a line along the lower lumbar spine and sacrum, measured static,
+  so it includes spinal flexion and does not compare. The old "~85-110" figure
+  had no source. Aggressive and TT positions sit below 55, upright bikes above 65;
+  the two real clips in this repo read 74-75 on a relaxed position. Shown, never
+  graded.
 - **Practitioner cross-check** for the full joint set (torso, shoulder, hip):
   https://www.bikefitadviser.com/blog/not-basic-bike-fit-part-3-bike-fit-joint-angles
