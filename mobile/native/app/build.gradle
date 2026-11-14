@@ -14,8 +14,8 @@ android {
         applicationId "xyz.doniwirawan.bikefit"
         minSdk 26
         targetSdk 35
-        versionCode 2
-        versionName "1.1"
+        versionCode 3
+        versionName "1.2"
 
         // MediaPipe 0.10.14 ships no x86_64 .so. If x86_64 is in the APK, Android picks it on
         // an x86_64 device (emulators), finds no libmediapipe_tasks_vision_jni.so, and dies with
