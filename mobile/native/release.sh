@@ -13,7 +13,7 @@
 # Signing credentials: from the environment, else from mobile/signing.env (gitignored).
 set -euo pipefail
 cd "$(dirname "$0")"
-ROOT=$(cd ../.. && pwd)
+ROOT=$(cd ../.. && { pwd -W 2>/dev/null || pwd; })  # a path Windows Python can open
 
 # The release key's certificate. Same value as web/.well-known/assetlinks.json.
 CERT="fcd38fcc9e29a3b7647efa3f95589d89038cc2aba469c65a44d2147ca2cd8a34"
@@ -37,14 +37,15 @@ git -C "$ROOT" rev-parse -q --verify "refs/tags/android-v$NAME" >/dev/null \
 export JAVA_HOME="${JAVA_HOME:-/c/Program Files/Android/Android Studio/jbr}"
 export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$LOCALAPPDATA/Android/Sdk}"
 GRADLE=$(command -v gradle || ls "$HOME"/.gradle/wrapper/dists/gradle-8.9-all/*/gradle-8.9/bin/gradle | head -1)
-APKSIGNER=$(ls "$ANDROID_SDK_ROOT"/build-tools/*/apksigner* | grep -v '\.jar' | sort -V | tail -1)
+# the jar, not apksigner.bat: the .bat can't read a Git Bash style JAVA_HOME
+APKSIGNER_JAR=$(ls "$ANDROID_SDK_ROOT"/build-tools/*/lib/apksigner.jar | sort -V | tail -1)
 
 echo "release: building $NAME ($CODE)"
 "$GRADLE" --no-daemon -q assembleRelease
 APK=app/build/outputs/apk/release/app-release.apk
 [ -f "$APK" ] || die "no APK at $APK"
 
-"$APKSIGNER" verify --print-certs "$APK" | tr 'A-F' 'a-f' | grep -q "sha-256 digest: $CERT" \
+"$JAVA_HOME/bin/java" -jar "$APKSIGNER_JAR" verify --print-certs "$APK" | tr 'A-Z' 'a-z' | grep -q "sha-256 digest: $CERT" \
   || die "APK is not signed with the release key; it would not install over the old version"
 
 cp "$APK" "$ROOT/web/bikefit-native.apk"
