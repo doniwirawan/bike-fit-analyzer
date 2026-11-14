@@ -22,6 +22,8 @@ npm i bikefit-angles
 
 It is also on GitHub Packages as `@doniwirawan/bikefit-angles`, with the same code.
 
+Full documentation: **[bikefit.doniwirawan.xyz/docs](https://bikefit.doniwirawan.xyz/docs)**
+
 ## Quick start
 
 ```js

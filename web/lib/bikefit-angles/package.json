@@ -39,7 +39,7 @@
   ],
   "author": "Doni Wirawan (https://doniwirawan.xyz)",
   "license": "SEE LICENSE IN LICENSE",
-  "homepage": "https://bikefit.doniwirawan.xyz",
+  "homepage": "https://bikefit.doniwirawan.xyz/docs",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/doniwirawan/bike-fit-analyzer.git",

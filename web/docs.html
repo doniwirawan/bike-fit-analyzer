@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bikefit-angles: Developer Docs</title>
+<meta name="description" content="Documentation for bikefit-angles, the JavaScript package behind Bike Fit Analyzer: joint angles from 2D pose landmarks, pedal-stroke detection and per-bike-type grading.">
+<link rel="icon" type="image/png" href="/logo-64.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="canonical" href="https://bikefit.doniwirawan.xyz/docs">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://bikefit.doniwirawan.xyz/docs">
+<meta property="og:site_name" content="Bike Fit Analyzer">
+<meta property="og:title" content="bikefit-angles: developer docs">
+<meta property="og:description" content="Bike fit joint angles from any pose model's landmarks. The measuring core of Bike Fit Analyzer, as a package.">
+<meta property="og:image" content="https://bikefit.doniwirawan.xyz/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/base.css">
+<link rel="stylesheet" href="/legal.css">
+<link rel="stylesheet" href="/blog.css">
+<style>
+  /* code is the content here, so blocks get the card surface and scroll on their own */
+  .doc pre{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;
+    overflow-x:auto;font-size:.88rem;line-height:1.6;margin:16px 0}
+  .doc pre code{background:none;padding:0;font-size:inherit;border-radius:0}
+  .doc .c{color:var(--mut)}
+  .toc{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:6px 0;margin:28px 0 8px}
+  .toc ol{margin:8px 0;columns:2;column-gap:32px}
+  .toc li{margin:6px 0;break-inside:avoid}
+  @media(max-width:560px){ .toc ol{columns:1} }
+  .api h3{font-family:var(--mono);font-size:1rem;font-weight:700;margin:34px 0 4px;overflow-wrap:anywhere}
+  .api h3 + p{margin-top:4px}
+  .api dl{margin:10px 0 0;display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;font-size:.98rem}
+  .api dt{font-family:var(--mono);font-size:.88rem;padding-top:2px}
+  .api dd{margin:0;color:var(--mut)}
+  @media(max-width:560px){ .api dl{grid-template-columns:1fr;gap:2px} .api dd{margin-bottom:8px} }
+  .langsw button[disabled]{opacity:.45;cursor:not-allowed}
+</style>
+<script defer src="/_vercel/insights/script.js"></script>
+<script>try{var t=localStorage.getItem("bfa-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script defer src="/theme.js"></script>
+</head>
+<body>
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="/"><img src="/logo-64.png" alt="" width="30" height="30"><span class="bname">Bike Fit Analyzer</span></a>
+    <nav class="headright" aria-label="Main">
+      <a class="navlink opt" href="/app">Analyzer</a>
+      <a class="navlink" href="/blog">Guides</a>
+      <a class="navlink gh" href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener" aria-label="Source code on GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.26 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.2.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
+        <span class="lbl">GitHub</span>
+      </a>
+      <div class="themesw" role="group" aria-label="Theme">
+        <button data-theme="auto" title="Match my system" aria-label="Match my system"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg></button>
+        <button data-theme="light" title="Light" aria-label="Light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg></button>
+        <button data-theme="dark" title="Dark" aria-label="Dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 13.2A8.6 8.6 0 0 1 10.8 3a8.6 8.6 0 1 0 10.2 10.2Z"/></svg></button>
+      </div>
+      <div class="langsw" role="group" aria-label="Language">
+        <button class="active" aria-pressed="true" aria-label="English">EN</button>
+        <button disabled title="These docs are in English only" aria-label="Bahasa Indonesia, not available for the docs">ID</button>
+      </div>
+    </nav>
+  </div>
+</header>
+<main class="doc post">
+
+  <p class="crumb"><a href="/">Home</a> / Developers</p>
+
+  <h1>bikefit-angles</h1>
+  <p class="meta"><span>v1.0.0</span><span class="dot">·</span><span>ES module, no dependencies</span><span class="dot">·</span><span>Browser and Node 18+</span></p>
+
+  <p class="intro">The measuring core of Bike Fit Analyzer as a package. The site runs this
+  exact code. Give it 2D points from any pose model and it returns the five fit angles,
+  finds the bottom of each pedal stroke, and grades the result against targets for six bike types.</p>
+
+  <nav class="toc" aria-label="On this page">
+    <ol>
+      <li><a href="#install">Install</a></li>
+      <li><a href="#quick-start">Quick start</a></li>
+      <li><a href="#mediapipe">With MediaPipe Pose</a></li>
+      <li><a href="#other-models">Other pose models</a></li>
+      <li><a href="#targets">Targets and grading</a></li>
+      <li><a href="#frontal">Front and rear views (beta)</a></li>
+      <li><a href="#api">API reference</a></li>
+      <li><a href="#limits">Limits</a></li>
+      <li><a href="#licence">Licence</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="install">Install</h2>
+  <p>From npm:</p>
+<pre><code>npm i bikefit-angles</code></pre>
+  <p>Or from GitHub Packages, which has the same code under a scoped name. Point the
+  <code>@doniwirawan</code> scope at GitHub in your project's <code>.npmrc</code>, then install:</p>
+<pre><code><span class="c"># .npmrc</span>
+@doniwirawan:registry=https://npm.pkg.github.com
+
+npm i @doniwirawan/bikefit-angles</code></pre>
+  <p>GitHub's registry asks for a token with <code>read:packages</code> even for public packages.</p>
+  <p>Without a bundler, import it straight from a CDN:</p>
+<pre><code>import { sideFrameAngles, analyzeSide } from 'https://cdn.jsdelivr.net/npm/bikefit-angles@1.0.0/index.js';</code></pre>
+  <p>TypeScript types ship with the package.</p>
+
+  <h2 id="quick-start">Quick start</h2>
+<pre><code>import { sideFrameAngles, analyzeSide } from 'bikefit-angles';
+
+<span class="c">// One side's joints, in any consistent unit. visibility (0-1) is optional.</span>
+const angles = sideFrameAngles({
+  shoulder: { x: 512, y: 210 }, elbow: { x: 590, y: 300 }, wrist: { x: 660, y: 330 },
+  hip: { x: 400, y: 330 }, knee: { x: 470, y: 470 }, ankle: { x: 455, y: 600 },
+});
+<span class="c">// { knee_flexion_bdc, torso_from_horiz, elbow_flexion, shoulder_angle, hip_angle }</span>
+
+<span class="c">// A whole clip, one entry per frame</span>
+const report = analyzeSide(frames, { bikeType: 'road_endurance' });
+<span class="c">// frames: [{ t: seconds, ankleY: ankle y in image coordinates, angles }, ...]</span>
+<span class="c">// report: { angles, grades, verdict, strokes, hipTop, bdcFrames, tdcFrames } or null</span></code></pre>
+  <p><code>analyzeSide</code> returns <code>null</code> when there are fewer than five usable
+  frames or no clear pedal strokes. Check for it before reading the result.</p>
+
+  <h2 id="mediapipe">With MediaPipe Pose</h2>
+  <p>The helpers read MediaPipe's 33-point layout directly. Lock onto the side facing the
+  camera using confidence summed over the whole clip, so one noisy frame can't switch the
+  measurement to the far leg.</p>
+<pre><code>import { PoseLandmarker } from '@mediapipe/tasks-vision';
+import { sidePoints, sideConfidence, sideFrameAngles, analyzeSide } from 'bikefit-angles';
+
+const frames = [];
+const confidence = { left: 0, right: 0 };
+
+for (const { t, result } of everyFrame) {   <span class="c">// your loop over the video</span>
+  const lm = result.landmarks[0];
+  if (!lm) continue;
+  confidence.left += sideConfidence(lm, 'left');
+  confidence.right += sideConfidence(lm, 'right');
+  const side = confidence.left >= confidence.right ? 'left' : 'right';
+
+  <span class="c">// MediaPipe gives 0-1 coordinates; pass the frame size to get pixels</span>
+  const p = sidePoints(lm, side, video.videoWidth, video.videoHeight);
+  frames.push({ t, ankleY: p.ankle.y, angles: sideFrameAngles(p) });
+}
+
+const report = analyzeSide(frames, { bikeType: 'gravel' });
+if (report) console.log(report.verdict, report.angles.knee_flexion_bdc, report.grades.knee_flexion_bdc);</code></pre>
+  <p>Pass pixels, not 0-1 coordinates, whenever the frame isn't square. Normalised x and y are
+  scaled differently, which bends every angle.</p>
+  <p>For good input, film the rider square to the side, with the camera at hip height, pedalling
+  steadily for 20 to 30 seconds. <a href="/blog/how-to-film-a-bike-fit-video">How to film a bike fit video</a> covers the details.</p>
+
+  <h2 id="other-models">Other pose models</h2>
+  <p>The angle functions only need six named points for one side, so any model works: MoveNet,
+  YOLO-pose, OpenPose, or your own. Map its keypoints to <code>shoulder</code>,
+  <code>elbow</code>, <code>wrist</code>, <code>hip</code>, <code>knee</code> and
+  <code>ankle</code>, and pass the model's confidence as <code>visibility</code>.</p>
+<pre><code><span class="c">// COCO-17 keypoints (MoveNet, YOLO-pose), left side</span>
+const k = (i) => ({ x: kp[i].x, y: kp[i].y, visibility: kp[i].score });
+const p = { shoulder: k(5), elbow: k(7), wrist: k(9), hip: k(11), knee: k(13), ankle: k(15) };
+frames.push({ t, ankleY: p.ankle.y, angles: sideFrameAngles(p) });</code></pre>
+  <p>A joint below <code>MIN_VISIBILITY</code> (0.5) turns every angle that uses it into
+  <code>NaN</code>, and the medians skip <code>NaN</code>. An occluded far-side limb never makes it into the result.</p>
+
+  <h2 id="targets">Targets and grading</h2>
+  <p>Each angle is graded against a zone, written as <code>[greenLow, greenHigh, redBelow, redAbove]</code>
+  in degrees. Inside the green range is <code>GREEN</code>, beyond either red edge is
+  <code>RED</code>, and anything in between is <code>AMBER</code>. A missing reading is
+  <code>GRAY</code>. The verdict is the worst of the four grades.</p>
+  <div class="tablewrap"><table class="nums">
+    <thead><tr><th>Measurement</th><th>Key</th><th>Green</th><th>Red outside</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td>Knee flexion at the bottom of the stroke</td><td><code>knee_flexion_bdc</code></td><td class="n">30–40°</td><td class="n">28 / 42°</td><td>Holmes method, raised ~8° for pedalling video</td></tr>
+      <tr><td>Elbow flexion</td><td><code>elbow_flexion</code></td><td class="n">15–30°</td><td class="n">8 / 45°</td><td>Holmes method</td></tr>
+      <tr><td>Shoulder (torso to upper arm)</td><td><code>shoulder_angle</code></td><td class="n">80–95°</td><td class="n">70 / 105°</td><td>Fitter's rule of thumb</td></tr>
+      <tr><td>Torso from horizontal</td><td><code>torso_from_horiz</code></td><td class="n">By bike type</td><td class="n">By bike type</td><td>Fitter's rule of thumb</td></tr>
+      <tr><td>Hip at the top of the stroke</td><td><code>hipTop</code></td><td class="n">~55–65°</td><td class="n">Not graded</td><td>Burt (2014), road bikes, reported only</td></tr>
+    </tbody>
+  </table></div>
+  <p>Only the torso target changes with the bike:</p>
+  <div class="tablewrap"><table class="nums">
+    <thead><tr><th><code>bikeType</code></th><th>Torso green</th><th>Red outside</th></tr></thead>
+    <tbody>
+      <tr><td><code>road_endurance</code> (default)</td><td class="n">40–50°</td><td class="n">34 / 56°</td></tr>
+      <tr><td><code>road_race</code></td><td class="n">32–42°</td><td class="n">28 / 48°</td></tr>
+      <tr><td><code>tt_tri</code></td><td class="n">12–28°</td><td class="n">8 / 34°</td></tr>
+      <tr><td><code>gravel</code></td><td class="n">42–52°</td><td class="n">36 / 58°</td></tr>
+      <tr><td><code>mtb</code></td><td class="n">46–58°</td><td class="n">40 / 64°</td></tr>
+      <tr><td><code>city</code></td><td class="n">55–70°</td><td class="n">48 / 78°</td></tr>
+    </tbody>
+  </table></div>
+  <p>To grade against your own targets, start from <code>zonesFor()</code> and override what you need:</p>
+<pre><code>import { zonesFor, analyzeSide } from 'bikefit-angles';
+
+const zones = { ...zonesFor('road_race'), knee_flexion_bdc: [33, 43, 30, 46] };
+const report = analyzeSide(frames, { zones });</code></pre>
+  <p>Where each number comes from: <a href="/blog/bike-fit-joint-angles-explained">the fit angles explained</a>
+  and the <a href="https://github.com/doniwirawan/bike-fit-analyzer/blob/main/files/bikefit-research-ranges.md" target="_blank" rel="noopener">research notes</a>.</p>
+
+  <h2 id="frontal">Front and rear views (beta)</h2>
+  <p>A clip filmed from the front or the back gives three readings. Knee tracking is the
+  frontal-plane projection angle (FPPA), signed so that positive means toward the midline. Pelvic
+  rock is the range of hip tilt. Symmetry is the left/right difference.</p>
+<pre><code>import { frontalFrameMetrics, analyzeFrontal, FRONTAL } from 'bikefit-angles';
+
+const metrics = everyLandmarkSet.map((lm) => frontalFrameMetrics(lm, { width, height }));
+const r = analyzeFrontal(metrics, { width });
+
+if (!r.ok) console.log(r.reason);   <span class="c">// 'too-few-frames' or 'not-frontal'</span>
+else {
+  const flagKnee = (leg) => leg && leg.peak > FRONTAL.fppa;
+  console.log(flagKnee(r.left), flagKnee(r.right), r.rock > FRONTAL.rock);
+}</code></pre>
+  <p><code>not-frontal</code> means the hips are less than 4% of the frame width apart, so the clip is really a side view.
+  Flag thresholds sit at the top of the healthy range: knee tracking 10°, pelvic rock 12°,
+  left/right difference 9°. These readings have been checked against the literature and against
+  synthetic poses, but not yet against real footage. Treat them as hints, not verdicts.</p>
+
+  <div class="api">
+  <h2 id="api">API reference</h2>
+  <p>A <code>Point</code> is <code>{ x, y, visibility? }</code> in any consistent unit. A grade is
+  one of <code>'GREEN'</code>, <code>'AMBER'</code>, <code>'RED'</code>, <code>'GRAY'</code>.</p>
+
+  <h3>sideFrameAngles(points, { minVisibility })</h3>
+  <p>The five angles for one frame, in degrees.</p>
+  <dl>
+    <dt>points</dt><dd><code>{ shoulder, elbow, wrist, hip, knee, ankle }</code> for one side.</dd>
+    <dt>minVisibility</dt><dd>Default 0.5. A joint below it gives <code>NaN</code> for every angle that uses it.</dd>
+    <dt>returns</dt><dd><code>{ knee_flexion_bdc, torso_from_horiz, elbow_flexion, shoulder_angle, hip_angle }</code>.
+    Knee and elbow are flexion, so 0° is a straight limb.</dd>
+  </dl>
+
+  <h3>analyzeSide(frames, { bikeType, zones })</h3>
+  <p>Finds the strokes, takes the median angles at the bottom of each one, and grades them.</p>
+  <dl>
+    <dt>frames</dt><dd><code>[{ t, ankleY, angles }]</code>: time in seconds, ankle y in image
+    coordinates (y grows downward, <code>NaN</code> if unseen), and <code>sideFrameAngles()</code> output.</dd>
+    <dt>bikeType</dt><dd>One of the six keys above. Default <code>'road_endurance'</code>.</dd>
+    <dt>zones</dt><dd>Your own zones. Overrides <code>bikeType</code>.</dd>
+    <dt>returns</dt><dd><code>{ angles, grades, verdict, strokes, hipTop, bdcFrames, tdcFrames }</code>,
+    or <code>null</code> with fewer than five frames or no clear strokes. <code>bdcFrames</code> and
+    <code>tdcFrames</code> are the frame indices of the bottom and top of each stroke.</dd>
+  </dl>
+
+  <h3>sidePoints(landmarks, side, width, height)</h3>
+  <p>Picks one side's six joints out of a 33-point MediaPipe / BlazePose array. Multiplies by
+  <code>width</code> and <code>height</code> (default 1) and keeps <code>visibility</code>.</p>
+
+  <h3>sideConfidence(landmarks, side)</h3>
+  <p>The summed visibility of one side's six joints. Add it up over the clip and measure whichever side is larger.</p>
+
+  <h3>frontalFrameMetrics(landmarks, { width, height, minVisibility })</h3>
+  <p>One frame's frontal readings from a 33-point array: <code>{ L, R, hipTilt, hipSpan }</code>.
+  <code>L</code> and <code>R</code> are <code>{ fppa, medialSign }</code>, or <code>null</code> when that leg is not visible.</p>
+
+  <h3>analyzeFrontal(frames, { width })</h3>
+  <p>Summarises a front or rear clip. Returns <code>{ ok: false, reason }</code>, or
+  <code>{ ok: true, left, right, rock, frames }</code>, where <code>left</code> and <code>right</code>
+  are <code>{ peak, median }</code> (peak is the 90th percentile).</p>
+
+  <h3>grade(value, zone) · worst(...grades)</h3>
+  <p>Grade one value against a zone, and pick the worst of several grades
+  (<code>RED</code> &gt; <code>AMBER</code> &gt; <code>GREEN</code> &gt; <code>GRAY</code>).</p>
+
+  <h3>angleAt(a, b, c) · torsoFromHorizontal(hip, shoulder)</h3>
+  <p>The interior angle at <code>b</code> of the path a, b, c (<code>NaN</code> if a segment has
+  no length), and the torso angle from horizontal, 0–90° whichever way the rider faces.</p>
+
+  <h3>findPeaks(y, minDist, prominence) · median(values)</h3>
+  <p>Indices of local maxima at least <code>minDist</code> apart that stand at least <code>prominence</code>
+  above the lower of their two neighbouring minima. Median skips non-finite values and returns <code>null</code> when none are left.</p>
+
+  <h3>Constants</h3>
+  <dl>
+    <dt>ZONES</dt><dd>The default side-view zones.</dd>
+    <dt>BIKE_TYPES</dt><dd>Torso zone per bike type.</dd>
+    <dt>zonesFor(bikeType)</dt><dd><code>ZONES</code> with that bike type's torso zone.</dd>
+    <dt>HIP_TOP_REFERENCE</dt><dd><code>[55, 65]</code>, for display only.</dd>
+    <dt>FRONTAL</dt><dd><code>{ fppa: 10, rock: 12, sym: 9 }</code>, the beta flag thresholds.</dd>
+    <dt>SIDE_LANDMARKS</dt><dd>MediaPipe indices for each side's six joints.</dd>
+    <dt>MIN_VISIBILITY</dt><dd><code>0.5</code>.</dd>
+  </dl>
+  </div>
+
+  <h2 id="limits">Limits</h2>
+  <p>These are 2D angles from a single camera. A clip filmed off-axis stretches or squashes them,
+  and reach suffers most. Knee flexion is the most reliable reading, and shoulder and reach are the
+  least. The results are a starting point for adjusting a bike or booking a fitter, not a
+  replacement for a professional fit, and not medical advice. <a href="/blog/limits-of-2d-bike-fit-analysis">The limits of 2D analysis</a> goes further.</p>
+
+  <h2 id="licence">Licence</h2>
+  <p>Source-available under <a href="https://github.com/doniwirawan/bike-fit-analyzer/blob/main/web/lib/bikefit-angles/LICENSE" target="_blank" rel="noopener">PolyForm Shield 1.0.0</a>.
+  You may use it, including commercially, but not to build or provide a product that competes
+  with Bike Fit Analyzer. It is not open source.</p>
+
+  <div class="morelinks">
+    <h2>Links</h2>
+    <ul>
+      <li><a href="https://github.com/doniwirawan/bike-fit-analyzer/tree/main/web/lib/bikefit-angles" target="_blank" rel="noopener">Source on GitHub</a></li>
+      <li><a href="https://github.com/doniwirawan/bike-fit-analyzer/pkgs/npm/bikefit-angles" target="_blank" rel="noopener">GitHub Packages</a> · <a href="https://www.npmjs.com/package/bikefit-angles" target="_blank" rel="noopener">npm</a></li>
+      <li><a href="https://github.com/doniwirawan/bike-fit-analyzer/issues" target="_blank" rel="noopener">Report an issue</a></li>
+      <li><a href="/app">Try the analyzer</a></li>
+    </ul>
+  </div>
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="row">
+      <div class="about">
+        <a class="brand" href="/"><img src="/logo-64.png" alt="" width="30" height="30"><span class="bname">Bike Fit Analyzer</span></a>
+        <p>Grade your bike fit in your browser. Works with any bike. Free to use.</p>
+      </div>
+      <nav aria-label="Footer">
+        <a href="/">Home</a>
+        <a href="/app">Analyzer</a>
+        <a href="/blog">Guides</a>
+        <a href="/docs" aria-current="page">Developers</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.strava.com/athletes/124436743" target="_blank" rel="noopener">Strava</a>
+        <a href="https://ascent-analytics.doniwirawan.xyz/" target="_blank" rel="noopener">Ascent Analytics</a>
+        <a href="https://ko-fi.com/L7T7234BJ2" target="_blank" rel="noopener">Support on Ko-fi</a>
+      </nav>
+    </div>
+    <p class="legal">Runs entirely in your browser with MediaPipe Pose. Knee and elbow targets come from published research (Holmes method); torso and shoulder targets are a fitter's rule of thumb. Not medical advice, and not a substitute for a professional bike fit. Made by <a href="https://www.strava.com/athletes/124436743" target="_blank" rel="noopener">Doni Wirawan</a>.</p>
+  </div>
+</footer>
+</body>
+</html>

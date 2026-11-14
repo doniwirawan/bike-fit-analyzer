@@ -76,4 +76,11 @@
     <priority>0.3</priority>
   </url>
 
+  <url>
+    <loc>https://bikefit.doniwirawan.xyz/docs</loc>
+    <lastmod>2026-11-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
 </urlset>
