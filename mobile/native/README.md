@@ -55,6 +55,23 @@ gradle --no-daemon bundleRelease          # -> app/build/outputs/bundle/release/
 `bundleRelease` produces the AAB that Google Play requires; `assembleRelease` still produces an
 APK for sideloading. See `PLAY.md` for the store submission.
 
+## Releasing
+
+1. Bump `versionCode` and `versionName` in `app/build.gradle`.
+2. Write what changed in `release-notes.json`, in English and Indonesian.
+3. Run `./release.sh`.
+
+It builds and signs the APK, refuses if it isn't signed with the release key (it would not
+install over the old one), copies it to `web/bikefit-native.apk`, writes `web/android.json`,
+commits and pushes (which deploys the site), and creates the GitHub release
+`android-v<versionName>` with the APK attached. Signing credentials come from the environment,
+or from `mobile/signing.env` (gitignored).
+
+**How people find out about updates.** The app has no INTERNET permission, so it can't check
+itself. About → *Check for updates* opens `bikefit.doniwirawan.xyz/android?v=<versionCode>` in
+the browser, and that page compares it with `android.json`. Keep `android.json` honest: it is
+the only thing that says what the latest version is.
+
 ## Gotchas found the hard way
 
 - **ABI:** MediaPipe 0.10.14 ships no `x86_64` `.so`. Leave x86_64 in the APK and it dies on

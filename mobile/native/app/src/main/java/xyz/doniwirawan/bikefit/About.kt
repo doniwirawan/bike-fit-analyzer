@@ -176,6 +176,20 @@ fun AboutScreen(onBack: () -> Unit) {
         Spacer(Modifier.height(8.dp))
         LinkButton("Read the full terms") { open("$SITE/terms") }
 
+        Section("Updates")
+        // No INTERNET permission, so the app can't ask the site for the latest version itself.
+        // It hands its version to the browser, and /android compares it with android.json.
+        val info = remember { ctx.packageManager.getPackageInfo(ctx.packageName, 0) }
+        val code = if (android.os.Build.VERSION.SDK_INT >= 28) info.longVersionCode
+                   else @Suppress("DEPRECATION") info.versionCode.toLong()
+        Text("You have version ${info.versionName}. The app can't go online, so this opens the " +
+                "website in your browser to compare your version with the latest one.",
+            style = MaterialTheme.typography.bodyMedium)
+        Spacer(Modifier.height(8.dp))
+        LinkButton("Check for updates") {
+            open("$SITE/android?v=$code&name=${Uri.encode(info.versionName)}")
+        }
+
         Section("The project")
         Text("By Doni Wirawan. The web version of this analyzer runs the same grading rules.",
             style = MaterialTheme.typography.bodyMedium)

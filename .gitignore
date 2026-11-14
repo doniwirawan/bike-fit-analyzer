@@ -41,3 +41,6 @@ mobile/**/local.properties
 dist/
 build/
 .desktop-data/
+
+# Local release signing credentials
+mobile/signing.env
