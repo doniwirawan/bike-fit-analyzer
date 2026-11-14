@@ -109,11 +109,11 @@ html{scrollbar-color:var(--line) transparent}
 /* segmented switches: theme + language */
 .themesw,.langsw{display:inline-flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:10px;
   background:var(--card);flex:none}
-.themesw button,.langsw button{border:0;background:transparent;color:var(--mut);font:inherit;font-weight:700;
+.themesw button,.langsw button,.langsw a{border:0;text-decoration:none;background:transparent;color:var(--mut);font:inherit;font-weight:700;
   font-size:.74rem;letter-spacing:.02em;min-width:44px;min-height:44px;padding:0 10px;border-radius:8px;
   display:inline-flex;align-items:center;justify-content:center;line-height:1}
 .themesw button svg{width:16px;height:16px;display:block}
-.themesw button:hover,.langsw button:hover{color:var(--fg)}
+.themesw button:hover,.langsw button:hover,.langsw a:hover{color:var(--fg)}
 .themesw button[aria-pressed="true"],.langsw button.active{background:var(--fg);color:var(--bg)}
 
 /* ----------------------------------------------------------------- buttons */
