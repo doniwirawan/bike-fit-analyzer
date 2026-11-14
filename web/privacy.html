@@ -142,7 +142,8 @@ const I18N = {
 };
 const ID_TZ=/Asia\/(Jakarta|Pontianak|Makassar|Jayapura)/;
 function detectLang(){
-  const s=localStorage.getItem('bfa-lang'); if(s==='en'||s==='id')return s;
+  const q=new URLSearchParams(location.search).get('lang'); if(q==='en'||q==='id')return q;
+  let s=null; try{ s=localStorage.getItem('bfa-lang'); }catch(e){} if(s==='en'||s==='id')return s;
   const n=((navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'en']).join(',')).toLowerCase();
   if(/\bid\b|id[-_]|in[-_]/.test(n))return 'id';
   try{ if(ID_TZ.test(Intl.DateTimeFormat().resolvedOptions().timeZone||''))return 'id'; }catch(e){}

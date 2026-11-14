@@ -107,7 +107,7 @@
   /* result / example */
   .badge{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--mut);
     background:var(--grid);padding:5px 11px;border-radius:999px;margin-bottom:14px}
-  .badge.sample{color:var(--amber);background:color-mix(in srgb,var(--amber) 12%,var(--card))}
+  .badge.sample{color:var(--fg);background:var(--grid)}
   .badge.yours{color:var(--accent);background:var(--soft)}
   .verdict{font-size:1.2rem;font-weight:800;letter-spacing:-.01em;margin:2px 0 16px;display:flex;align-items:center;flex-wrap:wrap}
   .vdot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:10px;flex:none}
@@ -181,7 +181,7 @@
   .tips ol{list-style:none;margin:0;padding:0;counter-reset:t}
   .tips li{counter-increment:t;display:grid;grid-template-columns:36px 1fr;gap:2px 12px;padding:16px 0;border-top:1px solid var(--line)}
   .tips li:first-child{border-top:0;padding-top:0}
-  .tips li::before{content:counter(t);grid-row:1 / span 2;font-stretch:var(--wide);font-weight:800;font-size:1.25rem;color:var(--accent);line-height:1.2}
+  .tips li::before{content:counter(t);grid-row:1 / span 2;font-stretch:var(--wide);font-weight:800;font-size:1.25rem;color:var(--fg);line-height:1.2}
   .tips h3{margin:0;font-size:1rem}
   .tips li p{margin:0;color:var(--mut);font-size:.94rem}
 
@@ -349,6 +349,11 @@
             <path d="M172 130 L214 84" stroke="#2ea44f"/>
             <path d="M214 84 L247 124 L268 140" stroke="#e0912f"/>
             <path d="M172 130 L203 174 L201 214" stroke="#2ea44f"/>
+          </g>
+          <g fill="none" stroke-width="2.5" stroke-linecap="round">
+            <g><path d="M172 130 H210" stroke="#8792a6" stroke-dasharray="3 4"/><path d="M196 130 A24 24 0 0 0 188.2 112.3" stroke="#2ea44f"/></g>
+            <g><path d="M193.8 160.9 A16 16 0 0 0 202.2 190" stroke="#2ea44f"/></g>
+            <g><path d="M238.1 113.2 A14 14 0 0 1 258.1 132.5" stroke="#e0912f"/></g>
           </g>
           <g fill="#fff" stroke="#0e131b" stroke-width="1.4">
             <circle cx="172" cy="130" r="5"/><circle cx="214" cy="84" r="5"/><circle cx="247" cy="124" r="5"/>
