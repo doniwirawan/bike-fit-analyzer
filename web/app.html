@@ -82,6 +82,8 @@
   #drop .hint{color:var(--mut);font-size:.9rem;margin-top:6px}
   .drop-ic{width:40px;height:40px;color:var(--accent);margin:0 auto 4px;display:block}
   .try{margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .apkline{margin:14px 0 0;color:var(--mut);font-size:.9rem;line-height:1.5}
+  .apkline a{font-weight:600;white-space:nowrap}
 
   #stage{position:relative;margin-top:4px;display:none}
   canvas{width:100%;border-radius:14px;background:#000;display:block}
@@ -285,6 +287,7 @@
         <button class="btn ghost" id="rec" data-i18n="btn.rec">Record with webcam</button>
         <span class="foot" style="margin:0"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span data-i18n="foot.noupload">Nothing is uploaded. Analysis runs on your hardware.</span></span>
       </div>
+      <p class="apkline"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/></svg><span data-i18n="apk.line">On Android? The app works offline and keeps going in the background.</span> <a href="/bikefit-native.apk" download data-i18n="apk.get">Download the app (43 MB)</a></p>
       <div id="camera">
         <video id="preview" playsinline muted autoplay></video>
         <div class="camrow">
@@ -768,6 +771,7 @@
         <a href="app.html" data-i18n="foot.launch">Analyzer</a>
         <a href="/blog" data-i18n="nav.guides">Guides</a>
         <a href="/docs">Developers</a>
+        <a href="/bikefit-native.apk" download>Android app</a>
         <a href="privacy.html" data-i18n="foot.link.privacy">Privacy</a>
         <a href="terms.html" data-i18n="foot.link.terms">Terms</a>
         <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>
@@ -811,6 +815,8 @@ const I18N = {
   "drop.hint":{en:"or click to choose · .mp4 .mov .webm · stays on your device",id:"atau klik untuk pilih file · .mp4 .mov .webm · videomu tidak diunggah"},
   "btn.pick":{en:"Choose a video",id:"Pilih video"},
   "btn.rec":{en:"Record with webcam",id:"Rekam pakai webcam"},
+  "apk.line":{en:"On Android? The app works offline and keeps going in the background.",id:"Pakai Android? Aplikasinya jalan offline dan tetap memproses di latar belakang."},
+  "apk.get":{en:"Download the app (43 MB)",id:"Unduh aplikasinya (43 MB)"},
   "foot.noupload":{en:"Nothing is uploaded. Analysis runs on your hardware.",id:"Tidak ada yang diunggah. Semua diproses di perangkatmu."},
   "cam.cancel":{en:"Cancel",id:"Batal"},
   "cam.flip":{en:"Flip camera",id:"Ganti kamera"},
