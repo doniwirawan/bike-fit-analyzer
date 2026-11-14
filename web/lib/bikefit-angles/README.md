@@ -1,4 +1,4 @@
-# @doniwirawan/bikefit-angles
+# bikefit-angles
 
 Bike fit joint angles from 2D pose landmarks. This is the measuring core of [Bike Fit Analyzer](https://bikefit.doniwirawan.xyz), the same code the site runs, published as a package.
 
@@ -17,13 +17,15 @@ Give it points from any pose model (MediaPipe, BlazePose, MoveNet, YOLO-pose, yo
 There are no dependencies. It runs in the browser or in Node 18+.
 
 ```sh
-npm i @doniwirawan/bikefit-angles
+npm i bikefit-angles
 ```
+
+It is also on GitHub Packages as `@doniwirawan/bikefit-angles`, with the same code.
 
 ## Quick start
 
 ```js
-import { sideFrameAngles, analyzeSide } from '@doniwirawan/bikefit-angles';
+import { sideFrameAngles, analyzeSide } from 'bikefit-angles';
 
 // One side's joints, in any consistent unit. visibility (0-1) is optional.
 const angles = sideFrameAngles({
@@ -42,7 +44,7 @@ const result = analyzeSide(frames, { bikeType: 'road_endurance' });
 
 ```js
 import { PoseLandmarker } from '@mediapipe/tasks-vision';
-import { sidePoints, sideConfidence, sideFrameAngles, analyzeSide } from '@doniwirawan/bikefit-angles';
+import { sidePoints, sideConfidence, sideFrameAngles, analyzeSide } from 'bikefit-angles';
 
 const frames = [];
 const confidence = { left: 0, right: 0 };
@@ -94,7 +96,7 @@ Sources and how each number was chosen: [bikefit-research-ranges.md](https://git
 ## Front and rear views (beta)
 
 ```js
-import { frontalFrameMetrics, analyzeFrontal, FRONTAL } from '@doniwirawan/bikefit-angles';
+import { frontalFrameMetrics, analyzeFrontal, FRONTAL } from 'bikefit-angles';
 
 const metrics = everyLandmarkSet.map((lm) => frontalFrameMetrics(lm, { width, height }));
 const r = analyzeFrontal(metrics, { width });

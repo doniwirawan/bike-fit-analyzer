@@ -1,5 +1,5 @@
 {
-  "name": "@doniwirawan/bikefit-angles",
+  "name": "bikefit-angles",
   "version": "1.0.0",
   "description": "Bike fit joint angles from 2D pose landmarks: knee, torso, elbow, shoulder and hip, bottom-of-stroke detection, per-bike-type targets and green/amber/red grading. The measuring core of Bike Fit Analyzer.",
   "type": "module",

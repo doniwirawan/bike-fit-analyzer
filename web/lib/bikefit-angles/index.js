@@ -5,7 +5,8 @@
  * pose estimator; helpers are included for the 33-point MediaPipe / BlazePose layout.
  *
  * This file is the one copy of the maths: the analyzer at bikefit.doniwirawan.xyz imports it
- * directly, and the npm package is published from this folder.
+ * directly, and it is published from this folder as `bikefit-angles` on npm and
+ * `@doniwirawan/bikefit-angles` on GitHub Packages.
  *
  * Source-available under PolyForm Shield 1.0.0 (see LICENSE): free to use, but not to build
  * a product that competes with Bike Fit Analyzer.
