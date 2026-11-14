@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-14T00:00:00Z",
+  "title": "Design System: Bike Fit Analyzer",
+  "extensions": {
+    "colorMeta": {
+      "accent": { "role": "primary", "displayName": "Logo Blue", "canonical": "#2d4fe0", "tonalRamp": ["#0f1a4d", "#18287a", "#2238ad", "#2d4fe0", "#5873ea", "#8299ff", "#b9c6ff", "#edf1fe"] },
+      "accent-soft": { "role": "primary", "displayName": "Blue Wash", "canonical": "#edf1fe" },
+      "grade-green": { "role": "grade", "displayName": "Dialled Green", "canonical": "#15803d", "tonalRamp": ["#08311a", "#0d4f28", "#126a34", "#15803d", "#2ea44f", "#3fb950", "#8fdca0", "#e3f6e8"] },
+      "grade-amber": { "role": "grade", "displayName": "Borderline Amber", "canonical": "#b45309", "tonalRamp": ["#3d1d04", "#632e06", "#8c4107", "#b45309", "#e0912f", "#e3a33b", "#f2cf8f", "#fdf2df"] },
+      "grade-red": { "role": "grade", "displayName": "Fix-It Red", "canonical": "#d1282a", "tonalRamp": ["#4a0d0e", "#741516", "#a11e20", "#d1282a", "#e5544a", "#f26b5b", "#f8ada3", "#fde9e6"] },
+      "grade-gray": { "role": "grade", "displayName": "Not Graded Gray", "canonical": "#6b7280" },
+      "grade-ink": { "role": "grade", "displayName": "Grade Ink", "canonical": "#ffffff" },
+      "ground": { "role": "neutral", "displayName": "Cool Paper", "canonical": "#f4f5f7", "tonalRamp": ["#0d1015", "#141517", "#2d3035", "#545d6b", "#a3a8b0", "#e1e4ea", "#eceef2", "#f4f5f7"] },
+      "card": { "role": "neutral", "displayName": "Card White", "canonical": "#ffffff" },
+      "ink": { "role": "neutral", "displayName": "Report Ink", "canonical": "#0d1015" },
+      "muted": { "role": "neutral", "displayName": "Quiet Slate", "canonical": "#545d6b" },
+      "line": { "role": "neutral", "displayName": "Hairline", "canonical": "#e1e4ea" },
+      "grid": { "role": "neutral", "displayName": "Grid Grey", "canonical": "#eceef2" },
+      "figure": { "role": "neutral", "displayName": "Camera Black", "canonical": "#0e131b" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Landing H1 only; wide and heavy." },
+      "headline": { "displayName": "Headline", "purpose": "Section headings and the inverted band." },
+      "numeral": { "displayName": "Numeral", "purpose": "Every measured angle and target goal." },
+      "numeral-hero": { "displayName": "Numeral Hero", "purpose": "The knee reading, the largest number on the page." },
+      "title": { "displayName": "Title", "purpose": "List-row headings, FAQ questions, panel headings." },
+      "body": { "displayName": "Body", "purpose": "Interface text." },
+      "prose": { "displayName": "Prose", "purpose": "Guides and legal inside the 720px column." },
+      "label": { "displayName": "Label", "purpose": "Pills, segmented options, field labels; never uppercase." }
+    },
+    "shadows": [
+      { "name": "report-lift", "value": "0 1px 2px rgb(13 16 21 / .05), 0 18px 40px -18px rgb(13 16 21 / .22)", "purpose": "The landing sample report only (light theme)." },
+      { "name": "report-lift-dark", "value": "0 1px 0 rgb(255 255 255 / .04) inset, 0 24px 60px -24px rgb(0 0 0 / .75)", "purpose": "The landing sample report only (dark theme)." }
+    ],
+    "motion": [
+      { "name": "ease", "value": "cubic-bezier(.16,1,.3,1)", "purpose": "Shared easing for button press, arrow nudges, FAQ toggle and the marker settle." },
+      { "name": "marker-settle", "value": "1.1s cubic-bezier(.16,1,.3,1) .25s, once", "purpose": "Range-bar markers settle into place on first view of the sample report." },
+      { "name": "limb-highlight", "value": "opacity .2s", "purpose": "Hovering or focusing a metric row dims the other limbs on the figure to 25%." },
+      { "name": "state", "value": ".15s", "purpose": "Button background and border changes." },
+      { "name": "reduced-motion", "value": "all durations .01ms", "purpose": "Every animation and transition is off under prefers-reduced-motion." }
+    ],
+    "breakpoints": [
+      { "name": "hero-stack", "value": "920px" },
+      { "name": "split-stack", "value": "860px" },
+      { "name": "lists-stack", "value": "760px" },
+      { "name": "nav-icons", "value": "640px" },
+      { "name": "full-width-buttons", "value": "600px" },
+      { "name": "header-wrap", "value": "520px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The main action, such as Analyse a clip. Logo blue, 48px tall.",
+      "html": "<a class=\"ds-btn ds-btn-primary\" href=\"#\">Analyse a clip</a>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:0 22px;border-radius:12px;border:1px solid transparent;font-family:var(--sans);font-weight:700;font-size:.98rem;text-decoration:none;line-height:1.1;transition:background-color .15s,border-color .15s,transform .15s cubic-bezier(.16,1,.3,1)} .ds-btn:active{transform:translateY(1px)} .ds-btn:focus-visible{outline:2px solid var(--accent,#2d4fe0);outline-offset:3px} .ds-btn-primary{background:var(--accent,#2d4fe0);color:var(--accent-ink,#fff)} .ds-btn-primary:hover{background:color-mix(in srgb,var(--accent,#2d4fe0) 88%,var(--fg,#0d1015))}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action beside a primary, such as the Android download.",
+      "html": "<a class=\"ds-btn-ghost\" href=\"#\">Android app</a>",
+      "css": ".ds-btn-ghost{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 22px;border-radius:12px;border:1px solid var(--line,#e1e4ea);background:var(--card,#fff);color:var(--fg,#0d1015);font-family:var(--sans);font-weight:700;font-size:.98rem;text-decoration:none;transition:border-color .15s,transform .15s} .ds-btn-ghost:hover{border-color:color-mix(in srgb,var(--fg,#0d1015) 30%,var(--line,#e1e4ea))} .ds-btn-ghost:active{transform:translateY(1px)} .ds-btn-ghost:focus-visible{outline:2px solid var(--accent,#2d4fe0);outline-offset:3px}"
+    },
+    {
+      "name": "Segmented Switch",
+      "kind": "nav",
+      "refersTo": "segmented-switch",
+      "description": "Theme and language switches in the header; the same form serves analyzer tabs and view selection.",
+      "html": "<div class=\"ds-seg\" role=\"group\" aria-label=\"Language\"><button aria-pressed=\"true\">EN</button><button aria-pressed=\"false\">ID</button></div>",
+      "css": ".ds-seg{display:inline-flex;gap:2px;padding:2px;border:1px solid var(--line,#e1e4ea);border-radius:10px;background:var(--card,#fff)} .ds-seg button{border:0;background:transparent;color:var(--mut,#545d6b);font-family:var(--sans);font-weight:700;font-size:.74rem;letter-spacing:.02em;min-width:44px;min-height:44px;padding:0 10px;border-radius:8px;cursor:pointer} .ds-seg button:hover{color:var(--fg,#0d1015)} .ds-seg button[aria-pressed=\"true\"]{background:var(--fg,#0d1015);color:var(--bg,#f4f5f7)} .ds-seg button:focus-visible{outline:2px solid var(--accent,#2d4fe0);outline-offset:3px}"
+    },
+    {
+      "name": "Grade Pills",
+      "kind": "chip",
+      "refersTo": "grade-pill",
+      "description": "A grade is always a fill plus a word; text uses the grade ink token.",
+      "html": "<span class=\"ds-pill ds-green\">dialled</span> <span class=\"ds-pill ds-amber\">borderline</span> <span class=\"ds-pill ds-red\">fix it</span>",
+      "css": ".ds-pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;color:var(--grade-ink,#fff);font-family:var(--sans);font-weight:700;font-size:.72rem;letter-spacing:.02em} .ds-green{background:var(--green,#15803d)} .ds-amber{background:var(--amber,#b45309)} .ds-red{background:var(--red,#d1282a)}"
+    },
+    {
+      "name": "Metric Row",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "The sample report's row: name, target, wide numeral with grade pill, and a range bar with a green target zone and ink marker.",
+      "html": "<div class=\"ds-metric\" tabindex=\"0\"><div class=\"ds-name\">Knee at the bottom</div><div class=\"ds-tgt\">Target 30-40&deg;</div><div class=\"ds-val\">38&deg;<span class=\"ds-pill ds-green\">dialled</span></div><div class=\"ds-rbar\"><span class=\"ds-zone\" style=\"left:40%;width:30%\"></span><span class=\"ds-mk\" style=\"left:62%\"></span></div></div>",
+      "css": ".ds-metric{display:grid;grid-template-columns:1fr auto;gap:2px 16px;align-items:center;padding:14px 4px;border-radius:8px;font-family:var(--sans);color:var(--fg,#0d1015);max-width:420px} .ds-metric:hover,.ds-metric:focus-visible{background:var(--grid,#eceef2);outline:none} .ds-name{font-weight:600} .ds-tgt{grid-column:1;color:var(--mut,#545d6b);font-size:.82rem} .ds-val{grid-row:1 / span 2;grid-column:2;text-align:right;font-stretch:118%;font-weight:800;font-size:1.7rem;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums} .ds-val .ds-pill{display:flex;width:max-content;margin:6px 0 0 auto;font-stretch:100%;padding:3px 9px;border-radius:999px;color:var(--grade-ink,#fff);font-weight:700;font-size:.72rem;letter-spacing:.02em} .ds-green{background:var(--green,#15803d)} .ds-rbar{grid-column:1 / -1;position:relative;height:6px;border-radius:99px;background:var(--grid,#eceef2);margin:12px 0 2px} .ds-zone{position:absolute;top:0;bottom:0;border-radius:99px;background:color-mix(in srgb,var(--green,#15803d) 55%,transparent)} .ds-mk{position:absolute;top:-5px;width:4px;height:16px;border-radius:2px;background:var(--fg,#0d1015);transform:translateX(-2px)}"
+    },
+    {
+      "name": "Hairline List",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "The default content shape: rows separated by hairline rules, label left, wide value right.",
+      "html": "<div class=\"ds-spec\"><div><div class=\"ds-top\"><h3>Knee at the bottom</h3><span class=\"ds-goal\">30-40&deg;</span></div><p>Still slightly bent at the bottom of the stroke.</p></div><div><div class=\"ds-top\"><h3>Elbow bend</h3><span class=\"ds-goal\">15-30&deg;</span></div><p>Never locked straight.</p></div></div>",
+      "css": ".ds-spec{font-family:var(--sans);color:var(--fg,#0d1015);max-width:460px} .ds-spec > div{padding:22px 0;border-top:1px solid var(--line,#e1e4ea)} .ds-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:6px} .ds-spec h3{margin:0;font-size:1.06rem} .ds-goal{font-stretch:118%;font-weight:800;font-size:1.35rem;letter-spacing:-.02em;white-space:nowrap;font-variant-numeric:tabular-nums} .ds-spec p{margin:0;color:var(--mut,#545d6b);font-size:.95rem}"
+    },
+    {
+      "name": "Inverted Band",
+      "kind": "card",
+      "refersTo": "band-inverted",
+      "description": "Ink-filled closing call to action with a flipped button.",
+      "html": "<div class=\"ds-band\"><div><h2>Ready to see your numbers?</h2><p>Drop a clip and get a graded read in under a minute.</p></div><a class=\"ds-band-btn\" href=\"#\">Analyse a clip</a></div>",
+      "css": ".ds-band{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px;background:var(--fg,#0d1015);color:var(--bg,#f4f5f7);border-radius:18px;padding:clamp(28px,5vw,52px);font-family:var(--sans)} .ds-band h2{font-stretch:118%;font-weight:800;font-size:clamp(1.6rem,3.2vw,2.4rem);letter-spacing:-.03em;line-height:1.05;margin:0 0 8px} .ds-band p{margin:0;color:color-mix(in srgb,var(--bg,#f4f5f7) 72%,var(--fg,#0d1015))} .ds-band-btn{display:inline-flex;align-items:center;min-height:48px;padding:0 22px;border-radius:12px;background:var(--bg,#f4f5f7);color:var(--fg,#0d1015);font-weight:700;text-decoration:none;transition:background-color .15s} .ds-band-btn:hover{background:color-mix(in srgb,var(--bg,#f4f5f7) 88%,var(--fg,#0d1015))} .ds-band-btn:focus-visible{outline:2px solid var(--bg,#f4f5f7);outline-offset:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Measured Report",
+    "overview": "The product's own graded report is the hero, the proof and the visual vocabulary. Every surface, from the landing page to the analyzer to the guides, reads like a page from a consumer sports-health report at Strava, Whoop or Apple Health craft: a cool near-white ground, near-black ink, hairline rules, big expanded numerals, and colour that only ever means something. It is played straight. The category standard, done carefully, is the identity.\n\nDensity is calm and list-shaped. Information sits in hairline-ruled rows and spec lists rather than in grids of boxed cards, so a page scans the way a report does: label on the left, measured value on the right. One typeface, Mona Sans, carries both voices: normal width for reading and interface text, stretched to 118% and set heavy for display lines and the numbers that matter.\n\nThe system refuses the SaaS template kit outright: no eyebrow labels over headings, no icon tiles, no chip rows, no glow gradients, no fake browser chrome, no four-column link footer. Dark theme is a faithful mirror on a graphite ground, not a separate mood.",
+    "keyCharacteristics": [
+      "Light base with an explicit dark theme, reachable by OS preference or the header toggle.",
+      "Colour has two jobs: the logo blue for action, links and focus; green, amber and red for grades.",
+      "Mona Sans variable, self-hosted: expanded heavy for display and numerals, normal width for text.",
+      "Hairline lists over card grids; one elevated surface on the whole site.",
+      "44px minimum tap targets everywhere, because the rider is often mid-session beside a trainer."
+    ],
+    "rules": [
+      { "name": "The Two Jobs Rule", "body": "Colour is either the brand blue (act, follow, focus) or a grade (green, amber, red, gray). Anything else is neutral. Reliability notes, view tags and \"beta\" markers are words and weight, never a grade hue, so a colour on this site always means a measurement.", "section": "colors" },
+      { "name": "The Never Alone Rule", "body": "A grade is never colour only: every pill carries a word (\"dialled\", \"borderline\", \"fix it\") and every number sits beside its target.", "section": "colors" },
+      { "name": "The Wide Numbers Rule", "body": "Display lines and measured numerals are set at 118% width and weight 800; everything a rider reads as sentences stays at normal width. Pills inside a numeral block reset to 100%.", "section": "typography" },
+      { "name": "The Tabular Rule", "body": "Every number that can be compared (values, targets, table cells, timers) uses tabular figures.", "section": "typography" },
+      { "name": "The 44px Rule", "body": "Every interactive control, including nav links, switch segments, footer links and FAQ summaries, has a 44px minimum hit area; primary buttons are 48px.", "section": "layout" },
+      { "name": "The One Lifted Report Rule", "body": "Only the sample report floats. Every other card, panel, table and post sits flat with a hairline.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use the logo blue only for primary action, links and focus.",
+      "Do keep green, amber, red and gray for grades, and pair every grade with a word.",
+      "Do set display lines and measured numbers in Mona Sans at 118% width, weight 800, tabular figures.",
+      "Do build content as hairline-ruled lists with the value on the right before reaching for a card.",
+      "Do give every control a 44px minimum target and let header controls wrap to a second row under 520px.",
+      "Do keep the sample figure dark in both themes with the figure token.",
+      "Do self-host every font and asset; a CDN load breaks the privacy promise.",
+      "Do switch off all animation and transitions under reduced motion."
+    ],
+    "donts": [
+      "Don't add eyebrow labels, icon tiles, chip rows, glow gradients or fake browser chrome.",
+      "Don't give any surface other than the sample report a drop shadow.",
+      "Don't colour reliability notes, tags or \"beta\" markers with a grade hue; use words and weight.",
+      "Don't use a second display face or uppercase-tracked labels.",
+      "Don't add a multi-column link footer; there is one shared footer."
+    ]
+  }
+}
