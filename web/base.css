@@ -83,6 +83,10 @@ html{scrollbar-color:var(--line) transparent}
     transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
 
+/* micro-text icons: one drawn set, same stroke as the header icons, sized to the text they sit in */
+.ic{display:inline-block;width:1.05em;height:1.05em;flex:none;vertical-align:-.17em;margin-right:.42em;
+  fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
 /* ------------------------------------------------------------------ header */
 .site-head{padding:18px 0;border-bottom:1px solid var(--line);background:var(--bg)}
 .site-head .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
