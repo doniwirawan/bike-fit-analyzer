@@ -126,6 +126,8 @@
   .rbar{position:relative;height:6px;border-radius:99px;margin:10px 0 6px}
   .rbar .mk{position:absolute;top:-5px;width:4px;height:16px;border-radius:2px;background:var(--fg);
     box-shadow:0 0 0 2px var(--card);transform:translateX(-2px)}
+  .rlab{position:relative;height:16px;margin:0 0 4px;font-size:.74rem;font-weight:600;color:var(--mut);font-variant-numeric:tabular-nums}
+  .rlab span{position:absolute;top:0;transform:translateX(-50%)}
   .srcbox{margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:0 16px}
   .srcbox summary{font-weight:700;font-size:.92rem;min-height:48px;display:flex;align-items:center}
   .srcbox summary:hover{color:var(--accent)}
@@ -686,6 +688,12 @@ function zoneGradient(m,zones){
     `${R_} 0 ${p(s.rlo)},${A_} ${p(s.rlo)} ${p(s.glo)},`+
     `${G_} ${p(s.glo)} ${p(s.ghi)},${A_} ${p(s.ghi)} ${p(s.rhi)},${R_} ${p(s.rhi)} 100%)`;
 }
+// The target band's two edges, written under the bar where they sit, so the bar reads without
+// the target line beside it.
+function bandLabels(m,zones){
+  const s=barScale(m,zones), p=x=>s.pos(x).toFixed(1)+"%";
+  return `<div class="rlab" aria-hidden="true"><span style="left:${p(s.glo)}">${s.glo}°</span><span style="left:${p(s.ghi)}">${s.ghi}°</span></div>`;
+}
 function rangeMarker(m,v,zones){
   if(v==null||isNaN(v)) return "";
   return `<span class="mk" style="left:${barScale(m,zones).pos(v).toFixed(1)}%"></span>`;
@@ -708,8 +716,8 @@ function sourceLink(m){
 function angleCard(m,v,g,target,zones){
   return `<div class="mcard"><div class="cname">${t(LABEL[m][0])}</div>`+
     `<div class="cval" style="color:${CSSCOL[g]}">${v==null||isNaN(v)?"–":Math.round(v)+"°"}</div>`+
-    `<div class="rbar" style="background:${zoneGradient(m,zones)}">${rangeMarker(m,v,zones)}</div>`+
-    `<div class="ctgt">${target}</div>${sourceLink(m)}</div>`;
+    `<div class="rbar" style="background:${zoneGradient(m,zones)}">${rangeMarker(m,v,zones)}</div>${bandLabels(m,zones)}`+
+    `<div class="ctgt vh">${target}</div>${sourceLink(m)}</div>`;
 }
 // The sample card set is pinned to the road-endurance zones so it stays a stable illustration
 // and doesn't turn red when someone picks a TT bike before uploading anything.
