@@ -1,25 +1,18 @@
+/* Reading pages: privacy, terms and the guides. base.css supplies the tokens, the header,
+   the buttons and the footer; this only sets the column and the prose. */
 
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);line-height:1.65;
-  font-family:var(--sans)}
-.wrap{max-width:760px;margin:0 auto;padding:26px 20px 70px}
-header{display:flex;align-items:center;justify-content:space-between;gap:14px;
-  padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:30px}
-.brand{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-weight:700;
-  letter-spacing:.08em;text-transform:uppercase;font-size:.82rem;color:inherit;text-decoration:none}
-.brand img{width:26px;height:26px;object-fit:contain;display:block}
-.langsw{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.langsw button{background:none;border:0;color:var(--mut);cursor:pointer;padding:5px 11px;
-  font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.06em}
-.langsw button.active{background:var(--accent);color:#fff}
-h1{font-size:1.9rem;letter-spacing:-.02em;margin:0 0 6px}
-.updated{color:var(--mut);font-family:var(--mono);font-size:.72rem;text-transform:uppercase;
-  letter-spacing:.08em;margin-bottom:26px}
-h2{font-size:1.06rem;margin:30px 0 8px}
-p,li{color:var(--fg);margin:9px 0}
-ul{padding-left:20px}
-.box{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin:18px 0}
+.doc{max-width:720px;margin:0 auto;padding:clamp(36px,6vw,64px) max(20px,env(safe-area-inset-left)) 0;
+  font-size:1.06rem;line-height:1.7}
+.doc h1{font-stretch:var(--wide);font-weight:800;font-size:clamp(2rem,4.6vw,3rem);line-height:1.04;
+  letter-spacing:-.035em;margin:0 0 14px}
+.updated{color:var(--mut);font-size:.92rem;margin:0 0 32px}
+.doc h2{font-size:1.5rem;font-weight:800;letter-spacing:-.015em;line-height:1.25;margin:44px 0 10px}
+.doc h3{font-size:1.2rem;font-weight:700;margin:28px 0 6px}
+.doc p,.doc li{margin:12px 0}
+.doc ul,.doc ol{padding-left:22px}
+.doc li::marker{color:var(--mut)}
+.doc code{font-family:var(--mono);font-size:.88em;background:var(--grid);padding:1px 6px;border-radius:6px}
+.doc b,.doc strong{font-weight:700}
+/* the one-paragraph summary at the top of a legal page */
+.box{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px;margin:22px 0}
 .box p:first-child{margin-top:0} .box p:last-child{margin-bottom:0}
-a{color:var(--accent)}
-footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);
-  color:var(--mut);font-size:.82rem;display:flex;gap:16px;flex-wrap:wrap}

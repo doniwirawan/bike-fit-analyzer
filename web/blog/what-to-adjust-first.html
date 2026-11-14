@@ -11,11 +11,10 @@
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://bikefit.doniwirawan.xyz/blog/what-to-adjust-first">
 <meta property="og:site_name" content="Bike Fit Analyzer">
-<meta property="og:title" content="Your bike fit report says red — what to adjust first">
-<meta property="og:description" content="Start with saddle height, change one thing at a time, re-measure — and know which readings are not worth spending money on.">
+<meta property="og:title" content="Your bike fit report says red: what to adjust first">
+<meta property="og:description" content="Start with saddle height, change one thing at a time, re-measure, and know which readings are not worth spending money on.">
 <meta property="og:image" content="https://bikefit.doniwirawan.xyz/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/open-props.min.css">
 <link rel="stylesheet" href="/base.css">
 <link rel="stylesheet" href="/legal.css">
 <link rel="stylesheet" href="/blog.css">
@@ -23,7 +22,7 @@
 {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": "Your bike fit report says red — what to adjust first",
+  "headline": "Your bike fit report says red: what to adjust first",
   "description": "An order of operations for acting on a bike fit result: start with saddle height, change one thing at a time, re-measure, and know which readings are not worth spending money on.",
   "datePublished": "2026-07-30",
   "dateModified": "2026-07-30",
@@ -38,30 +37,40 @@
 <script defer src="/theme.js"></script>
 </head>
 <body>
-<div class="wrap post">
-  <header>
-    <a class="brand" href="/"><img src="/logo-64.png" alt="" width="26" height="26"> Bike Fit Analyzer</a>
-    <a class="brand" href="/app" style="letter-spacing:.06em">Open the analyzer →</a>
-    <div class="themesw" role="group" aria-label="Theme">
-  <button data-theme="auto" title="Match my system" aria-label="Match my system"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg></button>
-  <button data-theme="light" title="Light" aria-label="Light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg></button>
-  <button data-theme="dark" title="Dark" aria-label="Dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 13.2A8.6 8.6 0 0 1 10.8 3a8.6 8.6 0 1 0 10.2 10.2Z"/></svg></button>
-</div>
-  </header>
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="/"><img src="/logo-64.png" alt="" width="30" height="30"><span class="bname">Bike Fit Analyzer</span></a>
+    <nav class="headright" aria-label="Main">
+      <a class="navlink" href="/blog" aria-current="page">Guides</a>
+      <a class="navlink opt" href="/app">Analyzer</a>
+      <a class="navlink gh" href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener" aria-label="Source code on GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.26 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.2.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
+        <span class="lbl">GitHub</span>
+      </a>
+      <div class="themesw" role="group" aria-label="Theme">
+        <button data-theme="auto" title="Match my system" aria-label="Match my system"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg></button>
+        <button data-theme="light" title="Light" aria-label="Light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg></button>
+        <button data-theme="dark" title="Dark" aria-label="Dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 13.2A8.6 8.6 0 0 1 10.8 3a8.6 8.6 0 1 0 10.2 10.2Z"/></svg></button>
+      </div>
+
+    </nav>
+  </div>
+</header>
+<main class="doc post">
 
   <p class="crumb"><a href="/">Home</a> / <a href="/blog">Guides</a> / What to adjust</p>
 
-  <h1>Your report says red — what to adjust first</h1>
+  <h1>Your report says red: what to adjust first</h1>
   <p class="meta"><span>30 July 2026</span><span class="dot">·</span><span>7 min read</span></p>
 
   <p class="intro">A report with two red readings is not two problems. It is usually one problem
   showing up in two places. The order you work in matters more than how much you change, because
-  the contact points are not independent — move the saddle and you have changed reach as well.</p>
+  the contact points are not independent: move the saddle and you have changed reach as well.</p>
 
   <h2>Rule zero: if nothing hurts, be sceptical of the urge to change things</h2>
   <p>The most common way to make a bike worse is to chase a number on a screen when the bike was
   already comfortable. If you ride regularly, nothing aches, and your report has one amber reading
-  a few degrees outside its band — you are allowed to do nothing. Amber means "worth a look", not
+  a few degrees outside its band: you are allowed to do nothing. Amber means "worth a look", not
   "broken".</p>
   <p>What genuinely deserves action: a red reading, a reading that matches an ache you already have,
   or a knee angle well outside 30–40°. Those are worth your afternoon.</p>
@@ -92,8 +101,8 @@
   step 1.</p>
 
   <h3>3. Bar height (usually free)</h3>
-  <p>If your torso reads too aggressive — much below the 40–50° band and you feel it in your lower
-  back or neck — spacers under the stem are the cheap fix, and most bikes have some already
+  <p>If your torso reads too aggressive, much below the 40–50° band and you feel it in your lower
+  back or neck, spacers under the stem are the cheap fix, and most bikes have some already
   installed that can be moved. Raising the bars brings the torso up and opens the shoulder angle at
   the same time.</p>
   <p>Going the other way, removing spacers to get lower, is worth being careful about. It is easy to
@@ -101,19 +110,19 @@
 
   <h3>4. Cleat position (cheap, if you use clipless pedals)</h3>
   <p>Fore/aft cleat position changes the effective distance from your hip to the pedal, so it
-  interacts with saddle height. Worth knowing about, but do not start here — and note that the
+  interacts with saddle height. Worth knowing about, but do not start here, and note that the
   analyzer cannot see your cleats, so this one is judged by feel and by whether your knee angle
   moves when you change it.</p>
 
-  <h3>5. Reach — last, and reluctantly</h3>
+  <h3>5. Reach: last, and reluctantly</h3>
   <p>A different stem length is the only item on this list that costs money and cannot be undone in
   thirty seconds. So it goes last, and only if the first four steps genuinely did not get you there.</p>
   <p>Be especially slow to act on the shoulder angle alone. It is the least precise reading in the
-  whole report — it depends on exactly where your hands were on the bars during that clip, and
+  whole report: it depends on exactly where your hands were on the bars during that clip, and
   shoulder landmarks are the hardest for a pose model to place. A shoulder angle sitting a little
   below 80°, with no numbness and no ache, is not a reason to buy a stem. If your hands go numb, or
   your neck hurts after an hour, that is real information, and it usually shows up in the elbow
-  reading too — locked-out arms near 0° mean you are reaching.</p>
+  reading too: locked-out arms near 0° mean you are reaching.</p>
 
   <h2>Change one thing, then measure again</h2>
   <p>This is the part that makes self-fitting work at all. Adjust one thing, re-film, compare. The
@@ -137,7 +146,7 @@
     position. These need a person in the room.</li>
   </ul>
   <p>A physiotherapist for the pain, a professional fitter for the position. This tool is built to
-  find the obvious, cheap-to-fix problems before you spend money — not to replace either of them.</p>
+  find the obvious, cheap-to-fix problems before you spend money, not to replace either of them.</p>
 
   <div class="cta">
     <p>Made a change? Re-film and compare it against your saved result.</p>
@@ -153,9 +162,29 @@
     </ul>
   </div>
 
-  <footer>
-    <a href="/">Home</a><a href="/blog">Guides</a><a href="/app">Analyzer</a><a href="/privacy">Privacy</a>
-  </footer>
-</div>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="row">
+      <div class="about">
+        <a class="brand" href="/"><img src="/logo-64.png" alt="" width="30" height="30"><span class="bname">Bike Fit Analyzer</span></a>
+        <p>Grade your bike fit in your browser. Works with any bike. Free to use.</p>
+      </div>
+      <nav aria-label="Footer">
+        <a href="/">Home</a>
+        <a href="/app">Analyzer</a>
+        <a href="/blog">Guides</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="https://github.com/doniwirawan/bike-fit-analyzer" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.strava.com/athletes/124436743" target="_blank" rel="noopener">Strava</a>
+        <a href="https://ascent-analytics.doniwirawan.xyz/" target="_blank" rel="noopener">Ascent Analytics</a>
+        <a href="https://ko-fi.com/L7T7234BJ2" target="_blank" rel="noopener">Support on Ko-fi</a>
+      </nav>
+    </div>
+    <p class="legal">Runs entirely in your browser with MediaPipe Pose. Knee and elbow targets come from published research (Holmes method); torso and shoulder targets are a fitter's rule of thumb. Not medical advice, and not a substitute for a professional bike fit. Made by <a href="https://www.strava.com/athletes/124436743" target="_blank" rel="noopener">Doni Wirawan</a>.</p>
+  </div>
+</footer>
 </body>
 </html>

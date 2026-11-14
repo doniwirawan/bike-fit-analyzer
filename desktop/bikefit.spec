@@ -11,7 +11,7 @@ ROOT = Path(SPECPATH).parent
 
 datas = [
     # The UI is the website's own app.html plus everything it links — fonts, base.css,
-    # open-props, theme.js. Shipping the whole folder keeps the desktop build from needing
+    # theme.js. Shipping the whole folder keeps the desktop build from needing
     # its own copy of any of it.
     (str(ROOT / "web"), "web"),
     # analyze_bikefit.py is imported at runtime via sys.path, so it travels as data.

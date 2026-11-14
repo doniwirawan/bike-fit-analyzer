@@ -1,79 +1,147 @@
-/* Shared foundation for every page: the typeface, the colour tokens, and the theme switch.
-   Loaded before each page's own styles, which now only describe their own components.
+/* Shared foundation for every page: the typeface, the colour tokens, the theme switch, and the
+   handful of components every page repeats (header, buttons, footer, grade pills).
+   Each page's own <style> only describes what is unique to it.
 
-   Open Props supplies the scales underneath (open-props.min.css, vendored). We map the few
-   we actually use onto our own names rather than sprinkling --size-6 through the markup —
-   the pages keep speaking our vocabulary, and the ramps stop being hand-picked one-offs.
-
-   Everything here is served from this domain. No font CDN, no stylesheet CDN — the privacy
+   Everything here is served from this domain. No font CDN, no stylesheet CDN: the privacy
    page promises no third party loads on a normal visit, and a webfont link would quietly
-   break that. IBM Plex is SIL OFL 1.1; the woff2 files in fonts/ are the latin subsets. */
+   break that. Mona Sans is SIL OFL 1.1 (fonts/MONA-SANS-OFL.txt); the file is a latin
+   subset of the variable font, weight 400 to 800 and width 100 to 125.
+
+   Why Mona Sans: one variable family covers both voices the product needs. At normal width
+   it is a plain, readable UI sans; stretched wide and heavy it gives the big measured numbers
+   the athletic weight Strava- and Whoop-style reports have, without a second display face. */
 
 /* ---------------------------------------------------------------- typeface */
-/* swap: text paints immediately in the fallback and reflows when Plex lands, rather than
-   leaving the page blank on a slow connection. */
-@font-face{font-family:"IBM Plex Sans";src:url("fonts/ibm-plex-sans-latin-400-normal.woff2") format("woff2");
-  font-weight:400;font-style:normal;font-display:swap}
-@font-face{font-family:"IBM Plex Sans";src:url("fonts/ibm-plex-sans-latin-600-normal.woff2") format("woff2");
-  font-weight:600;font-style:normal;font-display:swap}
-/* 700 answers for 800 too — Plex has no extrabold, and the headings ask for one */
-@font-face{font-family:"IBM Plex Sans";src:url("fonts/ibm-plex-sans-latin-700-normal.woff2") format("woff2");
-  font-weight:700 800;font-style:normal;font-display:swap}
-@font-face{font-family:"IBM Plex Mono";src:url("fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
-  font-weight:400;font-style:normal;font-display:swap}
-@font-face{font-family:"IBM Plex Mono";src:url("fonts/ibm-plex-mono-latin-600-normal.woff2") format("woff2");
-  font-weight:600;font-style:normal;font-display:swap}
-@font-face{font-family:"IBM Plex Mono";src:url("fonts/ibm-plex-mono-latin-700-normal.woff2") format("woff2");
-  font-weight:700 800;font-style:normal;font-display:swap}
+@font-face{font-family:"Mona Sans";src:url("fonts/mona-sans-latin-var.woff2") format("woff2");
+  font-weight:400 800;font-stretch:100% 125%;font-style:normal;font-display:swap}
 
 /* ------------------------------------------------------------------ tokens */
 /* Light is the base. Dark arrives two ways and both must work: the OS preference, and an
    explicit choice from the toggle. The :not([data-theme="light"]) guard is what lets someone
-   on a dark-mode OS pick light and actually get it. */
+   on a dark-mode OS pick light and actually get it.
+
+   Colour has exactly two jobs. The logo's blue is the brand: primary action, links, focus.
+   Green / amber / red are grades and nothing else, so a colour on this site always means
+   something. Everything else is neutral. */
 :root{
-  --sans:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --sans:"Mona Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
 
-  --bg:#f2f4f7; --card:#ffffff; --fg:#101720; --mut:#5a6675; --line:#dde3ea; --grid:#eef1f5;
-  --accent:#1a63d8; --accent-ink:#ffffff; --soft:#e8f0fe;
-  --green:#15883f; --amber:#c2700a; --red:#d0342c; --gray:#95a0ae;
+  --bg:#f4f5f7; --card:#ffffff; --fg:#0d1015; --mut:#545d6b; --line:#e1e4ea; --grid:#eceef2;
+  --accent:#2d4fe0; --accent-ink:#ffffff; --soft:#edf1fe;
+  --green:#15803d; --amber:#b45309; --red:#d1282a; --gray:#6b7280; --grade-ink:#ffffff;
 
-  /* Open Props ramps, renamed. Corners are noticeably rounder than before and the shadows
-     are its layered ones, which is most of why the surfaces read differently now. */
-  --radius:var(--radius-3,16px); --radius-sm:var(--radius-2,10px);
-  --shadow:var(--shadow-2,0 1px 2px rgb(16 24 40 / .06));
-  --shadow-lg:var(--shadow-5,0 24px 60px -28px rgb(16 24 40 / .3));
-  --ease:var(--ease-3,cubic-bezier(.25,0,.3,1));
+  --radius:14px; --radius-sm:9px;
+  --shadow:none;
+  --shadow-lg:0 1px 2px rgb(13 16 21 / .05),0 18px 40px -18px rgb(13 16 21 / .22);
+  --ease:cubic-bezier(.16,1,.3,1);
+  --wide:118%;   /* font-stretch for display type and big numerals */
+  --figure:#0e131b;   /* the sample figure is a camera frame, so it stays dark in both themes */
 
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#0a0e14; --card:#121822; --fg:#e3e9f1; --mut:#8c98a8; --line:#1f2733; --grid:#161d27;
-    --accent:#5b95ff; --accent-ink:#08101d; --soft:#152234;
-    --green:#2ea44f; --amber:#e0912f; --red:#f0564d; --gray:#8b95a3;
-    --shadow:0 1px 0 rgb(0 0 0 / .5);
-    --shadow-lg:0 30px 70px -30px rgb(0 0 0 / .8),0 2px 10px rgb(0 0 0 / .45);
+    --bg:#141517; --card:#1c1e21; --fg:#eef0f2; --mut:#a3a8b0; --line:#2d3035; --grid:#232529;
+    --accent:#8299ff; --accent-ink:#101114; --soft:#1f2440;
+    --green:#3fb950; --amber:#e3a33b; --red:#f26b5b; --gray:#8d929a; --grade-ink:#101114; --figure:#0f1012;
+    --shadow-lg:0 1px 0 rgb(255 255 255 / .04) inset,0 24px 60px -24px rgb(0 0 0 / .75);
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0a0e14; --card:#121822; --fg:#e3e9f1; --mut:#8c98a8; --line:#1f2733; --grid:#161d27;
-  --accent:#5b95ff; --accent-ink:#08101d; --soft:#152234;
-  --green:#2ea44f; --amber:#e0912f; --red:#f0564d; --gray:#8b95a3;
-  --shadow:0 1px 0 rgb(0 0 0 / .5);
-  --shadow-lg:0 30px 70px -30px rgb(0 0 0 / .8),0 2px 10px rgb(0 0 0 / .45);
+  --bg:#141517; --card:#1c1e21; --fg:#eef0f2; --mut:#a3a8b0; --line:#2d3035; --grid:#232529;
+  --accent:#8299ff; --accent-ink:#101114; --soft:#1f2440;
+  --green:#3fb950; --amber:#e3a33b; --red:#f26b5b; --gray:#8d929a; --grade-ink:#101114; --figure:#0f1012;
+  --shadow-lg:0 1px 0 rgb(255 255 255 / .04) inset,0 24px 60px -24px rgb(0 0 0 / .75);
   color-scheme:dark;
 }
 
-body{font-family:var(--sans);font-feature-settings:"cv05" 1;letter-spacing:-.005em}
+/* -------------------------------------------------------------------- base */
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--sans);background:var(--bg);color:var(--fg);line-height:1.55;
+  overflow-wrap:break-word;-webkit-font-smoothing:antialiased}
+.num,.tnum,td,.val,.goal{font-variant-numeric:tabular-nums}
+img,svg,canvas,video{max-width:100%;height:auto}
+a{color:var(--accent);text-underline-offset:.18em;text-decoration-thickness:1px}
+a:hover{text-decoration-thickness:2px}
+h1,h2,h3{text-wrap:balance}
+p{text-wrap:pretty}
+::selection{background:color-mix(in srgb,var(--accent) 26%,transparent);color:var(--fg)}
+:focus{outline:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+a[href],button:not(:disabled),summary,select,label[for],input[type=checkbox],input[type=radio],
+[role=button],[role=tab]{cursor:pointer}
+button:disabled,.btn[aria-disabled="true"]{cursor:not-allowed;opacity:.5}
+html{scrollbar-color:var(--line) transparent}
+.wrap{max-width:1160px;margin:0 auto;padding:0 max(20px,env(safe-area-inset-left))}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wide{font-stretch:var(--wide)}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
 
-/* ------------------------------------------------------------ theme switch */
-.themesw{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;
+/* ------------------------------------------------------------------ header */
+.site-head{padding:18px 0;border-bottom:1px solid var(--line);background:var(--bg)}
+.site-head .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:1.02rem;
+  letter-spacing:-.01em;color:var(--fg);text-decoration:none;min-height:44px}
+.brand img{width:30px;height:30px;object-fit:contain;display:block;flex:none}
+.brand .bname{white-space:nowrap}
+.headright{display:flex;align-items:center;gap:6px}
+.navlink{color:var(--mut);text-decoration:none;font-weight:600;font-size:.92rem;padding:0 10px;
+  min-height:44px;display:inline-flex;align-items:center;gap:7px;border-radius:9px}
+.navlink:hover{color:var(--fg);background:var(--grid)}
+.navlink svg{width:17px;height:17px}
+.navlink[aria-current="page"]{color:var(--fg)}
+@media(max-width:640px){ .navlink .lbl{display:none} .navlink.opt{display:none} }
+/* A phone can't fit the wordmark and every 44px control on one line, so the controls drop to
+   a second row. GitHub leaves the header there; the footer still links it. */
+@media(max-width:520px){
+  .site-head{padding:10px 0}
+  .site-head .wrap{flex-wrap:wrap;row-gap:6px}
+  .site-head .headright{width:100%;justify-content:space-between}
+  .navlink.gh{display:none}
+}
+
+/* segmented switches: theme + language */
+.themesw,.langsw{display:inline-flex;gap:2px;padding:2px;border:1px solid var(--line);border-radius:10px;
   background:var(--card);flex:none}
-.themesw button{border:0;background:transparent;color:var(--mut);cursor:pointer;padding:6px 9px;
-  display:inline-flex;align-items:center;font:inherit;line-height:1}
-.themesw button+button{border-left:1px solid var(--line)}
-.themesw button svg{width:15px;height:15px;display:block}
-.themesw button:hover{color:var(--accent)}
-.themesw button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.themesw button,.langsw button{border:0;background:transparent;color:var(--mut);font:inherit;font-weight:700;
+  font-size:.74rem;letter-spacing:.02em;min-width:44px;min-height:44px;padding:0 10px;border-radius:8px;
+  display:inline-flex;align-items:center;justify-content:center;line-height:1}
+.themesw button svg{width:16px;height:16px;display:block}
+.themesw button:hover,.langsw button:hover{color:var(--fg)}
+.themesw button[aria-pressed="true"],.langsw button.active{background:var(--fg);color:var(--bg)}
+
+/* ----------------------------------------------------------------- buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:0 22px;
+  border-radius:12px;border:1px solid transparent;font:inherit;font-weight:700;font-size:.98rem;
+  text-decoration:none;line-height:1.1;transition:background-color .15s,border-color .15s,transform .15s var(--ease)}
+.btn svg{width:18px;height:18px;flex:none}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{background:color-mix(in srgb,var(--accent) 88%,var(--fg))}
+.btn.ghost{background:var(--card);color:var(--fg);border-color:var(--line)}
+.btn.ghost:hover{border-color:color-mix(in srgb,var(--fg) 30%,var(--line))}
+.btn.small{min-height:44px;padding:0 14px;font-size:.82rem;border-radius:9px}
+
+/* -------------------------------------------------------------- grades */
+.GREEN{background:var(--green)} .AMBER{background:var(--amber)} .RED{background:var(--red)} .GRAY{background:var(--gray)}
+.pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;color:var(--grade-ink);
+  font-weight:700;font-size:.72rem;letter-spacing:.02em}
+
+/* ------------------------------------------------------------------ footer */
+.site-foot{border-top:1px solid var(--line);margin-top:72px;padding:36px 0 48px;color:var(--mut);font-size:.9rem}
+.site-foot .row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px 40px;align-items:flex-start}
+.site-foot .about{max-width:340px}
+.site-foot .about p{margin:10px 0 0}
+.site-foot nav{display:flex;flex-wrap:wrap;gap:0 22px;max-width:600px}
+.site-foot nav a{color:var(--fg);text-decoration:none;font-weight:600;min-height:44px;display:inline-flex;align-items:center}
+.site-foot nav a:hover{color:var(--accent)}
+/* the rule runs the full width; only the text keeps a readable measure */
+.site-foot .legal{margin-top:28px;padding-top:20px;border-top:1px solid var(--line);font-size:.84rem;line-height:1.6;
+  padding-right:max(0px,calc(100% - 820px))}
+.site-foot .legal a{color:inherit}
