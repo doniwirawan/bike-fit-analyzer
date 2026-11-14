@@ -2,7 +2,6 @@ package xyz.doniwirawan.bikefit
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,10 +11,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.foundation.border
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -42,42 +39,42 @@ fun AboutScreen(onBack: () -> Unit) {
         })
 
     Column(
-        Modifier.fillMaxSize().background(BG).padding(18.dp).verticalScroll(rememberScrollState())
+        Modifier.fillMaxSize().background(P.bg).windowInsetsPadding(WindowInsets.safeDrawing)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp, vertical = 12.dp)
     ) {
-        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-            Image(painterResource(R.mipmap.ic_launcher), null, Modifier.size(34.dp))
-            Spacer(Modifier.width(10.dp))
-            Text("ABOUT", color = FG, fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.Bold, letterSpacing = 2.sp, fontSize = 14.sp)
-        }
-        Spacer(Modifier.height(14.dp))
+        Header("Bike Fit Analyzer", "Done", onBack)
+        Spacer(Modifier.height(26.dp))
+        Text("About", fontFamily = MonaWide, fontWeight = FontWeight.ExtraBold,
+            fontSize = 30.sp, lineHeight = 33.sp, letterSpacing = (-0.8).sp)
+        Spacer(Modifier.height(10.dp))
 
         Text(
             "Bike Fit Analyzer measures your riding position from a short side-on video of you " +
                 "pedalling. Everything runs on this phone.",
-            color = FG, fontSize = 14.sp
+            style = MaterialTheme.typography.bodyLarge
         )
         Spacer(Modifier.height(6.dp))
         Text(
             "It is a 2D side-view estimate, not a professional bike fit, and not medical advice. " +
                 "Saddle height (knee) is the most reliable number it gives you; reach is the softest.",
-            color = MUT, fontSize = 12.sp
+            color = P.mut, style = MaterialTheme.typography.bodySmall
         )
 
-        Section("HOW TO FILM")
+        Section("How to film")
         Bullet("Phone beside the bike, square to your side, roughly at hip height.")
         Bullet("20–30 seconds, pedalling at a steady rhythm as you normally would.")
         Bullet("A turbo trainer is easiest, but any steady pedalling works.")
-        Bullet("If the clip is not square-on, the app says so — reach stretches the most when it isn't.")
+        Bullet("If the clip is not square-on, the app says so. Reach stretches the most when it isn't.")
 
-        Section("FAQ")
+        Section("Questions")
         Qa("Is my video uploaded anywhere?",
             "No. This app holds no internet permission at all, so it cannot send your video, your " +
                 "measurements or anything else anywhere. The pose model is bundled inside the app, " +
                 "so it works with no connection. Your clip and saved results stay in the app's own " +
                 "private storage, and uninstalling deletes them.")
         Qa("Which bikes does it work with?",
-            "Almost any — road, MTB, gravel, TT/triathlon, hybrid, commuter or e-bike. What gets " +
+            "Almost any: road, MTB, gravel, TT/triathlon, hybrid, commuter or e-bike. What gets " +
                 "analyzed is your body position, not the bike. Only the torso target changes with " +
                 "the bike you pick; saddle height (knee) is the same on any of them.")
         Qa("How accurate is it, really?",
@@ -98,27 +95,32 @@ fun AboutScreen(onBack: () -> Unit) {
                 "It is source-available rather than open source: you may read it, learn from it and " +
                 "use the tool, but not build a competing product from it.")
 
-        Section("THE TARGET ZONES")
+        Section("The target zones")
         Text(
-            "These are the green zones the app grades against. They are dynamic ranges — measured " +
-                "while pedalling on video — which run a few degrees higher than static goniometer " +
+            "These are the green zones the app grades against. They are dynamic ranges, measured " +
+                "while pedalling on video, which run a few degrees higher than static goniometer " +
                 "numbers taken on a stationary rider.",
-            color = MUT, fontSize = 12.sp
+            color = P.mut, style = MaterialTheme.typography.bodySmall
         )
         Spacer(Modifier.height(8.dp))
-        ZoneRow("Knee at bottom (BDC)", "30–40°", "over ~42 saddle too low · under ~28 too high")
-        ZoneRow("Torso from horizontal", "40–50°", "road endurance; moves with the bike type")
-        ZoneRow("Elbow bend", "15–30°", "near 0 = locked out")
-        ZoneRow("Shoulder (reach)", "80–95°", "much lower = closed, scrunched cockpit")
+        Card(pad = 16.dp) {
+            ZoneRow("Knee at bottom (BDC)", "30–40°", "Over ~42 the saddle is too low, under ~28 too high")
+            Divider()
+            ZoneRow("Torso from horizontal", "40–50°", "Road endurance. Moves with the bike type")
+            Divider()
+            ZoneRow("Elbow bend", "15–30°", "Near 0 means locked out")
+            Divider()
+            ZoneRow("Shoulder (reach)", "80–95°", "Much lower means a closed, scrunched cockpit")
+        }
 
-        Section("RESEARCH")
+        Section("Research")
         Text(
             "The zones above come from the following sources. Tap one to open it.",
-            color = MUT, fontSize = 12.sp
+            color = P.mut, style = MaterialTheme.typography.bodySmall
         )
         Spacer(Modifier.height(8.dp))
         Paper(
-            "Holmes method — knee angle at the bottom of the stroke",
+            "Holmes method: knee angle at the bottom of the stroke",
             "The clinical standard this app's knee zone follows. Reports joint-angle averages of " +
                 "knee 36 ± 7° and elbow 19 ± 8°.",
             "https://pmc.ncbi.nlm.nih.gov/articles/PMC9219349/", ::open
@@ -137,7 +139,7 @@ fun AboutScreen(onBack: () -> Unit) {
         )
         Paper(
             "Knee alignment and frontal-plane knee biomechanics in cycling",
-            "Peak knee adduction by alignment group — varus 10.3 ± 4.8°, neutral 5.2°, valgus −2.2°.",
+            "Peak knee adduction by alignment group: varus 10.3 ± 4.8°, neutral 5.2°, valgus −2.2°.",
             "https://pmc.ncbi.nlm.nih.gov/articles/PMC5950749/", ::open
         )
         Paper(
@@ -152,80 +154,84 @@ fun AboutScreen(onBack: () -> Unit) {
             "https://www.bikefitadviser.com/blog/not-basic-bike-fit-part-3-bike-fit-joint-angles", ::open
         )
 
-        Section("PRIVACY")
+        Section("Privacy")
         Text(
             "This app collects nothing. It has no internet permission, so it cannot send your " +
-                "video, measurements or anything else anywhere — not to us, not to anyone. Camera " +
+                "video, measurements or anything else anywhere, not to us and not to anyone. Camera " +
                 "access is only requested when you press Record. Your clip and your saved results " +
                 "live in the app's private storage on this phone; uninstalling the app deletes them.",
-            color = FG, fontSize = 13.sp
+            style = MaterialTheme.typography.bodyMedium
         )
         Spacer(Modifier.height(8.dp))
         LinkButton("Read the full privacy policy") { open("$SITE/privacy") }
 
-        Section("TERMS")
+        Section("Terms")
         Text(
             "Free to use, with no warranty. The readings are an estimate to work from, not a " +
-                "professional fit and not medical advice — what you change on your bike is your " +
+                "professional fit and not medical advice. What you change on your bike is your " +
                 "decision. The source is published to read and learn from, but not to build a " +
                 "competing product from.",
-            color = FG, fontSize = 13.sp
+            style = MaterialTheme.typography.bodyMedium
         )
         Spacer(Modifier.height(8.dp))
         LinkButton("Read the full terms") { open("$SITE/terms") }
 
-        Section("THE PROJECT")
+        Section("The project")
         Text("By Doni Wirawan. The web version of this analyzer runs the same grading rules.",
-            color = FG, fontSize = 13.sp)
+            style = MaterialTheme.typography.bodyMedium)
         Spacer(Modifier.height(8.dp))
         LinkButton("bikefit.doniwirawan.xyz") { open(SITE) }
         Spacer(Modifier.height(4.dp))
         LinkButton("Source on GitHub") { open("https://github.com/doniwirawan/bike-fit-analyzer") }
 
-        Spacer(Modifier.height(24.dp))
-        Button(onClick = onBack, modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = ACCENT)) { Text("Back") }
+        Spacer(Modifier.height(28.dp))
+        PrimaryButton("Back to the analyzer", onBack, Modifier.fillMaxWidth())
         Spacer(Modifier.height(24.dp))
     }
 }
 
 @Composable
 private fun Section(title: String) {
-    Spacer(Modifier.height(24.dp))
-    Text(title, color = MUT, fontFamily = FontFamily.Monospace,
-        fontSize = 11.sp, letterSpacing = 1.sp)
-    Spacer(Modifier.height(8.dp))
+    Spacer(Modifier.height(34.dp))
+    SectionTitle(title)
 }
 
 @Composable
 private fun Bullet(text: String) {
-    Text("• $text", color = FG, fontSize = 13.sp, modifier = Modifier.padding(bottom = 5.dp))
+    Row(Modifier.padding(bottom = 8.dp)) {
+        Box(Modifier.padding(top = 9.dp, end = 12.dp).size(5.dp).background(P.mut, RoundedCornerShape(50)))
+        Text(text, style = MaterialTheme.typography.bodyMedium)
+    }
 }
 
 @Composable
 private fun Qa(q: String, a: String) {
+    var open by remember { mutableStateOf(false) }
     Column(
         Modifier.fillMaxWidth().padding(bottom = 8.dp)
-            .background(CARD, RoundedCornerShape(12.dp)).padding(12.dp)
+            .background(P.card, RoundedCornerShape(RADIUS))
+            .border(1.dp, P.line, RoundedCornerShape(RADIUS))
+            .clickable { open = !open }.padding(16.dp)
     ) {
-        Text(q, color = FG, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-        Spacer(Modifier.height(4.dp))
-        Text(a, color = MUT, fontSize = 12.sp)
+        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+            Text(q, style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f))
+            Text(if (open) "−" else "+", color = P.mut, fontSize = 20.sp)
+        }
+        if (open) {
+            Spacer(Modifier.height(6.dp))
+            Text(a, color = P.mut, style = MaterialTheme.typography.bodySmall)
+        }
     }
 }
 
 @Composable
 private fun ZoneRow(label: String, target: String, note: String) {
-    Column(
-        Modifier.fillMaxWidth().padding(bottom = 6.dp)
-            .background(CARD, RoundedCornerShape(10.dp)).padding(10.dp)
-    ) {
-        Row(Modifier.fillMaxWidth()) {
-            Text(label, color = FG, fontSize = 12.sp, modifier = Modifier.weight(1f))
-            Text(target, color = GREEN, fontFamily = FontFamily.Monospace,
-                fontSize = 12.sp, fontWeight = FontWeight.Bold)
+    Column(Modifier.fillMaxWidth().padding(vertical = 12.dp)) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+            Text(label, style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f))
+            Text(target, fontFamily = MonaWide, fontWeight = FontWeight.ExtraBold, fontSize = 16.sp)
         }
-        Text(note, color = MUT, fontSize = 11.sp)
+        Text(note, color = P.mut, style = MaterialTheme.typography.bodySmall)
     }
 }
 
@@ -233,21 +239,20 @@ private fun ZoneRow(label: String, target: String, note: String) {
 private fun Paper(title: String, what: String, url: String, open: (String) -> Unit) {
     Column(
         Modifier.fillMaxWidth().padding(bottom = 8.dp)
-            .background(CARD, RoundedCornerShape(12.dp))
-            .clickable { open(url) }.padding(12.dp)
+            .background(P.card, RoundedCornerShape(RADIUS))
+            .border(1.dp, P.line, RoundedCornerShape(RADIUS))
+            .clickable { open(url) }.padding(16.dp)
     ) {
-        Text(title, color = FG, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+        Text(title, style = MaterialTheme.typography.labelLarge)
         Spacer(Modifier.height(4.dp))
-        Text(what, color = MUT, fontSize = 12.sp)
-        Spacer(Modifier.height(6.dp))
-        Text(url, color = ACCENT, fontSize = 11.sp, fontFamily = FontFamily.Monospace,
-            textDecoration = TextDecoration.Underline)
+        Text(what, color = P.mut, style = MaterialTheme.typography.bodySmall)
+        Spacer(Modifier.height(8.dp))
+        Text(Uri.parse(url).host?.removePrefix("www.") ?: url, color = P.accent,
+            style = MaterialTheme.typography.labelMedium, textDecoration = TextDecoration.Underline)
     }
 }
 
 @Composable
 private fun LinkButton(label: String, onClick: () -> Unit) {
-    OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
-        Text(label, color = FG, fontSize = 13.sp)
-    }
+    GhostButton(label, onClick, Modifier.fillMaxWidth())
 }

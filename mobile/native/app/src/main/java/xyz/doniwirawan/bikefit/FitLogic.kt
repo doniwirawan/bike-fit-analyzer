@@ -43,8 +43,8 @@ object Fit {
     )
 
     val bikeLabels = linkedMapOf(
-        "road_endurance" to "Road — endurance",
-        "road_race" to "Road — race / aggressive",
+        "road_endurance" to "Road, endurance",
+        "road_race" to "Road, race / aggressive",
         "tt_tri" to "TT / Triathlon",
         "gravel" to "Gravel",
         "mtb" to "Mountain (MTB)",
@@ -139,10 +139,10 @@ object Fit {
         if (knee != null && !knee.isNaN() && grades[KNEE] != Grade.GREEN) {
             val mm = min(20, (abs(knee - 35f) * 1.5f).roundToInt())
             out += if (knee > 40)
-                "Saddle looks low — knee still bent ${knee.roundToInt()}° at the bottom (aim 30–40°). " +
+                "Saddle looks low: knee still bent ${knee.roundToInt()}° at the bottom (aim 30–40°). " +
                     "Raise it about ${mm}mm, in 2–3mm steps, and re-film. This is the most reliable reading here."
             else
-                "Saddle looks high — leg nearly straight (${knee.roundToInt()}°) at the bottom (aim 30–40°). " +
+                "Saddle looks high: leg nearly straight (${knee.roundToInt()}°) at the bottom (aim 30–40°). " +
                     "Lower it about ${mm}mm, in 2–3mm steps, and re-film. This is the most reliable reading here."
         }
 
@@ -151,7 +151,7 @@ object Fit {
             val zz = z[TORSO]!!
             out += if (torso > zz.gHi)
                 "Torso more upright (${torso.roundToInt()}°) than typical for this bike (aim ${zz.target}). " +
-                    "Comfortable — but if you want more power/aero and your flexibility allows, a slightly lower front end helps."
+                    "Comfortable, but if you want more power/aero and your flexibility allows, a slightly lower front end (spacers/stem) helps."
             else
                 "Torso lower/more aggressive (${torso.roundToInt()}°) than typical for this bike (aim ${zz.target}). " +
                     "If your lower back or neck complains, raise the bars or shorten the reach a touch."
@@ -160,7 +160,7 @@ object Fit {
         val elbow = angles[ELBOW]
         if (elbow != null && !elbow.isNaN() && grades[ELBOW] != Grade.GREEN) {
             out += if (elbow < 15)
-                "Elbow ${elbow.roundToInt()}° → arms look locked. Soften your elbows first — a slight bend absorbs " +
+                "Elbow ${elbow.roundToInt()}° → arms look locked. Soften your elbows first. A slight bend absorbs " +
                     "road buzz and often fixes this without touching the bike."
             else
                 "Elbow ${elbow.roundToInt()}° → arms quite bent. Usually fine; only if it feels cramped might the reach be a touch short."
@@ -169,14 +169,16 @@ object Fit {
         val sh = angles[SHOULDER]
         if (sh != null && !sh.isNaN() && grades[SHOULDER] != Grade.GREEN) {
             out += if (sh < 80)
-                "Shoulder ${sh.roundToInt()}° → cockpit looks a bit cramped. Reach is the least reliable 2D angle — " +
-                    "re-check your hand position and that the camera is square before changing anything."
+                "Shoulder ${sh.roundToInt()}° → your cockpit is cramped, which piles load onto your hands and shoulders. " +
+                    "Reach is still the softest 2D angle, so re-film square-on first. If two clips agree, then consider " +
+                    "a longer stem or moving the bars forward, one change at a time, then re-film."
             else
-                "Shoulder ${sh.roundToInt()}° → reach looks a bit long. Reach is the least reliable 2D angle — " +
-                    "don't shorten the stem off one clip; re-film square-on, then change one thing at a time."
+                "Shoulder ${sh.roundToInt()}° → your reach is long, and that is what usually shows up as a sore lower back, " +
+                    "neck or hands. Don't cut a stem off one clip though: reach is the softest 2D angle. Re-film " +
+                    "square-on; if two clips agree, then consider a shorter stem or bringing the bars closer."
         }
 
-        if (out.isEmpty()) out += "Everything's in range — nice fit. Re-film if you change anything."
+        if (out.isEmpty()) out += "Everything's in range. Nice fit. Re-film if you change anything."
         return out
     }
 }

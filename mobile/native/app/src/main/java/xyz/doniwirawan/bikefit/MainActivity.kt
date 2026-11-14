@@ -7,8 +7,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,8 +20,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,21 +27,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.work.*
 import org.json.JSONObject
 import kotlin.math.roundToInt
-
-internal val GREEN = Color(0xFF16A34A)
-internal val AMBER = Color(0xFFD97706)
-internal val RED = Color(0xFFDC2626)
-internal val GRAY = Color(0xFF9AA3B2)
-internal val BG = Color(0xFF0B0F16)
-internal val CARD = Color(0xFF111825)
-internal val LINE = Color(0xFF1E2734)
-internal val FG = Color(0xFFDFE6F0)
-internal val MUT = Color(0xFF8B97A8)
-internal val ACCENT = Color(0xFF4D8BFF)
-
-private fun colorOf(g: String) = when (g) {
-    "GREEN" -> GREEN; "AMBER" -> AMBER; "RED" -> RED; else -> GRAY
-}
 
 private val LABEL = mapOf(
     Fit.KNEE to "Knee at bottom",
@@ -51,6 +37,7 @@ private val LABEL = mapOf(
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         AnalysisWorker.ensureChannels(this)
         val handed: Uri? = when (intent?.action) {
@@ -59,7 +46,7 @@ class MainActivity : ComponentActivity() {
             else -> null
         }
         setContent {
-            MaterialTheme(colorScheme = darkColorScheme(background = BG, surface = CARD)) { App(handed) }
+            BikeFitTheme { App(handed) }
         }
     }
 }
@@ -106,10 +93,11 @@ private fun App(handed: Uri? = null) {
         if (uri != null) video = uri
     }
 
-    // The recorder owns the whole screen while it is up — a viewfinder you have to scroll to keep
+    // The recorder owns the whole screen while it is up: a viewfinder you have to scroll to keep
     // in view is useless when you are lining up the shot from across the room.
     if (recording) {
-        Box(Modifier.fillMaxSize().background(BG).padding(12.dp)) {
+        Box(Modifier.fillMaxSize().background(androidx.compose.ui.graphics.Color.Black)
+            .windowInsetsPadding(WindowInsets.safeDrawing)) {
             RecorderScreen(
                 onRecorded = { uri -> video = uri; recording = false },
                 onCancel = { recording = false }
@@ -119,111 +107,157 @@ private fun App(handed: Uri? = null) {
     }
 
     if (about) {
+        androidx.activity.compose.BackHandler { about = false }
         AboutScreen(onBack = { about = false })
         return
     }
 
     Column(
-        Modifier.fillMaxSize().background(BG).padding(18.dp).verticalScroll(rememberScrollState())
+        Modifier.fillMaxSize().background(P.bg).windowInsetsPadding(WindowInsets.safeDrawing)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp, vertical = 12.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            androidx.compose.foundation.Image(
-                androidx.compose.ui.res.painterResource(R.mipmap.ic_launcher), null,
-                Modifier.size(34.dp)
-            )
-            Spacer(Modifier.width(10.dp))
-            Column(Modifier.weight(1f)) {
-                Text("BIKE FIT ANALYZER", color = FG, fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Bold, letterSpacing = 2.sp, fontSize = 14.sp)
-                Text("Runs on your phone. Nothing is uploaded.", color = MUT, fontSize = 13.sp)
-            }
-            TextButton(onClick = { about = true }) { Text("About", fontSize = 13.sp) }
-        }
-        Spacer(Modifier.height(20.dp))
+        Header("Bike Fit Analyzer", "About") { about = true }
+        Spacer(Modifier.height(26.dp))
 
-        Text("BIKE TYPE", color = MUT, fontFamily = FontFamily.Monospace, fontSize = 11.sp, letterSpacing = 1.sp)
-        Spacer(Modifier.height(6.dp))
-        var open by remember { mutableStateOf(false) }
-        Box {
-            OutlinedButton(onClick = { open = true }, modifier = Modifier.fillMaxWidth()) {
-                Text(Fit.bikeLabels[bike] ?: bike, color = FG)
-            }
-            DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-                Fit.bikeLabels.forEach { (k, label) ->
-                    DropdownMenuItem(text = { Text(label) }, onClick = { bike = k; open = false })
+        Text("Check your fit", fontFamily = MonaWide, fontWeight = FontWeight.ExtraBold,
+            fontSize = 30.sp, lineHeight = 33.sp, letterSpacing = (-0.8).sp)
+        Spacer(Modifier.height(8.dp))
+        Text("Film yourself side-on, pedalling for 20 to 30 seconds. It runs on this phone and nothing is uploaded.",
+            color = P.mut, style = MaterialTheme.typography.bodyMedium)
+        Spacer(Modifier.height(22.dp))
+
+        Card {
+            Text("Bike type", style = MaterialTheme.typography.labelMedium)
+            Spacer(Modifier.height(8.dp))
+            var open by remember { mutableStateOf(false) }
+            Box {
+                Row(
+                    Modifier.fillMaxWidth().heightIn(min = 52.dp)
+                        .background(P.bg, RoundedCornerShape(RADIUS_SM + 2.dp))
+                        .border(1.dp, P.line, RoundedCornerShape(RADIUS_SM + 2.dp))
+                        .clickable(enabled = !running) { open = true }
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(Fit.bikeLabels[bike] ?: bike, style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.weight(1f))
+                    Chevron()
+                }
+                DropdownMenu(expanded = open, onDismissRequest = { open = false },
+                    modifier = Modifier.background(P.card)) {
+                    Fit.bikeLabels.forEach { (k, label) ->
+                        DropdownMenuItem(
+                            text = { Text(label, fontWeight = if (k == bike) FontWeight.Bold else FontWeight.Normal) },
+                            onClick = { bike = k; open = false })
+                    }
                 }
             }
-        }
-        Spacer(Modifier.height(6.dp))
-        Text("Only the torso target changes with the bike. Saddle height (knee) is the same on any bike.",
-            color = MUT, fontSize = 11.sp)
+            Spacer(Modifier.height(8.dp))
+            Text("Only the torso target changes with the bike. Saddle height (knee) is the same on any bike.",
+                color = P.mut, style = MaterialTheme.typography.bodySmall)
 
-        Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(18.dp))
+            Divider()
+            Spacer(Modifier.height(18.dp))
 
-        Button(
-            onClick = { pick.launch("video/*") },
-            enabled = !running,
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = ACCENT)
-        ) { Text(if (video == null) "Choose a video" else "Choose a different video") }
-
-        Spacer(Modifier.height(8.dp))
-        OutlinedButton(
-            onClick = { recording = true },
-            enabled = !running,
-            modifier = Modifier.fillMaxWidth()
-        ) { Text("Record with camera", color = FG) }
-
-        video?.let {
-            Spacer(Modifier.height(10.dp))
-            Button(
-                onClick = {
+            if (video == null) {
+                Text("Your video", style = MaterialTheme.typography.labelMedium)
+                Spacer(Modifier.height(10.dp))
+                PrimaryButton("Choose a video", { pick.launch("video/*") }, Modifier.fillMaxWidth(), enabled = !running)
+                Spacer(Modifier.height(10.dp))
+                GhostButton("Record with camera", { recording = true }, Modifier.fillMaxWidth(), enabled = !running)
+            } else {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Video ready", style = MaterialTheme.typography.labelLarge)
+                        Text(if (running) "Analyzing now" else "Pick a bike type above, then analyze.",
+                            color = P.mut, style = MaterialTheme.typography.bodySmall)
+                    }
+                    TextButton(onClick = { pick.launch("video/*") }, enabled = !running,
+                        modifier = Modifier.heightIn(min = 44.dp)) {
+                        Text("Change", color = if (running) P.mut else P.accent, style = MaterialTheme.typography.labelMedium)
+                    }
+                }
+                Spacer(Modifier.height(12.dp))
+                PrimaryButton(if (running) "Analyzing…" else "Analyze", {
                     // Never fail silently: if the video can't be read, say so instead of
                     // leaving the user tapping a button that does nothing.
-                    val staged = try { Staging.stage(ctx, it) } catch (e: Exception) {
+                    val staged = try { Staging.stage(ctx, video!!) } catch (e: Exception) {
                         error = "Couldn't read that video (${e.message ?: "unknown error"})."
-                        return@Button
+                        null
                     }
-                    error = null
-                    work.enqueueUniqueWork(
-                        "analysis", ExistingWorkPolicy.REPLACE,
-                        OneTimeWorkRequestBuilder<AnalysisWorker>()
-                            .setInputData(
-                                Data.Builder()
-                                    .putString(AnalysisWorker.KEY_URI, staged.toString())
-                                    .putString(AnalysisWorker.KEY_BIKE, bike)
-                                    .build()
-                            ).build()
-                    )
-                },
-                enabled = !running,
-                modifier = Modifier.fillMaxWidth()
-            ) { Text(if (running) "Analyzing…" else "Analyze") }
-        }
+                    if (staged != null) {
+                        error = null
+                        work.enqueueUniqueWork(
+                            "analysis", ExistingWorkPolicy.REPLACE,
+                            OneTimeWorkRequestBuilder<AnalysisWorker>()
+                                .setInputData(
+                                    Data.Builder()
+                                        .putString(AnalysisWorker.KEY_URI, staged.toString())
+                                        .putString(AnalysisWorker.KEY_BIKE, bike)
+                                        .build()
+                                ).build()
+                        )
+                    }
+                }, Modifier.fillMaxWidth(), enabled = !running)
+                Spacer(Modifier.height(10.dp))
+                GhostButton("Record a new clip", { recording = true }, Modifier.fillMaxWidth(), enabled = !running)
+            }
 
-        error?.let {
-            Spacer(Modifier.height(12.dp))
-            Text(it, color = RED, fontSize = 13.sp)
-        }
+            if (running) {
+                Spacer(Modifier.height(18.dp))
+                Row(verticalAlignment = Alignment.Bottom) {
+                    Text("$progress%", fontFamily = MonaWide, fontWeight = FontWeight.ExtraBold, fontSize = 22.sp)
+                    Spacer(Modifier.width(8.dp))
+                    Text("analyzed", color = P.mut, style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(bottom = 3.dp))
+                }
+                Spacer(Modifier.height(8.dp))
+                LinearProgressIndicator(
+                    progress = { progress / 100f },
+                    modifier = Modifier.fillMaxWidth().height(6.dp),
+                    color = P.accent, trackColor = P.grid,
+                    strokeCap = androidx.compose.ui.graphics.StrokeCap.Round, gapSize = 0.dp,
+                    drawStopIndicator = {}
+                )
+                Spacer(Modifier.height(8.dp))
+                Text("You can leave the app. It keeps going and notifies you when it's done.",
+                    color = P.mut, style = MaterialTheme.typography.bodySmall)
+            }
 
-        if (running) {
-            Spacer(Modifier.height(14.dp))
-            LinearProgressIndicator(progress = { progress / 100f }, modifier = Modifier.fillMaxWidth())
-            Spacer(Modifier.height(6.dp))
-            Text("$progress% — you can leave the app, it keeps going and will notify you.",
-                color = MUT, fontSize = 12.sp)
+            error?.let {
+                Spacer(Modifier.height(14.dp))
+                Text(it, color = P.red, style = MaterialTheme.typography.bodySmall)
+            }
         }
 
         result?.let { r ->
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(34.dp))
+            SectionTitle("Your fit", "Latest result. Saved on this phone only.")
             ResultView(r)
         }
 
         val history = remember(result) { ResultStore.raw(ctx) }
         if (history.length() > 1) {
-            Spacer(Modifier.height(28.dp))
+            Spacer(Modifier.height(34.dp))
             HistoryView(history) { result = ResultStore.latest(ctx) }
         }
+        Spacer(Modifier.height(24.dp))
+    }
+}
+
+@Composable
+private fun Chevron() {
+    val c = P.mut
+    androidx.compose.foundation.Canvas(Modifier.size(14.dp)) {
+        val w = size.width; val h = size.height
+        val path = androidx.compose.ui.graphics.Path().apply {
+            moveTo(w * .15f, h * .35f); lineTo(w * .5f, h * .7f); lineTo(w * .85f, h * .35f)
+        }
+        drawPath(path, c, style = androidx.compose.ui.graphics.drawscope.Stroke(
+            width = 2.dp.toPx(), cap = androidx.compose.ui.graphics.StrokeCap.Round,
+            join = androidx.compose.ui.graphics.StrokeJoin.Round))
     }
 }
 
@@ -232,58 +266,66 @@ private fun App(handed: Uri? = null) {
 private fun HistoryView(history: org.json.JSONArray, onChanged: () -> Unit) {
     val ctx = androidx.compose.ui.platform.LocalContext.current
     var picked by remember { mutableStateOf(listOf<Long>()) }
-    var shown by remember { mutableStateOf<JSONObject?>(null) }
+    var shown by remember { mutableStateOf<Long?>(null) }
 
-    Text("SAVED RESULTS", color = MUT, fontFamily = FontFamily.Monospace,
-        fontSize = 11.sp, letterSpacing = 1.sp)
-    Spacer(Modifier.height(2.dp))
-    Text("Tick two to compare them. Saved on this phone only.", color = MUT, fontSize = 11.sp)
-    Spacer(Modifier.height(8.dp))
+    SectionTitle("Saved results", "Tick two to compare them. Saved on this phone only.")
 
     if (picked.size == 2) {
         val pair = (0 until history.length()).map { history.getJSONObject(it) }
             .filter { it.optLong("at") in picked }
             .sortedBy { it.optLong("at") }
-        if (pair.size == 2) CompareView(pair[0], pair[1])
+        if (pair.size == 2) { CompareView(pair[0], pair[1]); Spacer(Modifier.height(12.dp)) }
     }
 
-    for (i in 0 until history.length()) {
-        val e = history.getJSONObject(i)
-        val at = e.optLong("at")
-        val when_ = java.text.SimpleDateFormat("dd MMM, HH:mm", java.util.Locale.getDefault())
-            .format(java.util.Date(at))
-        val knee = e.optJSONObject("angles")?.optDouble(Fit.KNEE)
-        Row(
-            Modifier.fillMaxWidth().padding(vertical = 3.dp)
-                .background(CARD, RoundedCornerShape(10.dp)).padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Checkbox(
-                checked = picked.contains(at),
-                onCheckedChange = { on ->
-                    picked = if (on) (picked + at).takeLast(2) else picked - at
-                }
-            )
-            Column(Modifier.weight(1f)) {
-                Text(when_, color = MUT, fontFamily = FontFamily.Monospace, fontSize = 10.sp)
-                Text(
-                    Fit.verdict(Fit.Grade.valueOf(e.optString("overall", "GRAY"))) +
-                        (knee?.takeIf { !it.isNaN() }?.let { " · knee ${it.roundToInt()}°" } ?: ""),
-                    color = colorOf(e.optString("overall")), fontSize = 13.sp, fontWeight = FontWeight.Bold
+    Card(pad = 0.dp) {
+        for (i in 0 until history.length()) {
+            val e = history.getJSONObject(i)
+            val at = e.optLong("at")
+            val when_ = java.text.SimpleDateFormat("d MMM, HH:mm", java.util.Locale.getDefault())
+                .format(java.util.Date(at))
+            val knee = e.optJSONObject("angles")?.optDouble(Fit.KNEE)
+            if (i > 0) Divider()
+            Row(
+                Modifier.fillMaxWidth().padding(start = 4.dp, end = 8.dp, top = 6.dp, bottom = 6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = picked.contains(at),
+                    onCheckedChange = { on -> picked = if (on) (picked + at).takeLast(2) else picked - at },
+                    colors = CheckboxDefaults.colors(checkedColor = P.accent, uncheckedColor = P.mut,
+                        checkmarkColor = P.accentInk)
                 )
+                Column(Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        GradeDot(e.optString("overall", "GRAY"), 8.dp)
+                        Spacer(Modifier.width(7.dp))
+                        Text(
+                            Fit.verdict(Fit.Grade.valueOf(e.optString("overall", "GRAY"))) +
+                                (knee?.takeIf { !it.isNaN() }?.let { " · knee ${it.roundToInt()}°" } ?: ""),
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
+                    Text(when_, color = P.mut, style = MaterialTheme.typography.bodySmall)
+                }
+                TextButton(onClick = { shown = if (shown == at) null else at },
+                    modifier = Modifier.heightIn(min = 44.dp)) {
+                    Text(if (shown == at) "Close" else "Open", color = P.accent, style = MaterialTheme.typography.labelMedium)
+                }
             }
-            TextButton(onClick = { shown = e }) { Text("Open", fontSize = 12.sp) }
         }
     }
 
-    Spacer(Modifier.height(6.dp))
-    TextButton(onClick = { ResultStore.clear(ctx); picked = emptyList(); onChanged() }) {
-        Text("Clear all", color = MUT, fontSize = 12.sp)
+    shown?.let { at ->
+        (0 until history.length()).map { history.getJSONObject(it) }.firstOrNull { it.optLong("at") == at }?.let {
+            Spacer(Modifier.height(16.dp))
+            ResultView(it)
+        }
     }
 
-    shown?.let { e ->
-        Spacer(Modifier.height(16.dp))
-        ResultView(e)
+    Spacer(Modifier.height(8.dp))
+    TextButton(onClick = { ResultStore.clear(ctx); picked = emptyList(); shown = null; onChanged() },
+        modifier = Modifier.heightIn(min = 44.dp)) {
+        Text("Clear saved results", color = P.mut, style = MaterialTheme.typography.labelMedium)
     }
 }
 
@@ -297,35 +339,34 @@ private fun CompareView(before: JSONObject, after: JSONObject) {
         return Fit.grade(v, z)
     }
     val rank = mapOf(Fit.Grade.GRAY to 0, Fit.Grade.RED to 1, Fit.Grade.AMBER to 2, Fit.Grade.GREEN to 3)
+    fun fmt(v: Float?) = v?.takeIf { !it.isNaN() }?.let { "${it.roundToInt()}°" } ?: "–"
 
-    Column(
-        Modifier.fillMaxWidth().padding(bottom = 10.dp)
-            .background(CARD, RoundedCornerShape(12.dp)).padding(12.dp)
-    ) {
-        Text("BEFORE  →  AFTER", color = MUT, fontFamily = FontFamily.Monospace,
-            fontSize = 10.sp, letterSpacing = 1.sp)
+    Card {
+        Row {
+            Text("Before and after", style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f))
+            Text("Change", color = P.mut, style = MaterialTheme.typography.bodySmall)
+        }
         Spacer(Modifier.height(6.dp))
-        listOf(Fit.KNEE, Fit.TORSO, Fit.ELBOW, Fit.SHOULDER).forEach { m ->
+        listOf(Fit.KNEE, Fit.TORSO, Fit.ELBOW, Fit.SHOULDER).forEachIndexed { i, m ->
             val a = angle(before, m); val b = angle(after, m)
             val ga = gradeOf(before, m, a); val gb = gradeOf(after, m, b)
             val moved = (rank[gb] ?: 0) - (rank[ga] ?: 0)
-            val tone = if (moved > 0) GREEN else if (moved < 0) RED else MUT
+            val tone = if (moved > 0) P.green else if (moved < 0) P.red else P.mut
             val delta = if (a != null && b != null && !a.isNaN() && !b.isNaN())
                 "${if (b - a > 0) "+" else ""}${(b - a).roundToInt()}°" else ""
-            Row(Modifier.fillMaxWidth().padding(vertical = 3.dp)) {
-                Text(LABEL[m]!!, color = FG, fontSize = 12.sp, modifier = Modifier.weight(1f))
-                Text(a?.takeIf { !it.isNaN() }?.let { "${it.roundToInt()}°" } ?: "—",
-                    color = colorOf(ga.name), fontFamily = FontFamily.Monospace, fontSize = 12.sp)
-                Text("  →  ", color = MUT, fontSize = 12.sp)
-                Text(b?.takeIf { !it.isNaN() }?.let { "${it.roundToInt()}°" } ?: "—",
-                    color = colorOf(gb.name), fontFamily = FontFamily.Monospace, fontSize = 12.sp)
-                Text("  $delta", color = tone, fontFamily = FontFamily.Monospace,
-                    fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            if (i > 0) Divider()
+            Row(Modifier.fillMaxWidth().padding(vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text(LABEL[m]!!, style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
+                Text(fmt(a), color = P.gradeColor(ga.name), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text("  →  ", color = P.mut, fontSize = 13.sp)
+                Text(fmt(b), color = P.gradeColor(gb.name), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text(delta, color = tone, fontWeight = FontWeight.Bold, fontSize = 14.sp,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.End, modifier = Modifier.width(52.dp))
             }
         }
         Spacer(Modifier.height(4.dp))
-        Text("Green = moved into a better band. Red = moved out of one.",
-            color = MUT, fontSize = 10.sp)
+        Text("Green means it moved into a better band, red means it moved out of one.",
+            color = P.mut, style = MaterialTheme.typography.bodySmall)
     }
 }
 
@@ -335,52 +376,67 @@ private fun ResultView(r: JSONObject) {
     val grades = r.getJSONObject("grades")
     val bike = r.optString("bike", "road_endurance")
     val zones = Fit.zonesFor(bike)
+    val overall = r.optString("overall", "GRAY")
 
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Box(Modifier.size(10.dp).background(colorOf(r.optString("overall")), RoundedCornerShape(5.dp)))
-        Spacer(Modifier.width(8.dp))
-        Text(
-            "${Fit.verdict(Fit.Grade.valueOf(r.optString("overall", "GRAY")))} · " +
-                "${r.optInt("strokes")} pedal strokes",
-            color = FG, fontWeight = FontWeight.Bold, fontSize = 16.sp
-        )
-    }
-    Spacer(Modifier.height(12.dp))
+    Card {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            GradeDot(overall, 12.dp)
+            Spacer(Modifier.width(10.dp))
+            Text(Fit.verdict(Fit.Grade.valueOf(overall)), fontFamily = MonaWide, fontWeight = FontWeight.ExtraBold,
+                fontSize = 22.sp, letterSpacing = (-0.4).sp)
+        }
+        Spacer(Modifier.height(2.dp))
+        Text("${r.optInt("strokes")} pedal strokes · ${Fit.bikeLabels[bike] ?: bike}",
+            color = P.mut, style = MaterialTheme.typography.bodySmall)
+        Spacer(Modifier.height(6.dp))
 
-    listOf(Fit.KNEE, Fit.TORSO, Fit.ELBOW, Fit.SHOULDER).forEach { m ->
-        val v = if (angles.has(m)) angles.getDouble(m).toFloat() else Float.NaN
-        val g = grades.optString(m, "GRAY")
-        Column(
-            Modifier.fillMaxWidth().padding(bottom = 8.dp)
-                .background(CARD, RoundedCornerShape(12.dp)).padding(12.dp)
-        ) {
-            Text(LABEL[m]!!.uppercase(), color = MUT, fontFamily = FontFamily.Monospace,
-                fontSize = 10.sp, letterSpacing = 1.sp)
-            Text(if (v.isNaN()) "—" else "${v.roundToInt()}°",
-                color = colorOf(g), fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.Bold, fontSize = 26.sp)
-            Text("target ${zones[m]!!.target}", color = MUT,
-                fontFamily = FontFamily.Monospace, fontSize = 11.sp)
+        listOf(Fit.KNEE, Fit.TORSO, Fit.ELBOW, Fit.SHOULDER).forEach { m ->
+            val v = if (angles.has(m)) angles.getDouble(m).toFloat() else Float.NaN
+            val g = grades.optString(m, "GRAY")
+            Spacer(Modifier.height(12.dp))
+            Divider()
+            Spacer(Modifier.height(14.dp))
+            Row(verticalAlignment = Alignment.Bottom) {
+                Column(Modifier.weight(1f)) {
+                    Text(LABEL[m]!!, style = MaterialTheme.typography.labelLarge)
+                    Text("target ${zones[m]!!.target}", color = P.mut, style = MaterialTheme.typography.bodySmall)
+                }
+                Text(if (v.isNaN()) "–" else "${v.roundToInt()}°", color = P.gradeColor(g),
+                    fontFamily = MonaWide, fontWeight = FontWeight.ExtraBold, fontSize = 34.sp,
+                    lineHeight = 36.sp, letterSpacing = (-1).sp)
+            }
+            Spacer(Modifier.height(8.dp))
+            RangeBar(if (v.isNaN()) null else v, zones[m]!!)
         }
     }
 
     if (r.optBoolean("offAxis")) {
-        Text("This clip doesn't look square-on — the angles, especially reach, may be stretched. " +
-            "Re-film with the camera directly beside you.", color = AMBER, fontSize = 12.sp)
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(12.dp))
+        Card {
+            Text("Camera angle", style = MaterialTheme.typography.labelLarge)
+            Spacer(Modifier.height(4.dp))
+            Text("This clip doesn't look square-on, so the angles, reach most of all, may be stretched. " +
+                "Re-film with the camera directly beside you.", color = P.mut, style = MaterialTheme.typography.bodySmall)
+        }
     }
 
-    Text("DO THIS", color = MUT, fontFamily = FontFamily.Monospace, fontSize = 11.sp, letterSpacing = 1.sp)
-    Spacer(Modifier.height(4.dp))
-    val advice = r.getJSONArray("advice")
-    for (i in 0 until advice.length()) {
-        Text("• ${advice.getString(i)}", color = FG, fontSize = 13.sp,
-            modifier = Modifier.padding(vertical = 3.dp))
-    }
     Spacer(Modifier.height(12.dp))
-    Text("2D side-view estimate, not a professional bike fit. Not medical advice. " +
+    Card {
+        Text("What to do", style = MaterialTheme.typography.labelLarge)
+        val advice = r.getJSONArray("advice")
+        for (i in 0 until advice.length()) {
+            Spacer(Modifier.height(10.dp))
+            Row {
+                Text("${i + 1}", fontFamily = MonaWide, fontWeight = FontWeight.ExtraBold, color = P.mut,
+                    fontSize = 15.sp, modifier = Modifier.width(22.dp))
+                Text(advice.getString(i), style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+    }
+    Spacer(Modifier.height(10.dp))
+    Text("A 2D side-view estimate, not a professional bike fit, and not medical advice. " +
         "Saddle height (knee) is the most reliable number here; reach is the softest.",
-        color = MUT, fontSize = 11.sp)
+        color = P.mut, style = MaterialTheme.typography.bodySmall)
 }
 
 /** Small helper so we can observe WorkManager's LiveData from Compose without extra deps. */

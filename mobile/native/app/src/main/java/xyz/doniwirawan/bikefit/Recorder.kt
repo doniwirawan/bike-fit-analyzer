@@ -26,6 +26,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import java.io.File
@@ -81,14 +86,11 @@ fun RecorderScreen(
     }
 
     if (!granted) {
-        Column(Modifier.fillMaxWidth().padding(vertical = 12.dp)) {
-            Text("Camera permission is needed to record.", color = Color(0xFFDFE6F0), fontSize = 13.sp)
-            Spacer(Modifier.height(8.dp))
-            Row {
-                Button(onClick = { ask.launch(Manifest.permission.CAMERA) }) { Text("Allow camera") }
-                Spacer(Modifier.width(8.dp))
-                OutlinedButton(onClick = onCancel) { Text("Cancel") }
-            }
+        Column(Modifier.fillMaxSize().background(P.bg).padding(20.dp), verticalArrangement = Arrangement.Center) {
+            SectionTitle("Allow the camera", "The app needs it to record. The clip stays on this phone.")
+            PrimaryButton("Allow camera", { ask.launch(Manifest.permission.CAMERA) }, Modifier.fillMaxWidth())
+            Spacer(Modifier.height(10.dp))
+            GhostButton("Cancel", onCancel, Modifier.fillMaxWidth())
         }
         return
     }
@@ -135,52 +137,68 @@ fun RecorderScreen(
         factory = { previewView }
     )
 
-    Spacer(Modifier.height(8.dp))
-    error?.let { Text(it, color = Color(0xFFDC2626), fontSize = 12.sp); Spacer(Modifier.height(6.dp)) }
-
-    Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-        Button(
-            onClick = {
-                // never fail silently: if the camera isn't bound yet, say so
-                val vc = capture
-                if (vc == null) { error = "Camera isn't ready yet — give it a second."; return@Button }
-                if (recording != null) { recording?.stop(); recording = null; return@Button }
-                val file = File(ctx.cacheDir, "recording.mp4")
-                if (file.exists()) file.delete()
-                val opts = FileOutputOptions.Builder(file).build()
-                try {
-                    recording = vc.output.prepareRecording(ctx, opts)
-                        .start(ContextCompat.getMainExecutor(ctx)) { ev ->
-                            if (ev is VideoRecordEvent.Finalize) {
-                                recording = null
-                                if (ev.hasError()) error = "Recording failed (${ev.error})."
-                                else onRecorded(Uri.fromFile(file))
+    Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp)) {
+        error?.let {
+            Text(it, color = P.red, style = MaterialTheme.typography.bodySmall)
+            Spacer(Modifier.height(10.dp))
+        }
+        Text(
+            if (recording != null) "Recording · ${seconds}s of $MAX_SECONDS"
+            else "Phone beside the bike, square to your side, at hip height. Pedal steadily. " +
+                "It stops by itself at ${MAX_SECONDS}s.",
+            color = if (recording != null) Color.White else Color(0xFFA3A8B0),
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = if (recording != null) FontWeight.Bold else FontWeight.Normal
+        )
+        Spacer(Modifier.height(12.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            DarkButton("Cancel", { recording?.stop(); onCancel() }, Modifier.weight(1f))
+            Spacer(Modifier.width(10.dp))
+            PrimaryButton(
+                if (recording != null) "Stop" else "Record",
+                {
+                    // never fail silently: if the camera isn't bound yet, say so
+                    val vc = capture
+                    if (vc == null) { error = "The camera isn't ready yet. Give it a second."; return@PrimaryButton }
+                    if (recording != null) { recording?.stop(); recording = null; return@PrimaryButton }
+                    val file = File(ctx.cacheDir, "recording.mp4")
+                    if (file.exists()) file.delete()
+                    val opts = FileOutputOptions.Builder(file).build()
+                    try {
+                        recording = vc.output.prepareRecording(ctx, opts)
+                            .start(ContextCompat.getMainExecutor(ctx)) { ev ->
+                                if (ev is VideoRecordEvent.Finalize) {
+                                    recording = null
+                                    if (ev.hasError()) error = "Recording failed (${ev.error})."
+                                    else onRecorded(Uri.fromFile(file))
+                                }
                             }
-                        }
-                    error = null
-                } catch (e: Exception) {
-                    error = "Couldn't start recording (${e.message ?: "unknown"})."
-                }
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = if (recording != null) Color(0xFFDC2626) else Color(0xFF4D8BFF)
+                        error = null
+                    } catch (e: Exception) {
+                        error = "Couldn't start recording (${e.message ?: "unknown"})."
+                    }
+                },
+                Modifier.weight(1.3f),
+                container = if (recording != null) P.red else P.accent,
+                ink = if (recording != null) Color.White else P.accentInk,
             )
-        ) { Text(if (recording != null) "Stop (${seconds}s)" else "Record") }
-
-        Spacer(Modifier.width(8.dp))
-        OutlinedButton(
-            onClick = { backCamera = !backCamera },
-            enabled = recording == null       // switching mid-recording would drop the clip
-        ) { Text(if (backCamera) "Rear camera" else "Front camera") }
-
-        Spacer(Modifier.width(8.dp))
-        OutlinedButton(onClick = { recording?.stop(); onCancel() }) { Text("Cancel") }
+            Spacer(Modifier.width(10.dp))
+            // switching mid-recording would drop the clip
+            DarkButton(if (backCamera) "Rear" else "Front", { backCamera = !backCamera }, Modifier.weight(1f),
+                enabled = recording == null)
+        }
     }
-    Spacer(Modifier.height(6.dp))
-    Text(
-        "Put the phone beside the bike, square to your side, roughly at hip height. " +
-            "Pedal steadily. Stops automatically at ${MAX_SECONDS}s.",
-        color = Color(0xFF8B97A8), fontSize = 11.sp
-    )
     }
+}
+
+/** Outlined button for the black camera screen, which stays dark in both themes. */
+@Composable
+private fun DarkButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
+    OutlinedButton(
+        onClick = onClick, enabled = enabled, modifier = modifier.heightIn(min = 52.dp),
+        shape = RoundedCornerShape(12.dp), border = BorderStroke(1.dp, Color(0xFF3A3D42)),
+        colors = ButtonDefaults.outlinedButtonColors(containerColor = Color(0xFF1C1E21),
+            contentColor = Color(0xFFEEF0F2), disabledContentColor = Color(0xFF6B7280)),
+        contentPadding = PaddingValues(horizontal = 10.dp),
+    ) { Text(text, style = MaterialTheme.typography.labelLarge, color = LocalContentColor.current) }
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 12+ draws its own launch splash. Give it the page ground, and an icon
+         background that matches the logo tile so the square icon doesn't sit in a white disc. -->
+    <style name="Theme.BikeFit" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#141517</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowSplashScreenBackground">#141517</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">#0E131B</item>
+    </style>
+</resources>

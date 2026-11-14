@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.BikeFit" parent="android:Theme.Material.NoActionBar">
-        <item name="android:statusBarColor">#0B0F16</item>
-        <item name="android:windowBackground">#0B0F16</item>
+    <!-- Matches the light theme in Theme.kt, so launch doesn't flash a different colour.
+         The dark variant is in values-night. Compose draws edge to edge over both bars. -->
+    <style name="Theme.BikeFit" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">#F4F5F7</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 </resources>
