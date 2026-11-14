@@ -785,6 +785,11 @@
 
 <script src="samples.js"></script>
 <script type="module">
+// The measuring and grading maths lives in lib/bikefit-angles, which is also the npm package
+// @doniwirawan/bikefit-angles. This page keeps only the UI around it.
+import { median, grade as gradeZone, worst, sidePoints, sideConfidence,
+  sideFrameAngles, analyzeSide, frontalFrameMetrics, analyzeFrontal, ZONES as LIB_ZONES,
+  BIKE_TYPES, FRONTAL as LIB_FRONTAL, SIDE_LANDMARKS } from "./lib/bikefit-angles/index.js";
 // MediaPipe is imported when a clip is actually analyzed, not on page load: the desktop
 // build (desktop/bikefit.py) measures with YOLO in Python and never needs it, and a
 // browser that only reads the page shouldn't pay for the download either.
@@ -1091,23 +1096,14 @@ function applyLang(l){
   document.querySelectorAll('.langsw button').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
 }
 
-const SIDE = {
-  left:  {shoulder:11, elbow:13, wrist:15, hip:23, knee:25, ankle:27},
-  right: {shoulder:12, elbow:14, wrist:16, hip:24, knee:26, ankle:28},
-};
-const ZONES = {
-  knee_flexion_bdc:[30,40,28,42], torso_from_horiz:[40,50,34,56],
-  elbow_flexion:[15,30,8,45], shoulder_angle:[80,95,70,105],
-};
+const SIDE = SIDE_LANDMARKS;
+// a mutable copy: applyBikeType() swaps in the torso target for the chosen bike
+const ZONES = {...LIB_ZONES};
 // Frontal-plane flag thresholds (beta). Set at the top of the healthy range, not at the
 // mean — healthy riders on a correct saddle already show real frontal-plane movement, so
 // flagging near the mean just tells most people they have a problem. See
 // files/bikefit-research-ranges.md for the numbers these come from.
-const FRONTAL = {
-  fppa: 10,  // healthy knee valgus excursion 5.0±2.2° (mean+2SD≈9.4); 2D FPPA detectable diff ~7.5–8.9°
-  rock: 12,  // healthy pelvis coronal ROM 7.1±2.5° (mean+2SD≈12.1; observed max 11.7°)
-  sym:  9,   // below the smallest detectable difference of 2D FPPA (~7.5–8.9°) L/R is just noise
-};
+const FRONTAL = LIB_FRONTAL;
 // [0] is an I18N key (shared with the sample table), [1] the target shown in the table.
 const LABEL = {
   knee_flexion_bdc:["ex.knee","30–40°"], torso_from_horiz:["ex.torso","40–50°"],
@@ -1115,14 +1111,7 @@ const LABEL = {
 };
 // Torso "aggressiveness" varies by bike; saddle-height (knee), elbow, reach stay constant.
 // Each entry: green range + red bounds [glo,ghi,rlo,rhi], and the target label shown in the table.
-const BIKE_TORSO = {
-  road_endurance:{z:[40,50,34,56], t:"40–50°"},
-  road_race:     {z:[32,42,28,48], t:"32–42°"},
-  tt_tri:        {z:[12,28,8,34],  t:"12–28°"},
-  gravel:        {z:[42,52,36,58], t:"42–52°"},
-  mtb:           {z:[46,58,40,64], t:"46–58°"},
-  city:          {z:[55,70,48,78], t:"55–70°"},
-};
+const BIKE_TORSO = Object.fromEntries(Object.entries(BIKE_TYPES).map(([k,z])=>[k,{z:[...z], t:`${z[0]}–${z[1]}°`}]));
 const COL = {GREEN:"#16a34a", AMBER:"#d97706", RED:"#dc2626", GRAY:"#9aa3b2"};
 // HTML takes the theme tokens instead, so a grade stays readable in dark mode too.
 const CSSCOL = {GREEN:"var(--green)", AMBER:"var(--amber)", RED:"var(--red)", GRAY:"var(--gray)"};
@@ -1362,28 +1351,9 @@ function resetToIdle(){
 }
 $("#retry").onclick=resetToIdle;
 
-const deg=r=>r*180/Math.PI;
-function angleAt(a,b,c){const v1=[a.x-b.x,a.y-b.y],v2=[c.x-b.x,c.y-b.y];
-  const n1=Math.hypot(...v1),n2=Math.hypot(...v2); if(!n1||!n2) return NaN;
-  return deg(Math.acos(Math.max(-1,Math.min(1,(v1[0]*v2[0]+v1[1]*v2[1])/(n1*n2)))));}
-function torsoFromHoriz(hip,sh){return deg(Math.atan2(Math.abs(sh.y-hip.y),Math.abs(sh.x-hip.x)));}
-function grade(m,v){if(v==null||isNaN(v))return"GRAY";const[glo,ghi,rlo,rhi]=ZONES[m];
-  if(v>=glo&&v<=ghi)return"GREEN"; if(v<rlo||v>rhi)return"RED"; return"AMBER";}
-// A saved result from an older build can be missing its grades. Without the seed value, an empty
-// list throws and takes the whole history panel down with it.
-function worse(...g){const o={GRAY:0,GREEN:1,AMBER:2,RED:3};
-  return g.filter(x=>x in o).reduce((a,b)=>o[b]>o[a]?b:a,"GRAY");}
-function median(a){if(!a.length)return null;const s=[...a].sort((x,y)=>x-y),m=s.length>>1;
-  return s.length%2?s[m]:(s[m-1]+s[m])/2;}
-function findPeaks(y,minDist,prom){const peaks=[];
-  for(let i=0;i<y.length;i++){ if(isNaN(y[i]))continue;
-    let lo=Math.max(0,i-minDist),hi=Math.min(y.length,i+minDist+1),isMax=true,bL=y[i],bR=y[i];
-    for(let j=lo;j<hi;j++) if(!isNaN(y[j])&&y[j]>y[i]){isMax=false;break;}
-    if(!isMax)continue;
-    for(let j=lo;j<i;j++) if(!isNaN(y[j])) bL=Math.min(bL,y[j]);
-    for(let j=i+1;j<hi;j++) if(!isNaN(y[j])) bR=Math.min(bR,y[j]);
-    if(y[i]-Math.max(bL,bR)>=prom){ if(peaks.length&&i-peaks[peaks.length-1]<minDist){ if(y[i]>y[peaks[peaks.length-1]])peaks[peaks.length-1]=i;} else peaks.push(i);} }
-  return peaks;}
+// grade(m,v) grades against the live ZONES (which follow the bike type); worse() is the library's worst()
+function grade(m,v){ return gradeZone(v,ZONES[m]); }
+const worse=worst;
 
 let frames=[], sideConf={left:0,right:0}, viewRatios=[], frontalFrames=[];
 let ankleLo=Infinity, ankleHi=-Infinity;   // running ankle travel, for the live BDC test
@@ -1443,24 +1413,18 @@ async function start(f, knownDur){
       else{
       // Lock onto the near (camera) side by confidence accumulated over the whole
       // clip, so a noisy frame can't flip us to the far leg mid-stroke.
-      for(const s in SIDE) sideConf[s]+=Object.values(SIDE[s]).reduce((a,i)=>a+(lm[i].visibility??0),0);
+      for(const s in SIDE) sideConf[s]+=sideConfidence(lm,s);
       // View quality: in a true side view left/right shoulders & hips overlap, so the body's
       // horizontal spread is small vs torso length. Off-axis / front / rear inflates it.
       const pxw=i=>lm[i].x*cv.width, pxh=i=>lm[i].y*cv.height;
       const torsoLen=Math.hypot((pxw(11)+pxw(12))/2-(pxw(23)+pxw(24))/2,(pxh(11)+pxh(12))/2-(pxh(23)+pxh(24))/2);
       if(torsoLen>5) viewRatios.push(Math.max(Math.abs(pxw(11)-pxw(12)),Math.abs(pxw(23)-pxw(24)))/torsoLen);
-      const near=sideConf.left>=sideConf.right?"left":"right"; const ids=SIDE[near];
-      const px=i=>({x:lm[i].x*cv.width,y:lm[i].y*cv.height});
-      const P={}; for(const k in ids)P[k]=px(ids[k]);
-      // Only measure a joint when MediaPipe is confident it's visible; an occluded
-      // far-side limb otherwise poisons the median.
-      const v=k=>lm[ids[k]].visibility??0, okv=(...ks)=>ks.every(k=>v(k)>=MIN_VIS);
-      const A={ knee_flexion_bdc: okv("hip","knee","ankle")?180-angleAt(P.hip,P.knee,P.ankle):NaN,
-        torso_from_horiz: okv("hip","shoulder")?torsoFromHoriz(P.hip,P.shoulder):NaN,
-        elbow_flexion: okv("shoulder","elbow","wrist")?180-angleAt(P.shoulder,P.elbow,P.wrist):NaN,
-        shoulder_angle: okv("hip","shoulder","elbow")?angleAt(P.hip,P.shoulder,P.elbow):NaN,
-        hip_angle: okv("shoulder","hip","knee")?angleAt(P.shoulder,P.hip,P.knee):NaN };
-      const ankleY=okv("ankle")?P.ankle.y:NaN;
+      const near=sideConf.left>=sideConf.right?"left":"right";
+      // Only measure a joint when MediaPipe is confident it's visible; an occluded far-side
+      // limb otherwise poisons the median. sideFrameAngles() applies that gate.
+      const P=sidePoints(lm,near,cv.width,cv.height);
+      const A=sideFrameAngles(P,{minVisibility:MIN_VIS});
+      const ankleY=P.ankle.visibility>=MIN_VIS?P.ankle.y:NaN;
       frames.push({t:vid.currentTime,ankleY,A,P});
       // Live readouts: always show the numbers, but only colour them near the bottom of
       // the stroke. Everywhere else the targets simply don't apply — mid-stroke the knee
@@ -1596,20 +1560,9 @@ function finish(){
   const ankle=frames.map(f=>f.ankleY);
   const sorted=ankle.filter(v=>!isNaN(v)).sort((a,b)=>a-b);
   if(sorted.length<5){ fail(t('err.track')); return; }
-  const amp=sorted[Math.floor(sorted.length*0.95)]-sorted[Math.floor(sorted.length*0.05)];
-  // A recorded webm can still report duration=Infinity here, which would zero the fps and
-  // let noise peaks 0.1s apart count as pedal strokes. The frames carry their own timestamps.
-  const span=frames[frames.length-1].t-frames[0].t;
-  const fps=span>0?frames.length/span:30;
-  const minDist=Math.max(3,Math.round(fps*0.35)), prom=Math.max(2,0.25*amp);
-  const bdc=findPeaks(ankle,minDist,prom);                 // bottom of stroke (ankle lowest)
-  const tdc=findPeaks(ankle.map(v=>-v),minDist,prom);      // top of stroke (ankle highest)
-  if(!bdc.length){ fail(t('err.nostrokes')); return; }
-  const med=m=>median(bdc.map(i=>frames[i].A[m]).filter(v=>!isNaN(v)));
-  const hipTop=tdc.length?median(tdc.map(i=>frames[i].A.hip_angle).filter(v=>!isNaN(v))):null;
-  const R={knee_flexion_bdc:med("knee_flexion_bdc"),torso_from_horiz:med("torso_from_horiz"),
-           elbow_flexion:med("elbow_flexion"),shoulder_angle:med("shoulder_angle")};
-  const G={}; for(const m in ZONES)G[m]=grade(m,R[m]);
+  const res=analyzeSide(frames.map(f=>({t:f.t,ankleY:f.ankleY,angles:f.A})),{zones:ZONES});
+  if(!res){ fail(t('err.nostrokes')); return; }
+  const R=res.angles, G=res.grades, hipTop=res.hipTop, bdc=res.bdcFrames;
   lastSide={R,G,strokes:bdc.length,hipTop,offAxis:(viewRatios.length>=5 && median(viewRatios)>0.55)};
   renderSide();
   $("#example").hidden=true; $("#results").hidden=false;
@@ -1639,28 +1592,10 @@ function finish(){
 
 // ---- Front / Rear (frontal-plane) analysis — beta, report-only ----
 function frontalMetrics(lm){
-  const Pt=i=>({x:lm[i].x*cv.width,y:lm[i].y*cv.height,v:lm[i].visibility??0});
-  const hL=Pt(23),hR=Pt(24),kL=Pt(25),kR=Pt(26),aL=Pt(27),aR=Pt(28);
-  const center=(hL.x+hR.x)/2;
-  const leg=(h,k,a)=>{
-    if(Math.abs(a.y-h.y)<1) return null;
-    const lineX=h.x+(a.x-h.x)*((k.y-h.y)/(a.y-h.y));   // hip→ankle line at knee height
-    const dev=k.x-lineX;                                // knee offset from that line
-    const medial=(h.x<center)? dev : -dev;             // signed toward the body midline
-    return { fppa:180-angleAt(h,k,a), medialSign:Math.sign(medial) };
-  };
-  const ok=(...p)=>p.every(q=>q.v>=MIN_VIS);
-  return {
-    L: ok(hL,kL,aL)?leg(hL,kL,aL):null,
-    R: ok(hR,kR,aR)?leg(hR,kR,aR):null,
-    hipTilt: ok(hL,hR)?deg(Math.atan2(hR.y-hL.y,hR.x-hL.x)):NaN,
-    // Seen from the front or the back the two hips are well apart across the frame; seen
-    // side-on they sit almost on top of each other, and then the tilt between them is just
-    // noise swinging through ±180°. Carry the separation so the run can refuse the clip
-    // rather than confidently reporting a nonsense pelvic rock.
-    hipSpan: ok(hL,hR)?Math.abs(hR.x-hL.x):NaN,
-    P:{hL,hR,kL,kR,aL,aR},
-  };
+  const m=frontalFrameMetrics(lm,{width:cv.width,height:cv.height,minVisibility:MIN_VIS});
+  const Pt=i=>({x:lm[i].x*cv.width,y:lm[i].y*cv.height});
+  m.P={hL:Pt(23),hR:Pt(24),kL:Pt(25),kR:Pt(26),aL:Pt(27),aR:Pt(28)};   // for drawing only
+  return m;
 }
 function drawFrontal(f){
   if(!f||!f.P) return; const P=f.P;
@@ -1671,23 +1606,11 @@ function drawFrontal(f){
 }
 function finishFrontal(){
   spin.hidden=true; status.textContent=""; bar.style.display="none";
-  const F=frontalFrames.filter(Boolean);
-  if(F.length<5){ fail(t('err.trackFront')); return; }
-  const legStat=s=>{ const v=F.map(f=>f[s]).filter(Boolean).map(x=>x.medialSign*x.fppa);
-    if(v.length<3) return null; const q=[...v].sort((a,b)=>a-b);
-    return { peak:q[Math.floor(q.length*0.9)], med:median(v) }; };
-  // Refuse a side-on clip that was submitted as front or rear. Under 4% of the frame width
-  // between the hips is nobody's frontal view — it's a rider seen from the side, and every
-  // frontal number from it would be meaningless.
-  const spans=F.map(f=>f.hipSpan).filter(x=>!isNaN(x));
-  if(spans.length>=5 && median(spans) < 0.04*cv.width){ fail(t('err.notFrontal')); return; }
-  const L=legStat("L"), R=legStat("R");
-  // NB: this local was once named `t`, which shadowed the i18n t() for the whole function
-  // (TDZ) — so the fail(t('err.trackFront')) path above threw instead of showing the error.
-  const tilts=F.map(f=>f.hipTilt).filter(x=>!isNaN(x)); let rock=null;
-  if(tilts.length>=5){ const q=[...tilts].sort((a,b)=>a-b); rock=q[Math.floor(q.length*0.95)]-q[Math.floor(q.length*0.05)]; }
-
-  lastFront={L,R,rock,frames:F.length,view:runView};
+  // analyzeFrontal() refuses too few frames, and a side-on clip submitted as front or rear
+  // (hips under 4% of the frame width apart), rather than report nonsense.
+  const r=analyzeFrontal(frontalFrames,{width:cv.width});
+  if(!r.ok){ fail(t(r.reason==="not-frontal"?'err.notFrontal':'err.trackFront')); return; }
+  lastFront={L:r.left,R:r.right,rock:r.rock,frames:r.frames,view:runView};
   renderFront();
   $("#example").hidden=true; $("#results").hidden=true; $("#frontresults").hidden=false;
   $("#tabdot").hidden=false; showTab("report");
