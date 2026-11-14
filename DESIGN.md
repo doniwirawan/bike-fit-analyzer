@@ -218,7 +218,7 @@ A centred 1160px container with a 20px safe-area-aware gutter; reading pages nar
 
 Lists are the default content shape: rows of about 22px vertical padding, separated by a hairline top border, with the label left and the value right. Wide tables scroll inside their own bordered wrapper so a phone never scrolls the page sideways.
 
-The header holds the wordmark, nav links and two segmented switches (theme, language). Under 640px nav labels hide to icons; under 520px the controls drop to a full-width second row and the GitHub link leaves the header (the footer still has it). One shared footer closes every page.
+The header is identical on every page: the wordmark, then Analyzer, Guides and GitHub, then the theme and language switches, with the current section marked by `aria-current`. On English-only guides the language switch's ID option links to the Indonesian articles on /blog instead of switching the page. Under 640px the Analyzer link and nav labels hide; under 520px the controls drop to a full-width second row and the GitHub link leaves the header (the footer still has it). One shared footer closes every page.
 
 **The 44px Rule.** Every interactive control, including nav links, switch segments, footer links and FAQ summaries, has a 44px minimum hit area; primary buttons are 48px.
 
